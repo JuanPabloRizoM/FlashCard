@@ -1,0 +1,76 @@
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { colors, spacing, typography } from '../../theme';
+
+type StudySessionAnswerActionsProps = {
+  isSubmittingAnswer: boolean;
+  onSubmitAnswer: (isCorrect: boolean) => void | Promise<void>;
+};
+
+export function StudySessionAnswerActions({
+  isSubmittingAnswer,
+  onSubmitAnswer
+}: StudySessionAnswerActionsProps) {
+  return (
+    <View style={styles.actionRow}>
+      <Pressable
+        disabled={isSubmittingAnswer}
+        onPress={() => {
+          onSubmitAnswer(false);
+        }}
+        style={[
+          styles.answerButton,
+          styles.answerButtonMuted,
+          isSubmittingAnswer ? styles.buttonDisabled : null
+        ]}
+      >
+        <Text style={styles.answerButtonLabel}>
+          {isSubmittingAnswer ? 'Saving...' : 'Needs review'}
+        </Text>
+      </Pressable>
+      <Pressable
+        disabled={isSubmittingAnswer}
+        onPress={() => {
+          onSubmitAnswer(true);
+        }}
+        style={[
+          styles.answerButton,
+          styles.answerButtonSuccess,
+          isSubmittingAnswer ? styles.buttonDisabled : null
+        ]}
+      >
+        <Text style={styles.answerButtonLabel}>
+          {isSubmittingAnswer ? 'Saving...' : 'I got it'}
+        </Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  actionRow: {
+    flexDirection: 'row',
+    gap: spacing.s
+  },
+  answerButton: {
+    alignItems: 'center',
+    borderRadius: 12,
+    flex: 1,
+    paddingHorizontal: spacing.m,
+    paddingVertical: 14
+  },
+  answerButtonMuted: {
+    backgroundColor: colors.muted
+  },
+  answerButtonSuccess: {
+    backgroundColor: colors.success
+  },
+  answerButtonLabel: {
+    color: colors.surface,
+    fontSize: typography.body,
+    fontWeight: '700'
+  },
+  buttonDisabled: {
+    opacity: 0.5
+  }
+});

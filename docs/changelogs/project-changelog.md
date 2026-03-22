@@ -46,3 +46,138 @@
 - Files: src/core/models/Deck.ts, src/core/types/deck.ts, src/services/validation/deckValidation.ts, src/storage/migrations.ts, src/storage/repositories/deckRepository.ts, src/features/decks/useDecks.ts, src/ui/screens/DecksScreen.tsx, docs/features/decks.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md, docs/adr/0001-deck-id-v1.md
 - Risk: Medium
 - Notes: Existing V1 deck rows are migrated forward with safe defaults and deck ordering now uses `created_at` rather than numeric IDs.
+
+---
+
+[2026-03-18]
+- Change: Added the Card domain foundation with card model/types, cards table migration, card repository, and selected-deck create/list flow.
+- Reason: Cards are the core study unit and needed to exist before study sessions or techniques can be implemented.
+- Files: src/core/models/Card.ts, src/core/types/card.ts, src/services/validation/cardValidation.ts, src/storage/migrations.ts, src/storage/repositories/cardRepository.ts, src/features/cards/useDeckCards.ts, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/DecksScreen.tsx, src/ui/screens/CardsScreen.tsx, docs/features/cards.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Medium
+- Notes: Cards are scoped to a valid `deckId`, foreign keys prevent orphan rows, and cards are ordered per deck by `created_at`.
+
+---
+
+[2026-03-18]
+- Change: Added the initial Study Engine foundation with a prompt resolver, technique registry, study engine, three modular techniques, and Study screen integration through a feature hook.
+- Reason: The app needed its core study logic in the engine layer before real study sessions could exist.
+- Files: src/core/models/StudySession.ts, src/core/types/study.ts, src/engine/StudyEngine.ts, src/engine/PromptModeResolver.ts, src/engine/TechniqueRegistry.ts, src/engine/types.ts, src/techniques/BasicReviewTechnique.ts, src/techniques/ReverseReviewTechnique.ts, src/techniques/MixedRecallTechnique.ts, src/features/study/useStudySession.ts, src/ui/screens/StudyScreen.tsx, docs/features/study.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: High
+- Notes: Prompt modes are derived strictly from available card fields, unsupported cards are skipped safely, and the UI only renders engine state plus answer actions.
+
+---
+
+[2026-03-20]
+- Change: Added persistent study progress storage per `(cardId, promptMode)` plus study session completion summary, restart, and retry-incorrect flows.
+- Reason: Study sessions needed durable answer history and a complete end-of-session flow before later scheduling or scoring features are layered on.
+- Files: src/core/models/StudyProgress.ts, src/core/types/studyProgress.ts, src/services/validation/studyProgressValidation.ts, src/storage/migrations.ts, src/storage/repositories/studyProgressRepository.ts, src/engine/StudyEngine.ts, src/features/study/useStudySession.ts, src/ui/components/study/StudySessionCard.tsx, src/ui/components/study/StudySessionSummary.tsx, src/ui/screens/StudyScreen.tsx, docs/features/study.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: High
+- Notes: Answer results are saved before the session advances, duplicate taps are blocked during persistence, and retry mode replays the exact incorrect prompt items from the completed session.
+
+---
+
+[2026-03-20]
+- Change: Added adaptive study ordering that prioritizes recently failed and weaker prompt items using persisted study progress while preserving technique-generated valid prompt items.
+- Reason: Flat session ordering left study sessions too static even after progress persistence existed.
+- Files: src/engine/StudyEngine.ts, src/engine/types.ts, src/features/study/useStudySession.ts, docs/features/study.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: High
+- Notes: Fresh prompt items remain represented, strong streak items are deprioritized rather than removed, and retry-incorrect flow still replays the exact failed prompt items.
+
+---
+
+[2026-03-20]
+- Change: Added balanced session shaping on top of adaptive ordering, including a session size cap, same-card repetition protection, and weak/fresh/strong composition balancing.
+- Reason: Adaptive ranking alone still allowed oversized or repetitive sessions, especially when many prompt items came from the same card.
+- Files: src/engine/StudyEngine.ts, src/engine/types.ts, docs/features/study.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: High
+- Notes: Retry-incorrect flow remains exact prompt-item replay, while main sessions are capped and interleaved with safe fallbacks for small decks.
+
+---
+
+[2026-03-20]
+- Change: Polished the Study UI with session progress indicators, remaining count, stage badges, and clearer answer feedback.
+- Reason: The study logic was stable, but the active session UI still lacked enough feedback and progress visibility for a clear user experience.
+- Files: src/ui/screens/StudyScreen.tsx, src/ui/components/study/StudySessionCard.tsx, src/ui/components/study/StudySessionProgress.tsx, docs/features/study.md, docs/flows/main-user-flows.md
+- Risk: Low
+- Notes: The polish is presentation-only; it reads existing session state and does not modify engine, persistence, or study logic behavior.
+
+---
+
+[2026-03-20]
+- Change: Refined the Study UI polish pass with an active session banner, animated progress and card transitions, extracted answer-action/session-banner components, and clearer summary retry messaging.
+- Reason: The first pass added the right state indicators, but the Study screen still needed clearer session framing and better transition feedback while staying strictly presentation-only.
+- Files: src/ui/screens/StudyScreen.tsx, src/ui/components/study/StudySessionCard.tsx, src/ui/components/study/StudySessionProgress.tsx, src/ui/components/study/StudySessionSummary.tsx, src/ui/components/study/StudySessionAnswerActions.tsx, src/ui/components/study/StudySessionBanner.tsx, docs/features/study.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Low
+- Notes: The hook and engine contracts were left intact; the component split also keeps the UI files inside the project file-size rule.
+
+---
+
+[2026-03-20]
+- Change: Added a lightweight study-readiness insight layer with deck-level readiness badges, prompt coverage metrics, technique availability hints, and soft card warnings for missing study fields.
+- Reason: The study engine was already strong, but users still lacked visibility into whether their decks and cards were actually ready for useful study sessions.
+- Files: src/features/study/studyInsights.ts, src/features/decks/useDecks.ts, src/storage/repositories/cardRepository.ts, src/ui/screens/DecksScreen.tsx, src/ui/screens/DeckDetailScreen.tsx, src/ui/components/deck/DeckReadinessBadge.tsx, src/ui/components/deck/DeckStudyInsightCard.tsx, src/ui/components/deck/DeckListItem.tsx, src/ui/components/card/CardStudyFeedback.tsx, src/ui/components/card/DeckCardListItem.tsx, docs/features/study.md, docs/flows/main-user-flows.md
+- Risk: Medium
+- Notes: The insight layer only reads existing card data and prompt rules; it does not change study logic, persistence behavior, or card-creation blocking rules.
+
+---
+
+[2026-03-20]
+- Change: Added real-time card editor guidance with prompt-mode support preview, technique usefulness hints, and optional application/image fields in the current card creation flow.
+- Reason: Deck-level insight was not enough on its own; users also needed immediate feedback while drafting a card so they can improve study quality before saving.
+- Files: src/features/study/cardStudyPreview.ts, src/features/cards/useDeckCards.ts, src/ui/screens/DeckDetailScreen.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardEditorStudyPreview.tsx, docs/features/study.md, docs/flows/main-user-flows.md
+- Risk: Medium
+- Notes: The preview reuses the same prompt support rules as the study insight layer, stays non-blocking, and does not change engine or persistence behavior.
+
+---
+
+[2026-03-20]
+- Change: Added study session modes (`Mixed`, `Weak Focus`, `Fresh Focus`) and session size options (`10`, `20`, `All`) to the Study flow using feature-layer queue configuration before engine start.
+- Reason: Users needed direct control over session intent and length without changing the StudyEngine’s internal ranking or shaping behavior.
+- Files: src/core/types/study.ts, src/engine/types.ts, src/engine/StudyEngine.ts, src/features/study/useStudySession.ts, src/features/study/sessionConfiguration.ts, src/features/study/sessionSummary.ts, src/ui/screens/StudyScreen.tsx, src/ui/components/study/StudySessionSetupPanel.tsx, src/ui/components/study/StudySessionBanner.tsx, docs/features/study.md, docs/flows/main-user-flows.md
+- Risk: Medium
+- Notes: Retry-incorrect sessions remain exact prompt-item replays and do not use the new mode/size configuration layer.
+
+---
+
+[2026-03-20]
+- Change: Performed a Study stabilization pass covering session setup locking, focused-mode fallback hardening, and a rollback of unnecessary Step 8 engine build-option fields.
+- Reason: The Study feature had enough moving parts that it needed one pass focused on correctness, UX consistency, and boundary cleanup before adding more scope.
+- Files: src/features/study/useStudySession.ts, src/features/study/sessionConfiguration.ts, src/ui/screens/StudyScreen.tsx, src/engine/StudyEngine.ts, src/engine/types.ts, docs/features/study.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Low
+- Notes: The minimal engine hook-up remains `queueItems` plus `maxSessionItems`; focused-mode rules stay in the feature layer, retry-incorrect remains exact prompt-item replay, and active session setup can no longer be reset accidentally from the UI.
+
+---
+
+[2026-03-20]
+- Change: Moved card creation/editing into the Cards tab workspace, removed the embedded deck-detail editor, and added deck-to-cards handoff with the current deck preselected.
+- Reason: Deck detail had become overloaded, while the Cards tab was underused and needed to become the primary workspace for card management.
+- Files: src/navigation/types.ts, src/features/cards/useDeckCards.ts, src/storage/repositories/cardRepository.ts, src/services/validation/cardValidation.ts, src/core/types/card.ts, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/components/card/DeckCardListItem.tsx, docs/features/cards.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Medium
+- Notes: Deck-to-cards handoff uses a one-shot route param, card lists refresh on tab focus to avoid stale deck detail state, and the Cards workspace now supports both create and edit flows with the existing study-guidance preview.
+
+---
+
+[2026-03-20]
+- Change: Added Settings v1 with Study default controls, app information, and an honest roadmap section, then wired those defaults into the Study setup flow.
+- Reason: The main product loop was already functional, but the Settings tab was still empty and the app lacked a useful place to control current Study defaults.
+- Files: src/core/types/settings.ts, src/features/settings/AppSettingsProvider.tsx, src/bootstrap/AppRoot.tsx, src/features/study/useStudySession.ts, src/ui/screens/SettingsScreen.tsx, docs/features/study.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Low
+- Notes: Settings are session-only for the current app run, they only expose behavior that already has a real effect, and they do not interrupt active or completed Study sessions already on screen.
+
+---
+
+[2026-03-21]
+- Change: Persisted Study default settings across app restarts using a lightweight local key-value store, and polished Settings/Study copy to reflect saved defaults.
+- Reason: Settings v1 already had a real effect, but users would reasonably expect their chosen Study defaults to survive an app restart.
+- Files: src/core/types/settings.ts, src/storage/appSettingsStorage.ts, src/features/settings/AppSettingsProvider.tsx, src/features/study/useStudySession.ts, src/ui/screens/SettingsScreen.tsx, src/ui/screens/StudyScreen.tsx, docs/features/study.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Low
+- Notes: Persisted values are validated on load, invalid or partial payloads fall back to recommended defaults, and app settings hydrate before the main shell renders so Study setup does not flicker on cold start.
+
+---
+
+[2026-03-22]
+- Change: Added paste-based Card Import v1 in the Cards workspace with structured line parsing, preview-before-save, per-line validation feedback, and transactional batch creation for valid rows.
+- Reason: Single-card creation worked, but the card workspace still needed a faster path for building decks from existing structured notes or vocabulary lists.
+- Files: src/features/cards/cardImport.ts, src/features/cards/useCardImport.ts, src/features/cards/useDeckCards.ts, src/storage/repositories/cardRepository.ts, src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardImportPanel.tsx, src/ui/components/card/CardWorkspaceCardList.tsx, docs/features/cards.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Medium
+- Notes: Import v1 is paste-only, requires user confirmation before writing anything, imports only valid preview rows, and keeps invalid lines visible with explicit reasons instead of guessing at ambiguous input.

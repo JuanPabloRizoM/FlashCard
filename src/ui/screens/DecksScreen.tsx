@@ -7,10 +7,12 @@ import {
   TextInput,
   View
 } from 'react-native';
+import { useState } from 'react';
 
 import type { Deck } from '../../core/models/Deck';
-import { DECK_TYPE_LABELS } from '../../core/types/deck';
 import { useDecks } from '../../features/decks/useDecks';
+import { DeckListItem } from '../components/deck/DeckListItem';
+import { DeckDetailScreen } from './DeckDetailScreen';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { colors, spacing, typography } from '../theme';
 
@@ -28,8 +30,10 @@ function formatDeckTimestampLabel(deck: Deck): string {
 }
 
 export function DecksScreen() {
+  const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
   const {
     decks,
+    deckInsightsByDeckId,
     draftName,
     formError,
     screenError,
@@ -37,8 +41,21 @@ export function DecksScreen() {
     isSubmitting,
     canSubmit,
     onDraftNameChange,
-    onCreateDeck
+    onCreateDeck,
+    onRefreshDeckInsights
   } = useDecks();
+
+  if (selectedDeck != null) {
+    return (
+      <DeckDetailScreen
+        deck={selectedDeck}
+        onBack={() => {
+          setSelectedDeck(null);
+          void onRefreshDeckInsights();
+        }}
+      />
+    );
+  }
 
   return (
     <ScreenContainer
@@ -97,18 +114,20 @@ export function DecksScreen() {
             contentContainerStyle={decks.length === 0 ? styles.emptyListContent : styles.listContent}
             data={decks}
             keyExtractor={(deck) => deck.id.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.deckCard}>
-                <View style={styles.deckCardHeader}>
-                  <Text style={styles.deckType}>{DECK_TYPE_LABELS[item.type]}</Text>
-                  <Text style={styles.deckMeta}>{formatDeckTimestampLabel(item)}</Text>
-                </View>
-                <Text style={styles.deckName}>{item.name}</Text>
-                {item.description != null ? (
-                  <Text style={styles.deckDescription}>{item.description}</Text>
-                ) : null}
-              </View>
-            )}
+            renderItem={({ item }) => {
+              const insights = deckInsightsByDeckId[item.id];
+
+              return (
+                <DeckListItem
+                  deck={item}
+                  insights={insights ?? null}
+                  onPress={() => {
+                    setSelectedDeck(item);
+                  }}
+                  timestampLabel={formatDeckTimestampLabel(item)}
+                />
+              );
+            }}
             ListEmptyComponent={
               <View style={styles.feedbackState}>
                 <Text style={styles.feedbackTitle}>No decks yet</Text>
@@ -201,39 +220,6 @@ const styles = StyleSheet.create({
   },
   emptyListContent: {
     flexGrow: 1
-  },
-  deckCard: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: spacing.xs,
-    padding: spacing.m
-  },
-  deckCardHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  deckType: {
-    color: colors.primary,
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase'
-  },
-  deckName: {
-    color: colors.text,
-    fontSize: typography.body,
-    fontWeight: '700'
-  },
-  deckDescription: {
-    color: colors.muted,
-    fontSize: typography.body,
-    lineHeight: 22
-  },
-  deckMeta: {
-    color: colors.muted,
-    fontSize: typography.caption
   },
   feedbackState: {
     alignItems: 'center',

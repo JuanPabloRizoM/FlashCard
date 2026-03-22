@@ -28,45 +28,92 @@
 - `models/`
 - `constants/`
 - `models/Deck.ts`
+- `models/Card.ts`
+- `models/StudySession.ts`
+- `models/StudyProgress.ts`
 - `types/deck.ts`
+- `types/card.ts`
+- `types/study.ts`
+- `types/studyProgress.ts`
+- `types/settings.ts`
 
 ---
 
 ### engine/
-- (reserved for Study Engine modules)
+- `StudyEngine.ts`
+- `PromptModeResolver.ts`
+- `TechniqueRegistry.ts`
+- `types.ts`
 
 ---
 
 ### techniques/
-- (reserved for technique implementations)
+- `BasicReviewTechnique.ts`
+- `ReverseReviewTechnique.ts`
+- `MixedRecallTechnique.ts`
 
 ---
 
 ### storage/
 - `database.ts`
+- `appSettingsStorage.ts`
 - `migrations.ts`
 - `repositories/deckRepository.ts`
+- `repositories/cardRepository.ts`
+- `repositories/studyProgressRepository.ts`
 
 ---
 
 ### features/
 - decks/
 - cards/
+- settings/
 - study/
 - `decks/useDecks.ts`
+- `cards/useDeckCards.ts`
+- `cards/useCardImport.ts`
+- `cards/cardImport.ts`
+- `settings/AppSettingsProvider.tsx`
+- `study/useStudySession.ts`
+- `study/studyInsights.ts`
+- `study/cardStudyPreview.ts`
+- `study/sessionConfiguration.ts`
+- `study/sessionSummary.ts`
 
 ---
 
 ### ui/
 - `components/layout/ScreenContainer.tsx`
+- `components/deck/DeckReadinessBadge.tsx`
+- `components/deck/DeckStudyInsightCard.tsx`
+- `components/deck/DeckListItem.tsx`
+- `components/card/CardStudyFeedback.tsx`
+- `components/card/DeckCardListItem.tsx`
+- `components/card/CardEditorPanel.tsx`
+- `components/card/CardEditorStudyPreview.tsx`
+- `components/card/CardImportPanel.tsx`
+- `components/card/CardWorkspaceDeckSelector.tsx`
+- `components/card/CardWorkspaceCardList.tsx`
 - `screens/DecksScreen.tsx`
+- `screens/DeckDetailScreen.tsx`
 - `screens/CardsScreen.tsx`
 - `screens/StudyScreen.tsx`
 - `screens/SettingsScreen.tsx`
+- `components/study/StudySessionCard.tsx`
+- `components/study/StudySessionProgress.tsx`
+- `components/study/StudySessionAnswerActions.tsx`
+- `components/study/StudySessionBanner.tsx`
+- `components/study/StudySessionSetupPanel.tsx`
+- `components/study/StudySessionSummary.tsx`
 - `theme/colors.ts`
 - `theme/spacing.ts`
 - `theme/typography.ts`
 - `screens/DecksScreen.tsx` owns rendering only; deck persistence flows through feature + repository layers
+- `screens/DeckDetailScreen.tsx` is a deck overview and routing entry point into the Cards workspace
+- `screens/CardsScreen.tsx` is the primary card creation/editing workspace and may accept route params for deck handoff
+- `screens/CardsScreen.tsx` may host reviewed bulk-import workflows, but parsing and validation must stay in the card feature layer
+- `screens/StudyScreen.tsx` renders engine output and delegates all study logic to the feature + engine layers
+- `screens/SettingsScreen.tsx` owns app-level Study defaults and honest product information only; it must not expose fake toggles
 
 ---
 
@@ -75,6 +122,8 @@
 - validation/
 - security/
 - `validation/deckValidation.ts`
+- `validation/cardValidation.ts`
+- `validation/studyProgressValidation.ts`
 
 ---
 
@@ -91,6 +140,13 @@
 - No cross-layer leaks
 - No circular dependencies
 - UI layer must remain free of study/business/storage logic
+- Settings may control app-level defaults, but those defaults must be consumed through feature layers rather than screens reaching into engine internals
+- Lightweight settings persistence belongs to the settings/storage boundary, not to Study screens or engine files
+- Study progress persistence belongs to repository + feature layers, not screens
+- Study session setup, focused-mode filtering, and session-size selection belong to the feature layer, not the engine or UI
+- Adaptive study ordering belongs to the engine/session layer and must consume persisted progress through feature-layer inputs
+- Session shaping belongs to the engine/session layer and must not be implemented inside StudyScreen
+- The `StudyEngine` may accept a prebuilt prompt queue as input, but it must not own Study mode selection rules
 - Navigation contracts must be typed and validated through route params
 
 ---

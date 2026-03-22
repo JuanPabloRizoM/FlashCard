@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
 
 import type { Deck } from '../../core/models/Deck';
+import type { Card } from '../../core/models/Card';
+import type { DeckStudyInsights } from '../study/studyInsights';
+import { buildDeckStudyInsights } from '../study/studyInsights';
 import {
   getFirstDeckValidationError,
   normalizeDeckName,
   validateCreateDeckInput
 } from '../../services/validation/deckValidation';
 import { createDeck, listDecks } from '../../storage/repositories/deckRepository';
+import { listAllCards } from '../../storage/repositories/cardRepository';
 
 type UseDecksResult = {
   decks: Deck[];
+  deckInsightsByDeckId: Record<number, DeckStudyInsights>;
   draftName: string;
   formError: string | null;
   screenError: string | null;
@@ -18,6 +23,7 @@ type UseDecksResult = {
   canSubmit: boolean;
   onDraftNameChange: (value: string) => void;
   onCreateDeck: () => Promise<void>;
+  onRefreshDeckInsights: () => Promise<void>;
 };
 
 function getDeckSaveErrorMessage(error: unknown): string {
@@ -28,39 +34,69 @@ function getDeckSaveErrorMessage(error: unknown): string {
   return 'Could not save the deck. Please try again.';
 }
 
+function buildDeckInsightMap(decks: Deck[], cards: Card[]): Record<number, DeckStudyInsights> {
+  const cardsByDeckId = cards.reduce<Record<number, Card[]>>((groupedCards, card) => {
+    const deckCards = groupedCards[card.deckId] ?? [];
+    deckCards.push(card);
+    groupedCards[card.deckId] = deckCards;
+    return groupedCards;
+  }, {});
+
+  return decks.reduce<Record<number, DeckStudyInsights>>((insights, deck) => {
+    insights[deck.id] = buildDeckStudyInsights(cardsByDeckId[deck.id] ?? []);
+    return insights;
+  }, {});
+}
+
 export function useDecks(): UseDecksResult {
   const [decks, setDecks] = useState<Deck[]>([]);
+  const [deckInsightsByDeckId, setDeckInsightsByDeckId] = useState<Record<number, DeckStudyInsights>>(
+    {}
+  );
   const [draftName, setDraftName] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [screenError, setScreenError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  async function loadDeckCollection(isMounted?: () => boolean) {
+    try {
+      const [deckResult, cardResult] = await Promise.allSettled([listDecks(), listAllCards()]);
+
+      if (deckResult.status !== 'fulfilled') {
+        throw new Error('Could not load decks right now.');
+      }
+
+      const storedDecks = deckResult.value;
+      const storedCards = cardResult.status === 'fulfilled' ? cardResult.value : [];
+
+      if (isMounted != null && !isMounted()) {
+        return;
+      }
+
+      setDecks(storedDecks);
+      setDeckInsightsByDeckId(buildDeckInsightMap(storedDecks, storedCards));
+
+      if (cardResult.status === 'fulfilled') {
+        setScreenError(null);
+      } else {
+        setScreenError('Decks loaded, but study readiness insights could not be refreshed.');
+      }
+    } catch {
+      if (isMounted == null || isMounted()) {
+        setScreenError('Could not load decks right now.');
+      }
+    } finally {
+      if (isMounted == null || isMounted()) {
+        setIsLoading(false);
+      }
+    }
+  }
+
   useEffect(() => {
     let isMounted = true;
 
-    async function loadDecks() {
-      try {
-        const storedDecks = await listDecks();
-
-        if (!isMounted) {
-          return;
-        }
-
-        setDecks(storedDecks);
-        setScreenError(null);
-      } catch {
-        if (isMounted) {
-          setScreenError('Could not load decks right now.');
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadDecks();
+    void loadDeckCollection(() => isMounted);
 
     return () => {
       isMounted = false;
@@ -83,6 +119,10 @@ export function useDecks(): UseDecksResult {
       const newDeck = await createDeck({ name: normalizedName });
 
       setDecks((currentDecks) => [newDeck, ...currentDecks]);
+      setDeckInsightsByDeckId((currentInsights) => ({
+        ...currentInsights,
+        [newDeck.id]: buildDeckStudyInsights([])
+      }));
       setDraftName('');
       setFormError(null);
       setScreenError(null);
@@ -103,6 +143,7 @@ export function useDecks(): UseDecksResult {
 
   return {
     decks,
+    deckInsightsByDeckId,
     draftName,
     formError,
     screenError,
@@ -110,6 +151,9 @@ export function useDecks(): UseDecksResult {
     isSubmitting,
     canSubmit: normalizeDeckName(draftName).length > 0 && !isSubmitting,
     onDraftNameChange,
-    onCreateDeck
+    onCreateDeck,
+    onRefreshDeckInsights: async () => {
+      await loadDeckCollection();
+    }
   };
 }

@@ -6,10 +6,20 @@ import {
   MAX_DECK_DESCRIPTION_LENGTH,
   MAX_DECK_NAME_LENGTH
 } from '../core/types/deck';
+import { PROMPT_MODES } from '../core/types/study';
+import {
+  MAX_CARD_IMAGE_URI_LENGTH,
+  MAX_CARD_LONG_TEXT_LENGTH,
+  MAX_CARD_SHORT_TEXT_LENGTH,
+  MAX_CARD_TITLE_LENGTH
+} from '../core/types/card';
+import { STUDY_PROGRESS_RESULTS } from '../core/types/studyProgress';
 
-const DATABASE_VERSION = 2;
+const DATABASE_VERSION = 4;
 const DECK_COLOR_GLOB = '#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]';
 const DECK_TYPE_SQL = DECK_TYPES.map((type) => `'${type}'`).join(', ');
+const PROMPT_MODE_SQL = PROMPT_MODES.map((mode) => `'${mode}'`).join(', ');
+const STUDY_PROGRESS_RESULT_SQL = STUDY_PROGRESS_RESULTS.map((result) => `'${result}'`).join(', ');
 
 function getCreateDecksTableSql(tableName: string): string {
   return `
@@ -31,6 +41,63 @@ function getCreateDecksTableSql(tableName: string): string {
 
 function getCreateDecksCreatedAtIndexSql(tableName: string): string {
   return `CREATE INDEX IF NOT EXISTS idx_${tableName}_created_at ON ${tableName} (created_at DESC, id DESC);`;
+}
+
+function getCreateCardsTableSql(): string {
+  return `
+    CREATE TABLE IF NOT EXISTS cards (
+      id INTEGER PRIMARY KEY NOT NULL,
+      deck_id INTEGER NOT NULL,
+      title TEXT NOT NULL
+        CHECK(length(trim(title)) > 0 AND length(title) <= ${MAX_CARD_TITLE_LENGTH}),
+      translation TEXT
+        CHECK(translation IS NULL OR length(translation) <= ${MAX_CARD_SHORT_TEXT_LENGTH}),
+      definition TEXT
+        CHECK(definition IS NULL OR length(definition) <= ${MAX_CARD_LONG_TEXT_LENGTH}),
+      example TEXT
+        CHECK(example IS NULL OR length(example) <= ${MAX_CARD_LONG_TEXT_LENGTH}),
+      application TEXT
+        CHECK(application IS NULL OR length(application) <= ${MAX_CARD_LONG_TEXT_LENGTH}),
+      image_uri TEXT
+        CHECK(image_uri IS NULL OR length(image_uri) <= ${MAX_CARD_IMAGE_URI_LENGTH}),
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (deck_id) REFERENCES decks(id) ON DELETE CASCADE
+    );
+  `;
+}
+
+function getCreateCardsDeckCreatedAtIndexSql(): string {
+  return 'CREATE INDEX IF NOT EXISTS idx_cards_deck_created_at ON cards (deck_id, created_at DESC, id DESC);';
+}
+
+function getCreateStudyProgressTableSql(): string {
+  return `
+    CREATE TABLE IF NOT EXISTS study_progress (
+      id INTEGER PRIMARY KEY NOT NULL,
+      card_id INTEGER NOT NULL,
+      prompt_mode TEXT NOT NULL
+        CHECK(prompt_mode IN (${PROMPT_MODE_SQL})),
+      times_seen INTEGER NOT NULL DEFAULT 0
+        CHECK(times_seen >= 0),
+      correct_count INTEGER NOT NULL DEFAULT 0
+        CHECK(correct_count >= 0),
+      incorrect_count INTEGER NOT NULL DEFAULT 0
+        CHECK(incorrect_count >= 0),
+      current_streak INTEGER NOT NULL DEFAULT 0
+        CHECK(current_streak >= 0),
+      last_result TEXT
+        CHECK(last_result IS NULL OR last_result IN (${STUDY_PROGRESS_RESULT_SQL})),
+      last_studied_at TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
+    );
+  `;
+}
+
+function getCreateStudyProgressCardPromptIndexSql(): string {
+  return 'CREATE UNIQUE INDEX IF NOT EXISTS idx_study_progress_card_prompt ON study_progress (card_id, prompt_mode);';
 }
 
 function getLegacyTimestampToIsoSql(columnName: string): string {
@@ -68,7 +135,7 @@ export async function migrateDatabaseIfNeeded(db: SQLiteDatabase): Promise<void>
   await db.execAsync('PRAGMA journal_mode = WAL;');
 
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
-  const currentVersion = result?.user_version ?? 0;
+  let currentVersion = result?.user_version ?? 0;
 
   if (currentVersion >= DATABASE_VERSION) {
     return;
@@ -78,11 +145,33 @@ export async function migrateDatabaseIfNeeded(db: SQLiteDatabase): Promise<void>
     await db.execAsync(`
       ${getCreateDecksTableSql('decks')}
       ${getCreateDecksCreatedAtIndexSql('decks')}
+      ${getCreateCardsTableSql()}
+      ${getCreateCardsDeckCreatedAtIndexSql()}
+      ${getCreateStudyProgressTableSql()}
+      ${getCreateStudyProgressCardPromptIndexSql()}
     `);
+    currentVersion = DATABASE_VERSION;
   }
 
   if (currentVersion === 1) {
     await migrateDecksV1ToV2(db);
+    currentVersion = 2;
+  }
+
+  if (currentVersion === 2) {
+    await db.execAsync(`
+      ${getCreateCardsTableSql()}
+      ${getCreateCardsDeckCreatedAtIndexSql()}
+    `);
+    currentVersion = 3;
+  }
+
+  if (currentVersion === 3) {
+    await db.execAsync(`
+      ${getCreateStudyProgressTableSql()}
+      ${getCreateStudyProgressCardPromptIndexSql()}
+    `);
+    currentVersion = DATABASE_VERSION;
   }
 
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
