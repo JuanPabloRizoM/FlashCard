@@ -49,6 +49,28 @@
 
 ---
 
+## Export A Deck
+
+1. The user opens the `Decks` tab and selects a saved deck.
+2. Deck detail loads the deck overview, study insights, and card list.
+3. The user opens the `Export deck` panel.
+4. The app generates structured text with a `# Deck: Deck name` header plus one card per line using the existing card import format.
+5. The user copies that export text from the panel and can paste it elsewhere for backup or sharing.
+
+---
+
+## Import A Deck
+
+1. The user opens the `Cards` tab.
+2. If the app already has decks, the import panel appears above the card workspace. If the app has no decks yet, the import panel still remains available.
+3. The user pastes exported deck text beginning with `# Deck: Deck name`.
+4. The app validates the deck header and previews each following card line with the existing card import parser.
+5. Duplicate deck names and malformed card lines are surfaced before any write happens.
+6. When the user confirms import, the repository creates a new deck and its valid cards in one transaction.
+7. The newly imported deck becomes selected in the Cards workspace, and it appears in the Decks tab on the next focus refresh.
+
+---
+
 ## Start A Study Session
 
 1. The user opens the `Study` tab.

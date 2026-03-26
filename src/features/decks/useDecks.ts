@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 
 import type { Deck } from '../../core/models/Deck';
 import type { Card } from '../../core/models/Card';
@@ -93,15 +94,17 @@ export function useDecks(): UseDecksResult {
     }
   }
 
-  useEffect(() => {
-    let isMounted = true;
+  useFocusEffect(
+    useCallback(() => {
+      let isMounted = true;
 
-    void loadDeckCollection(() => isMounted);
+      void loadDeckCollection(() => isMounted);
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+      return () => {
+        isMounted = false;
+      };
+    }, [])
+  );
 
   async function onCreateDeck() {
     const normalizedName = normalizeDeckName(draftName);

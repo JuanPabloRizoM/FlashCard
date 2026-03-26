@@ -8,6 +8,8 @@ It currently supports:
 - creating a card inside a selected deck from the Cards tab workspace
 - editing a card inside a selected deck from the Cards tab workspace
 - importing multiple cards from pasted text with preview-before-save
+- exporting a full deck as structured text from deck detail
+- importing a full deck from pasted structured text with preview-before-save
 - listing cards for a single deck
 - loading persisted cards from SQLite
 
@@ -58,6 +60,7 @@ Current repository methods:
 - `createCard({ deckId, title, translation?, definition?, example?, application?, imageUri? })`
 - `createCardsBatch([...])`
 - `updateCard({ id, deckId, title, translation?, definition?, example?, application?, imageUri? })`
+- `createDeckWithImportedCards({ name, ...deckFields }, cards[])`
 
 The repository is responsible for:
 - validating the target `deckId`
@@ -77,8 +80,10 @@ The Cards tab is now the primary card workspace:
 - the user can create a card with a required title and optional supporting fields
 - the user can edit an existing card without leaving the workspace
 - the user can paste structured multiline text and preview valid/invalid rows before importing
+- the user can paste a full exported deck into the Cards workspace, preview the parsed deck plus card lines, and confirm deck import
 - the same study-guidance preview updates in real time for both create and edit flows
 - deck detail remains a read-only overview with a clear entry point into the Cards workspace
+- deck detail also exposes deck export text with copy-to-clipboard support
 - empty and loading states render safely when a deck has no cards
 
 Import v1 format:
@@ -90,6 +95,14 @@ Import v1 format:
   - `title | translation | definition | application`
 - empty trailing optional fields are allowed if the line still matches the supported field order
 - invalid rows are previewed with per-line reasons and are not written until the user confirms import
+
+Deck Export/Import v1 format:
+- first non-empty line must be `# Deck: Deck name`
+- following lines reuse the Card Import v1 card format
+- deck import creates a new deck only
+- duplicate deck names are rejected before write
+- valid card lines are inserted into the new deck in the same confirmed import operation
+- invalid card lines stay visible in preview and are skipped until the user fixes or removes them
 
 ---
 
@@ -109,6 +122,7 @@ Import v1 format:
 Not included yet:
 - card deletion
 - file-picker import
+- deck export file download
 - OCR or image import
 - advanced card search/filtering
 - prompt mode generation

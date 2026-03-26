@@ -1,21 +1,24 @@
 import {
   ActivityIndicator,
+  Clipboard,
   FlatList,
   Pressable,
   StyleSheet,
   Text,
   View
 } from 'react-native';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { Deck } from '../../core/models/Deck';
 import { DECK_TYPE_LABELS } from '../../core/types/deck';
 import { useDeckCards } from '../../features/cards/useDeckCards';
+import { buildDeckExportText } from '../../features/decks/deckPortability';
 import { buildCardStudyFeedback } from '../../features/study/cardStudyPreview';
 import { buildDeckStudyInsights } from '../../features/study/studyInsights';
 import type { RootTabParamList } from '../../navigation/types';
 import { DeckCardListItem } from '../components/card/DeckCardListItem';
+import { DeckExportPanel } from '../components/deck/DeckExportPanel';
 import { DeckStudyInsightCard } from '../components/deck/DeckStudyInsightCard';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { colors, spacing, typography } from '../theme';
@@ -33,7 +36,10 @@ function formatCardTimestampLabel(createdAt: string): string {
 export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const { cards, screenError, isLoading } = useDeckCards(deck.id);
+  const [isExportVisible, setIsExportVisible] = useState(false);
+  const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const deckInsights = useMemo(() => buildDeckStudyInsights(cards), [cards]);
+  const exportText = useMemo(() => buildDeckExportText(deck, cards), [cards, deck]);
   const cardFeedbackById = useMemo(
     () =>
       cards.reduce<Record<number, ReturnType<typeof buildCardStudyFeedback>>>((feedbackMap, card) => {
@@ -42,6 +48,20 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
       }, {}),
     [cards]
   );
+
+  async function onCopyExportText() {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText != null) {
+        await navigator.clipboard.writeText(exportText);
+      } else {
+        Clipboard.setString(exportText);
+      }
+
+      setCopyMessage('Export text copied to the clipboard.');
+    } catch {
+      setCopyMessage('Could not copy the export text automatically. Select and copy it manually.');
+    }
+  }
 
   return (
     <ScreenContainer
@@ -59,6 +79,20 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
         </View>
 
         <DeckStudyInsightCard insights={deckInsights} />
+        <DeckExportPanel
+          copyMessage={copyMessage}
+          deckName={deck.name}
+          exportText={exportText}
+          isVisible={isExportVisible}
+          onCopy={onCopyExportText}
+          onToggleVisibility={() => {
+            setIsExportVisible((currentValue) => !currentValue);
+
+            if (copyMessage != null) {
+              setCopyMessage(null);
+            }
+          }}
+        />
         {screenError != null ? <Text style={styles.screenError}>{screenError}</Text> : null}
         <View style={styles.sectionHeader}>
           <View style={styles.sectionCopy}>

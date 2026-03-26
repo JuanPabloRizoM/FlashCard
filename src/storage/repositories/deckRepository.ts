@@ -1,4 +1,5 @@
 import type { Deck } from '../../core/models/Deck';
+import type { CreateCardInput } from '../../core/types/card';
 import type { CreateDeckInput, DeckType } from '../../core/types/deck';
 import {
   DECK_DUPLICATE_NAME_MESSAGE,
@@ -6,6 +7,11 @@ import {
   normalizeCreateDeckInput,
   validateCreateDeckInput
 } from '../../services/validation/deckValidation';
+import {
+  getFirstCardValidationError,
+  normalizeCreateCardInput,
+  validateCreateCardInput
+} from '../../services/validation/cardValidation';
 import { getDatabase } from '../database';
 
 type DeckRow = {
@@ -91,4 +97,110 @@ export async function createDeck(input: CreateDeckInput): Promise<Deck> {
   }
 
   return mapDeckRow(insertedDeck);
+}
+
+export async function createDeckWithImportedCards(
+  deckInput: CreateDeckInput,
+  cardInputs: Omit<CreateCardInput, 'deckId'>[]
+): Promise<{ deck: Deck; importedCardCount: number }> {
+  const db = await getDatabase();
+  const normalizedDeckInput = normalizeCreateDeckInput(deckInput);
+  const deckValidationError = getFirstDeckValidationError(validateCreateDeckInput(normalizedDeckInput));
+
+  if (deckValidationError != null) {
+    throw new Error(deckValidationError);
+  }
+
+  const normalizedCardInputs = cardInputs.map((cardInput) =>
+    normalizeCreateCardInput({
+      deckId: 1,
+      ...cardInput
+    })
+  );
+
+  normalizedCardInputs.forEach((cardInput) => {
+    const validationError = getFirstCardValidationError(validateCreateCardInput(cardInput));
+
+    if (validationError != null) {
+      throw new Error(validationError);
+    }
+  });
+
+  const timestamp = new Date().toISOString();
+  let deckId: number | null = null;
+
+  try {
+    await db.withExclusiveTransactionAsync(async (tx) => {
+      const deckResult = await tx.runAsync(
+        `
+          INSERT INTO decks (name, description, type, color, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `,
+        normalizedDeckInput.name,
+        normalizedDeckInput.description,
+        normalizedDeckInput.type,
+        normalizedDeckInput.color,
+        timestamp,
+        timestamp
+      );
+
+      deckId = deckResult.lastInsertRowId;
+
+      for (const cardInput of normalizedCardInputs) {
+        await tx.runAsync(
+          `
+            INSERT INTO cards (
+              deck_id,
+              title,
+              translation,
+              definition,
+              example,
+              application,
+              image_uri,
+              created_at,
+              updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `,
+          deckId,
+          cardInput.title,
+          cardInput.translation,
+          cardInput.definition,
+          cardInput.example,
+          cardInput.application,
+          cardInput.imageUri,
+          timestamp,
+          timestamp
+        );
+      }
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.toLowerCase().includes('unique')) {
+      throw new Error(DECK_DUPLICATE_NAME_MESSAGE);
+    }
+
+    throw error;
+  }
+
+  if (deckId == null) {
+    throw new Error('Deck import succeeded but the saved deck could not be loaded.');
+  }
+
+  const importedDeck = await db.getFirstAsync<DeckRow>(
+    `
+      SELECT id, name, description, type, color, created_at, updated_at
+      FROM decks
+      WHERE id = ?
+    `,
+    deckId
+  );
+
+  if (importedDeck == null) {
+    throw new Error('Deck import succeeded but the saved deck could not be loaded.');
+  }
+
+  return {
+    deck: mapDeckRow(importedDeck),
+    importedCardCount: normalizedCardInputs.length
+  };
 }

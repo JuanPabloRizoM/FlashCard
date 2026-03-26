@@ -1,22 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 import type { Deck } from '../../core/models/Deck';
 import { useDeckCards } from '../../features/cards/useDeckCards';
+import { useDeckImport } from '../../features/decks/useDeckImport';
 import { listDecks } from '../../storage/repositories/deckRepository';
 import type { RootTabParamList } from '../../navigation/types';
 import { CardEditorPanel } from '../components/card/CardEditorPanel';
 import { CardImportPanel } from '../components/card/CardImportPanel';
+import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { CardWorkspaceCardList } from '../components/card/CardWorkspaceCardList';
 import { CardWorkspaceDeckSelector } from '../components/card/CardWorkspaceDeckSelector';
+import { DeckImportPanel } from '../components/deck/DeckImportPanel';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { colors, spacing, typography } from '../theme';
 
@@ -79,8 +76,26 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     onEditCard,
     onCancelEditing
   } = useDeckCards(selectedDeckId);
-  const isEditorLocked = isSubmitting || isImportSubmitting;
-  const isImportLocked = isSubmitting || isImportSubmitting || editingCardId != null;
+  const {
+    importText: deckImportText,
+    importPreview: deckImportPreview,
+    importResultMessage: deckImportResultMessage,
+    isSubmitting: isDeckImportSubmitting,
+    onImportTextChange: onDeckImportTextChange,
+    onImportDeck,
+    onClearImport: onClearDeckImport
+  } = useDeckImport({
+    existingDeckNames: decks.map((deck) => deck.name),
+    onImportSuccess: (importedDeck) => {
+      setDecks((currentDecks) => [importedDeck, ...currentDecks]);
+      setSelectedDeckId(importedDeck.id);
+      setHandoffDeckId(null);
+      setDeckScreenError(null);
+    }
+  });
+  const isEditorLocked = isSubmitting || isImportSubmitting || isDeckImportSubmitting;
+  const isImportLocked =
+    isSubmitting || isImportSubmitting || isDeckImportSubmitting || editingCardId != null;
 
   useEffect(() => {
     if (routeSelectedDeckId == null) {
@@ -138,10 +153,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
         title="Cards"
         subtitle="Use this workspace to create and manage cards for one deck at a time."
       >
-        <View style={styles.feedbackState}>
-          <ActivityIndicator color={colors.primary} />
-          <Text style={styles.feedbackText}>Loading decks...</Text>
-        </View>
+        <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
       </ScreenContainer>
     );
   }
@@ -150,14 +162,24 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     return (
       <ScreenContainer
         title="Cards"
-        subtitle="Use this workspace to create and manage cards for one deck at a time."
+        subtitle="Use this workspace to import a deck or manage cards for one deck at a time."
       >
-        <View style={styles.feedbackState}>
-          <Text style={styles.feedbackTitle}>No decks available</Text>
-          <Text style={styles.feedbackText}>
-            Create a deck in the Decks tab before opening the card workspace.
-          </Text>
-        </View>
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+          <CardWorkspaceFeedbackState
+            message="Import a deck here or create one in the Decks tab before opening the card workspace."
+            title="No decks available"
+          />
+          <DeckImportPanel
+            importResultMessage={deckImportResultMessage}
+            importText={deckImportText}
+            isDisabled={isDeckImportSubmitting}
+            isSubmitting={isDeckImportSubmitting}
+            onClearImport={onClearDeckImport}
+            onImportDeck={onImportDeck}
+            onImportTextChange={onDeckImportTextChange}
+            preview={deckImportPreview}
+          />
+        </ScrollView>
       </ScreenContainer>
     );
   }
@@ -179,6 +201,17 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
 
         {deckScreenError != null ? <Text style={styles.errorText}>{deckScreenError}</Text> : null}
         {screenError != null ? <Text style={styles.errorText}>{screenError}</Text> : null}
+
+        <DeckImportPanel
+          importResultMessage={deckImportResultMessage}
+          importText={deckImportText}
+          isDisabled={isImportLocked}
+          isSubmitting={isDeckImportSubmitting}
+          onClearImport={onClearDeckImport}
+          onImportDeck={onImportDeck}
+          onImportTextChange={onDeckImportTextChange}
+          preview={deckImportPreview}
+        />
 
         <CardImportPanel
           importResultMessage={importResultMessage}
@@ -245,27 +278,5 @@ const styles = StyleSheet.create({
   listCount: {
     color: colors.muted,
     fontSize: typography.caption
-  },
-  feedbackState: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.surfaceMuted,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: spacing.s,
-    justifyContent: 'center',
-    minHeight: 160,
-    padding: spacing.l
-  },
-  feedbackTitle: {
-    color: colors.text,
-    fontSize: typography.body,
-    fontWeight: '700'
-  },
-  feedbackText: {
-    color: colors.muted,
-    fontSize: typography.body,
-    lineHeight: 22,
-    textAlign: 'center'
   }
 });

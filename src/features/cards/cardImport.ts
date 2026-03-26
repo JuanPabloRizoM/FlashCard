@@ -33,15 +33,11 @@ const MAX_IMPORT_FIELDS = 4;
 
 function buildImportError(fields: string[]): string | null {
   if (fields.length < MIN_IMPORT_FIELDS || fields.length > MAX_IMPORT_FIELDS) {
-    return 'Use `title | translation`, with optional `definition | application`.';
+    return 'Use `title | translation`, with optional `definition | application`, keeping empty fields in order when needed.';
   }
 
   if (fields[0]?.trim().length === 0) {
     return 'Title is required.';
-  }
-
-  if (fields[1]?.trim().length === 0) {
-    return 'Translation is required in import format.';
   }
 
   return null;

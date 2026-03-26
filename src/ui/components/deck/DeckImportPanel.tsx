@@ -1,49 +1,44 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import type { CardImportPreview } from '../../../features/cards/cardImport';
+import type { DeckImportPreview } from '../../../features/decks/deckPortability';
 import { colors, spacing, typography } from '../../theme';
 
-type CardImportPanelProps = {
+type DeckImportPanelProps = {
   importText: string;
-  preview: CardImportPreview;
+  preview: DeckImportPreview;
   importResultMessage: string | null;
-  isSubmitting: boolean;
   isDisabled: boolean;
-  selectedDeckName: string | null;
+  isSubmitting: boolean;
   onImportTextChange: (value: string) => void;
-  onImportCards: () => Promise<void>;
+  onImportDeck: () => Promise<void>;
   onClearImport: () => void;
 };
 
 const MAX_VISIBLE_PREVIEW_ROWS = 12;
 
-export function CardImportPanel({
+export function DeckImportPanel({
   importText,
   preview,
   importResultMessage,
-  isSubmitting,
   isDisabled,
-  selectedDeckName,
+  isSubmitting,
   onImportTextChange,
-  onImportCards,
+  onImportDeck,
   onClearImport
-}: CardImportPanelProps) {
-  const visibleRows = preview.rows.slice(0, MAX_VISIBLE_PREVIEW_ROWS);
-  const hiddenRowCount = Math.max(preview.rows.length - visibleRows.length, 0);
+}: DeckImportPanelProps) {
+  const visibleRows = preview.cardPreview.rows.slice(0, MAX_VISIBLE_PREVIEW_ROWS);
+  const hiddenRowCount = Math.max(preview.cardPreview.rows.length - visibleRows.length, 0);
 
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
-          <Text style={styles.sectionTitle}>Import cards</Text>
+          <Text style={styles.sectionTitle}>Import deck</Text>
           <Text style={styles.supportText}>
-            Paste one card per line using `title | translation`, with optional `| definition | application`.
-            Keep empty optional fields in order when needed.
+            Paste an exported deck starting with `# Deck: Name`, then keep one card per line using `title | translation | definition | application`.
           </Text>
           <Text style={styles.supportText}>
-            {selectedDeckName != null
-              ? `Imported cards will be created in ${selectedDeckName}.`
-              : 'Choose a deck before importing cards.'}
+            Empty optional fields are allowed, but the field order must stay consistent.
           </Text>
         </View>
         <Pressable
@@ -65,7 +60,7 @@ export function CardImportPanel({
         editable={!isSubmitting}
         multiline
         onChangeText={onImportTextChange}
-        placeholder={'to run | correr\nheart | corazon | Organ that pumps blood\narray | arreglo | Ordered list | Use in programming examples'}
+        placeholder={'# Deck: Spanish Basics\nhola | hello\nperro | dog | animal domestico\ncorrer | run | moverse rapido | usado en deportes'}
         placeholderTextColor={colors.muted}
         style={styles.input}
         textAlignVertical="top"
@@ -74,19 +69,21 @@ export function CardImportPanel({
 
       {preview.hasContent ? (
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryText}>{`${preview.validCount} valid`}</Text>
-          <Text style={styles.summaryText}>{`${preview.invalidCount} invalid`}</Text>
-          <Text style={styles.summaryText}>{`${preview.totalCount} total`}</Text>
+          <Text style={styles.summaryTitle}>
+            {preview.deckName.length > 0 ? preview.deckName : 'Deck name not ready'}
+          </Text>
+          <Text style={styles.summaryText}>{`${preview.cardPreview.validCount} valid card line${preview.cardPreview.validCount === 1 ? '' : 's'}`}</Text>
+          <Text style={styles.summaryText}>{`${preview.cardPreview.invalidCount} invalid line${preview.cardPreview.invalidCount === 1 ? '' : 's'}`}</Text>
         </View>
       ) : null}
 
-      {importResultMessage != null ? (
-        <Text style={styles.resultText}>{importResultMessage}</Text>
-      ) : null}
+      {preview.blockingError != null ? <Text style={styles.errorText}>{preview.blockingError}</Text> : null}
+      {preview.headerError != null ? <Text style={styles.errorText}>{preview.headerError}</Text> : null}
+      {importResultMessage != null ? <Text style={styles.resultText}>{importResultMessage}</Text> : null}
 
-      {preview.hasContent ? (
+      {preview.cardPreview.hasContent ? (
         <View style={styles.previewSection}>
-          <Text style={styles.previewTitle}>Preview</Text>
+          <Text style={styles.previewTitle}>Card preview</Text>
           <View style={styles.previewList}>
             {visibleRows.map((row) => (
               <View
@@ -99,7 +96,7 @@ export function CardImportPanel({
                 </Text>
                 {row.isValid ? (
                   <Text style={styles.previewDetailText}>
-                    {[row.translation, row.definition, row.application].filter(Boolean).join(' | ')}
+                    {[row.translation, row.definition, row.application].filter(Boolean).join(' | ') || 'Title only'}
                   </Text>
                 ) : (
                   <Text style={styles.previewErrorText}>{row.error}</Text>
@@ -115,17 +112,21 @@ export function CardImportPanel({
 
       <Pressable
         accessibilityRole="button"
-        disabled={isDisabled || preview.validCount === 0 || isSubmitting}
+        disabled={isDisabled || !preview.canImport || isSubmitting}
         onPress={() => {
-          void onImportCards();
+          void onImportDeck();
         }}
         style={[
           styles.primaryButton,
-          isDisabled || preview.validCount === 0 || isSubmitting ? styles.primaryButtonDisabled : null
+          isDisabled || !preview.canImport || isSubmitting ? styles.primaryButtonDisabled : null
         ]}
       >
         <Text style={styles.primaryButtonLabel}>
-          {isSubmitting ? 'Importing cards...' : `Import ${preview.validCount} valid card${preview.validCount === 1 ? '' : 's'}`}
+          {isSubmitting
+            ? 'Importing deck...'
+            : preview.cardPreview.validCount > 0
+              ? `Import deck with ${preview.cardPreview.validCount} valid card${preview.cardPreview.validCount === 1 ? '' : 's'}`
+              : 'Import empty deck'}
         </Text>
       </Pressable>
     </View>
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     color: colors.text,
     fontSize: typography.body,
-    minHeight: 140,
+    minHeight: 180,
     paddingHorizontal: spacing.m,
     paddingVertical: spacing.m
   },
@@ -177,14 +178,23 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 12,
     borderWidth: 1,
-    flexDirection: 'row',
-    gap: spacing.m,
+    gap: spacing.xs,
     padding: spacing.m
   },
-  summaryText: {
+  summaryTitle: {
     color: colors.text,
-    fontSize: typography.caption,
+    fontSize: typography.body,
     fontWeight: '700'
+  },
+  summaryText: {
+    color: colors.muted,
+    fontSize: typography.caption,
+    lineHeight: 18
+  },
+  errorText: {
+    color: colors.error,
+    fontSize: typography.caption,
+    lineHeight: 18
   },
   resultText: {
     color: colors.primary,
@@ -239,17 +249,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 12,
     paddingHorizontal: spacing.m,
-    paddingVertical: 14
+    paddingVertical: spacing.s
   },
   primaryButtonDisabled: {
     backgroundColor: colors.muted
   },
   primaryButtonLabel: {
     color: colors.surface,
-    fontSize: typography.body,
+    fontSize: typography.caption,
     fontWeight: '700'
   },
   secondaryButton: {
+    alignItems: 'center',
+    backgroundColor: colors.background,
     borderColor: colors.border,
     borderRadius: 12,
     borderWidth: 1,

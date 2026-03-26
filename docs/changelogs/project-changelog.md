@@ -181,3 +181,12 @@
 - Files: src/features/cards/cardImport.ts, src/features/cards/useCardImport.ts, src/features/cards/useDeckCards.ts, src/storage/repositories/cardRepository.ts, src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardImportPanel.tsx, src/ui/components/card/CardWorkspaceCardList.tsx, docs/features/cards.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
 - Risk: Medium
 - Notes: Import v1 is paste-only, requires user confirmation before writing anything, imports only valid preview rows, and keeps invalid lines visible with explicit reasons instead of guessing at ambiguous input.
+
+---
+
+[2026-03-22]
+- Change: Added Deck Export/Import v1 with structured deck text export from deck detail, preview-first deck import in the Cards workspace, duplicate-deck protection, and atomic deck-plus-card creation.
+- Reason: Users could already create and bulk-import cards, but they still lacked a safe way to move, share, or back up full decks.
+- Files: src/features/decks/deckPortability.ts, src/features/decks/useDeckImport.ts, src/storage/repositories/deckRepository.ts, src/features/cards/cardImport.ts, src/features/decks/useDecks.ts, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/components/deck/DeckExportPanel.tsx, src/ui/components/deck/DeckImportPanel.tsx, src/ui/components/card/CardWorkspaceFeedbackState.tsx, docs/features/cards.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Medium
+- Notes: Export/Import v1 is copy-paste only, reuses the card import line format, blocks deck-name collisions before write, and keeps the confirmed deck creation plus valid card inserts inside one repository transaction.
