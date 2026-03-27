@@ -50,7 +50,7 @@ export function CardWorkspaceCardList({
       )}
       ListEmptyComponent={
         <CardWorkspaceFeedbackState
-          message="Add the first card for this deck from the editor above or paste cards into the import panel."
+          message="Add a card or import a few."
           title="No cards yet"
         />
       }

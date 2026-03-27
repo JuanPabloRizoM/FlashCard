@@ -50,10 +50,10 @@ export function CardWorkspaceDeckSelector({
       </View>
       <Text style={styles.supportText}>
         {selectedDeckName == null
-          ? 'Choose a deck to open the card workspace.'
+          ? 'Choose a deck.'
           : isEditing
-            ? `Editing a card in ${selectedDeckName}.`
-            : `Creating cards for ${selectedDeckName}.`}
+            ? `Editing in ${selectedDeckName}.`
+            : `Working in ${selectedDeckName}.`}
       </Text>
     </View>
   );

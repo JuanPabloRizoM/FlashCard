@@ -21,7 +21,7 @@ export function StudySessionBanner({
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle}>Current session</Text>
+        <Text style={styles.sectionTitle}>In session</Text>
         <View style={styles.techniqueBadge}>
           <Text style={styles.techniqueLabel}>{techniqueLabel}</Text>
         </View>
@@ -36,7 +36,7 @@ export function StudySessionBanner({
         </View>
       </View>
       <Text style={styles.supportText}>
-        Reveal the answer, record the result, and the next prompt will reset cleanly.
+        Reveal, answer, continue.
       </Text>
     </View>
   );

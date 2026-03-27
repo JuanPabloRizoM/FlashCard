@@ -226,3 +226,12 @@
 - Files: src/ui/theme/colors.ts, src/ui/theme/spacing.ts, src/ui/theme/typography.ts, src/ui/components/layout/ScreenContainer.tsx, src/ui/components/card/*, src/ui/components/deck/*, src/ui/components/study/*, src/ui/screens/DecksScreen.tsx, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/screens/StudyScreen.tsx, src/ui/screens/SettingsScreen.tsx, docs/ui/design-system.md
 - Risk: Low
 - Notes: This pass changed hierarchy, spacing, tone, helper copy, and feedback states only. No study logic, repository behavior, persistence architecture, or navigation flow changed.
+
+---
+
+[2026-03-27]
+- Change: Shortened subtitles, helper text, empty states, and action labels across Decks, Cards, Study, Settings, and related workspace panels.
+- Reason: The UI was readable but still too explanatory, which made common actions feel slower than necessary.
+- Files: src/ui/screens/DecksScreen.tsx, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/screens/StudyScreen.tsx, src/ui/screens/SettingsScreen.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardImportPanel.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/components/card/CardWorkspaceCardList.tsx, src/ui/components/deck/DeckImportPanel.tsx, src/ui/components/deck/DeckExportPanel.tsx, src/ui/components/study/StudySessionSetupPanel.tsx, src/ui/components/study/StudySessionBanner.tsx, src/ui/components/study/StudySessionSummary.tsx
+- Risk: Low
+- Notes: Microcopy only. No app logic, persistence, navigation, or study behavior changed.

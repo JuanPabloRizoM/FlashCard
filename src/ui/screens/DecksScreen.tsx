@@ -53,15 +53,13 @@ export function DecksScreen() {
   return (
     <ScreenContainer
       title="Decks"
-      subtitle="Start with a clear deck, keep it lightweight, and grow it into a stronger study space over time."
+      subtitle="Create a deck and start adding cards."
     >
       <View style={styles.layout}>
         <View style={styles.formCard}>
-          <Text style={styles.eyebrow}>Start simple</Text>
-          <Text style={styles.cardTitle}>Create a new deck</Text>
-          <Text style={styles.helperText}>
-            Give the deck a clear name now. You can move into cards, import, and study readiness checks right after.
-          </Text>
+          <Text style={styles.eyebrow}>New deck</Text>
+          <Text style={styles.cardTitle}>Create a deck</Text>
+          <Text style={styles.helperText}>Pick a clear name.</Text>
 
           <Text style={styles.label}>Deck name</Text>
           <TextInput
@@ -103,9 +101,7 @@ export function DecksScreen() {
         <View style={styles.listHeader}>
           <View style={styles.listHeaderCopy}>
             <Text style={styles.listTitle}>Saved decks</Text>
-            <Text style={styles.listSubtitle}>
-              Open a deck to review cards, readiness, and export options.
-            </Text>
+            <Text style={styles.listSubtitle}>Open a deck to manage it.</Text>
           </View>
           <Text style={styles.listCount}>{`${decks.length} total`}</Text>
         </View>
@@ -119,7 +115,7 @@ export function DecksScreen() {
             keyExtractor={(deck) => deck.id.toString()}
             ListEmptyComponent={
               <CardWorkspaceFeedbackState
-                message="Create your first deck to start organizing cards for calmer, more focused study sessions."
+                message="Create a deck to get started."
                 title="No decks yet"
               />
             }

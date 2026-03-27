@@ -151,7 +151,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     return (
       <ScreenContainer
         title="Cards"
-        subtitle="Create, import, and revise cards for one deck at a time without losing sight of study quality."
+        subtitle="Add or edit cards."
       >
         <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
       </ScreenContainer>
@@ -162,11 +162,11 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     return (
       <ScreenContainer
         title="Cards"
-        subtitle="This workspace handles both deck import and card authoring once you have a deck selected."
+        subtitle="Import a deck or pick one to start."
       >
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <CardWorkspaceFeedbackState
-            message="Import a deck here or create one in the Decks tab before opening the card workspace."
+            message="Import a deck here or create one in Decks."
             title="No decks available"
           />
           <DeckImportPanel
@@ -187,7 +187,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
   return (
     <ScreenContainer
       title="Cards"
-      subtitle="This is the main card workspace: choose a deck, import in bulk, and keep each card study-ready as you write."
+      subtitle="Choose a deck, then add or import cards."
     >
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <CardWorkspaceDeckSelector

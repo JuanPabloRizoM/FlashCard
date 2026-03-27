@@ -46,22 +46,20 @@ export function StudyScreen() {
   return (
     <ScreenContainer
       title="Study"
-      subtitle="Set up a focused session, keep the controls calm, and let the engine handle the prompt logic underneath."
+      subtitle="Choose a deck and start a session."
     >
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.panel}>
-          <Text style={styles.eyebrow}>Session setup</Text>
+          <Text style={styles.eyebrow}>Setup</Text>
           <Text style={styles.sectionTitle}>Choose a deck</Text>
-          <Text style={styles.supportText}>
-            Saved defaults come from Settings, but you can still tune this session before you begin.
-          </Text>
+          <Text style={styles.supportText}>Adjust mode, size, and technique before you start.</Text>
 
           {isLoadingDecks ? (
             <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
           ) : decks.length === 0 ? (
             <CardWorkspaceFeedbackState
-              message="Create a deck and cards before starting a study session."
-              title="Nothing ready to study yet"
+              message="Create a deck and cards first."
+              title="Nothing to study yet"
             />
           ) : (
             <View style={styles.choiceRow}>
@@ -111,7 +109,7 @@ export function StudyScreen() {
         {sessionStartResult?.status === 'empty' ? (
           <CardWorkspaceFeedbackState
             message={sessionStartResult.reason}
-            title="Study session unavailable"
+            title="Session unavailable"
           />
         ) : null}
 

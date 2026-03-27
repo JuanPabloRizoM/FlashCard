@@ -73,8 +73,7 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
   return (
     <ScreenContainer
       subtitle={
-        deck.description ??
-        `${DECK_TYPE_LABELS[deck.type]} deck with readiness insights, card overview, and export tools.`
+        deck.description ?? `${DECK_TYPE_LABELS[deck.type]} deck`
       }
       title={deck.name}
     >
@@ -87,7 +86,7 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
           <View style={styles.metaBadge}>
             <Text style={styles.deckType}>{DECK_TYPE_LABELS[deck.type]}</Text>
           </View>
-          <Text style={styles.deckCounter}>{`${cards.length} cards in this deck`}</Text>
+          <Text style={styles.deckCounter}>{`${cards.length} cards`}</Text>
         </View>
 
         <DeckStudyInsightCard insights={deckInsights} />
@@ -113,7 +112,7 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
           <View style={styles.sectionCopy}>
             <Text style={styles.sectionTitle}>Cards</Text>
             <Text style={styles.sectionText}>
-              Use the Cards workspace when you want to add, import, or edit cards without crowding this overview.
+              Add or edit cards in the Cards tab.
             </Text>
           </View>
           <Pressable
@@ -136,7 +135,7 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
             keyExtractor={(card) => card.id.toString()}
             ListEmptyComponent={
               <CardWorkspaceFeedbackState
-                message="Open the Cards workspace to create the first card in this deck."
+                message="Open Cards to add the first card."
                 title="No cards yet"
               />
             }

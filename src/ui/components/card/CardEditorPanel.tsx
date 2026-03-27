@@ -52,8 +52,8 @@ export function CardEditorPanel({
           <Text style={styles.sectionTitle}>{isEditing ? 'Edit card' : 'Create a card'}</Text>
           <Text style={styles.sectionText}>
             {isEditing
-              ? 'Update the selected card and keep its study guidance in view.'
-              : 'Draft cards here for the selected deck. Study guidance updates as you type.'}
+              ? 'Update this card.'
+              : 'Add a card for this deck.'}
           </Text>
         </View>
         {isEditing && onCancelEditing != null ? (
@@ -82,7 +82,7 @@ export function CardEditorPanel({
         returnKeyType="next"
       />
 
-      <Text style={styles.label}>Translation (optional)</Text>
+      <Text style={styles.label}>Translation</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
@@ -93,7 +93,7 @@ export function CardEditorPanel({
         value={draftTranslation}
       />
 
-      <Text style={styles.label}>Definition (optional)</Text>
+      <Text style={styles.label}>Definition</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
@@ -106,7 +106,7 @@ export function CardEditorPanel({
         value={draftDefinition}
       />
 
-      <Text style={styles.label}>Application (optional)</Text>
+      <Text style={styles.label}>Application</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
@@ -119,7 +119,7 @@ export function CardEditorPanel({
         value={draftApplication}
       />
 
-      <Text style={styles.label}>Image URL (optional)</Text>
+      <Text style={styles.label}>Image URL</Text>
       <TextInput
         autoCapitalize="none"
         autoCorrect={false}

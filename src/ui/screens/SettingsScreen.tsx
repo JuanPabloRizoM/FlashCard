@@ -32,15 +32,13 @@ export function SettingsScreen() {
   return (
     <ScreenContainer
       title="Settings"
-      subtitle="Keep the defaults calm and predictable. Everything here either changes real behavior or clarifies how the app works."
+      subtitle="Set study defaults and view app info."
     >
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.sectionCard}>
-          <Text style={styles.eyebrow}>Study preferences</Text>
+          <Text style={styles.eyebrow}>Defaults</Text>
           <Text style={styles.sectionTitle}>Study defaults</Text>
-          <Text style={styles.supportText}>
-            These defaults apply when the Study screen is idle and when you start a new session. They are saved on this device.
-          </Text>
+          <Text style={styles.supportText}>Used when you start a new session.</Text>
           {saveError != null ? <Text style={styles.errorText}>{saveError}</Text> : null}
 
           <View style={styles.settingGroup}>
@@ -99,7 +97,7 @@ export function SettingsScreen() {
 
           <View style={styles.inlineRow}>
             <View style={styles.defaultSummary}>
-              <Text style={styles.settingLabel}>Current defaults</Text>
+              <Text style={styles.settingLabel}>Current</Text>
               <Text style={styles.supportText}>
                 {`${STUDY_SESSION_MODE_LABELS[settings.defaultStudyMode]} • ${STUDY_SESSION_SIZE_LABELS[settings.defaultSessionSize] === 'All' ? 'All items' : `${STUDY_SESSION_SIZE_LABELS[settings.defaultSessionSize]} items`}`}
               </Text>
@@ -119,7 +117,7 @@ export function SettingsScreen() {
         </View>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.eyebrow}>Product scope</Text>
+          <Text style={styles.eyebrow}>About</Text>
           <Text style={styles.sectionTitle}>App information</Text>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>App</Text>
@@ -129,17 +127,13 @@ export function SettingsScreen() {
             <Text style={styles.infoLabel}>Version</Text>
             <Text style={styles.infoValue}>{APP_VERSION_LABEL}</Text>
           </View>
-          <Text style={styles.supportText}>
-            This build focuses on local deck management, structured card creation, and adaptive study sessions. Cloud sync, imports, and AI-assisted authoring are outside the current scope.
-          </Text>
+          <Text style={styles.supportText}>Local decks, cards, and study sessions.</Text>
         </View>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.eyebrow}>Roadmap</Text>
+          <Text style={styles.eyebrow}>Later</Text>
           <Text style={styles.sectionTitle}>Coming later</Text>
-          <Text style={styles.supportText}>
-            These are roadmap items, not active settings. They are listed here to keep the tab honest and useful without implying unfinished tools already exist.
-          </Text>
+          <Text style={styles.supportText}>Planned tools, not active settings.</Text>
           <View style={styles.roadmapList}>
             {FUTURE_TOOLS.map((item) => (
               <View key={item} style={styles.roadmapItem}>

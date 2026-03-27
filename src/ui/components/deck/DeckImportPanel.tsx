@@ -35,10 +35,10 @@ export function DeckImportPanel({
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>Import deck</Text>
           <Text style={styles.supportText}>
-            Paste an exported deck starting with `# Deck: Name`, then keep one card per line using `title | translation | definition | application`.
+            Paste an exported deck starting with `# Deck: Name`.
           </Text>
           <Text style={styles.supportText}>
-            Empty optional fields are allowed, but the field order must stay consistent.
+            Keep one card per line in the same field order.
           </Text>
         </View>
         <Pressable
@@ -105,7 +105,7 @@ export function DeckImportPanel({
             ))}
           </View>
           {hiddenRowCount > 0 ? (
-            <Text style={styles.supportText}>{`${hiddenRowCount} more line${hiddenRowCount === 1 ? '' : 's'} not shown in preview.`}</Text>
+            <Text style={styles.supportText}>{`${hiddenRowCount} more line${hiddenRowCount === 1 ? '' : 's'}.`}</Text>
           ) : null}
         </View>
       ) : null}
@@ -123,9 +123,9 @@ export function DeckImportPanel({
       >
         <Text style={styles.primaryButtonLabel}>
           {isSubmitting
-            ? 'Importing deck...'
+            ? 'Importing...'
             : preview.cardPreview.validCount > 0
-              ? `Import deck with ${preview.cardPreview.validCount} valid card${preview.cardPreview.validCount === 1 ? '' : 's'}`
+              ? `Import deck with ${preview.cardPreview.validCount} card${preview.cardPreview.validCount === 1 ? '' : 's'}`
               : 'Import empty deck'}
         </Text>
       </Pressable>

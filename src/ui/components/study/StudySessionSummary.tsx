@@ -77,8 +77,8 @@ export function StudySessionSummary({
       <Text style={styles.supportText}>{techniqueLabel}</Text>
       <Text style={styles.summaryNote}>
         {incorrectCount === 0
-          ? 'Every answered prompt landed correctly in this run.'
-          : 'Use the summary below to restart the full session or retry only the missed prompts.'}
+          ? 'No missed prompts this round.'
+          : 'Restart or retry missed prompts.'}
       </Text>
 
       <View style={styles.summaryTrack}>
@@ -110,7 +110,7 @@ export function StudySessionSummary({
         style={[styles.primaryButton, isRestarting ? styles.buttonDisabled : null]}
       >
         <Text style={styles.primaryButtonLabel}>
-          {isRestarting ? 'Restarting...' : 'Restart session'}
+          {isRestarting ? 'Restarting...' : 'Restart'}
         </Text>
       </Pressable>
 
@@ -122,12 +122,12 @@ export function StudySessionSummary({
           !canRetryIncorrectAnswers || isRestarting ? styles.buttonDisabled : null
         ]}
       >
-        <Text style={styles.secondaryButtonLabel}>Retry incorrect answers</Text>
+        <Text style={styles.secondaryButtonLabel}>Retry misses</Text>
       </Pressable>
 
       {!canRetryIncorrectAnswers ? (
         <Text style={styles.actionHint}>
-          No incorrect prompts were recorded in this session.
+          No missed prompts.
         </Text>
       ) : null}
     </Animated.View>

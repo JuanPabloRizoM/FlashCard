@@ -25,7 +25,7 @@ export function DeckExportPanel({
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>Export deck</Text>
           <Text style={styles.supportText}>
-            Copy this deck as structured text so it can be backed up or imported somewhere else.
+            Copy this deck as text.
           </Text>
         </View>
         <Pressable
@@ -44,7 +44,7 @@ export function DeckExportPanel({
         <>
           <View style={styles.summaryCard}>
             <Text style={styles.summaryTitle}>{deckName}</Text>
-            <Text style={styles.summaryText}>Header plus one card per line using the import format.</Text>
+            <Text style={styles.summaryText}>Header plus one card per line.</Text>
           </View>
 
           <ScrollView style={styles.exportScroller} contentContainerStyle={styles.exportScrollerContent}>
@@ -62,7 +62,7 @@ export function DeckExportPanel({
             }}
             style={({ pressed }) => [styles.primaryButton, pressed ? styles.primaryButtonPressed : null]}
           >
-            <Text style={styles.primaryButtonLabel}>Copy export text</Text>
+            <Text style={styles.primaryButtonLabel}>Copy text</Text>
           </Pressable>
         </>
       ) : null}

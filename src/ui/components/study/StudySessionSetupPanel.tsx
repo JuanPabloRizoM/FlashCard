@@ -74,12 +74,11 @@ export function StudySessionSetupPanel({
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Study mode</Text>
         <Text style={styles.supportText}>
-          Mixed keeps current behavior. Weak Focus leans into misses and low-confidence items.
-          Fresh Focus favors prompts with no study history first.
+          Mixed balances review. Weak and Fresh focus the queue.
         </Text>
         {isSessionActive ? (
           <Text style={styles.inlineNotice}>
-            Finish the current session before changing study setup.
+            Finish this session to change setup.
           </Text>
         ) : null}
         <View style={styles.choiceRow}>
@@ -149,7 +148,7 @@ export function StudySessionSetupPanel({
         ]}
       >
         <Text style={styles.primaryButtonLabel}>
-          {isStartingSession ? 'Starting session...' : 'Start study session'}
+          {isStartingSession ? 'Starting...' : 'Start session'}
         </Text>
       </Pressable>
     </View>

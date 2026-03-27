@@ -37,13 +37,12 @@ export function CardImportPanel({
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>Import cards</Text>
           <Text style={styles.supportText}>
-            Paste one card per line using `title | translation`, with optional `| definition | application`.
-            Keep empty optional fields in order when needed.
+            Paste one card per line: `title | translation | definition | application`.
           </Text>
           <Text style={styles.supportText}>
             {selectedDeckName != null
-              ? `Imported cards will be created in ${selectedDeckName}.`
-              : 'Choose a deck before importing cards.'}
+              ? `Adds cards to ${selectedDeckName}.`
+              : 'Choose a deck first.'}
           </Text>
         </View>
         <Pressable
@@ -108,7 +107,7 @@ export function CardImportPanel({
             ))}
           </View>
           {hiddenRowCount > 0 ? (
-            <Text style={styles.supportText}>{`${hiddenRowCount} more line${hiddenRowCount === 1 ? '' : 's'} not shown in preview.`}</Text>
+            <Text style={styles.supportText}>{`${hiddenRowCount} more line${hiddenRowCount === 1 ? '' : 's'}.`}</Text>
           ) : null}
         </View>
       ) : null}
@@ -125,7 +124,7 @@ export function CardImportPanel({
         ]}
       >
         <Text style={styles.primaryButtonLabel}>
-          {isSubmitting ? 'Importing cards...' : `Import ${preview.validCount} valid card${preview.validCount === 1 ? '' : 's'}`}
+          {isSubmitting ? 'Importing...' : `Import ${preview.validCount} card${preview.validCount === 1 ? '' : 's'}`}
         </Text>
       </Pressable>
     </View>
