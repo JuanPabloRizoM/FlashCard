@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import type { Card } from '../../../core/models/Card';
 import type { CardStudyFeedback as CardStudyFeedbackType } from '../../../features/study/cardStudyPreview';
 import { colors, spacing, typography } from '../../theme';
+import { getCardCompletenessLevel } from './cardListFilters';
 
 type CardListStatusProps = {
   card: Card;
@@ -21,19 +22,14 @@ function getReadinessTone(readiness: CardStudyFeedbackType['readiness']) {
 }
 
 function getCompletenessLabel(card: Card): string {
-  const detailCount = [card.definition, card.application, card.imageUri].filter(
-    (value) => value != null && value.trim().length > 0
-  ).length;
-
-  if (detailCount >= 2) {
-    return 'Detailed';
+  switch (getCardCompletenessLevel(card)) {
+    case 'detailed':
+      return 'Detailed';
+    case 'expanded':
+      return 'Expanded';
+    default:
+      return 'Basic';
   }
-
-  if (detailCount === 1) {
-    return 'Expanded';
-  }
-
-  return 'Basic';
 }
 
 export function CardListStatus({ card, feedback }: CardListStatusProps) {

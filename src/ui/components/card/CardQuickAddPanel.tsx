@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { colors, spacing, typography } from '../../theme';
@@ -6,6 +7,8 @@ type CardQuickAddPanelProps = {
   draftTitle: string;
   draftTranslation: string;
   formError: string | null;
+  saveFeedbackMessage: string | null;
+  saveFeedbackTick: number;
   canSubmit: boolean;
   isSubmitting: boolean;
   onDraftTitleChange: (value: string) => void;
@@ -18,6 +21,8 @@ export function CardQuickAddPanel({
   draftTitle,
   draftTranslation,
   formError,
+  saveFeedbackMessage,
+  saveFeedbackTick,
   canSubmit,
   isSubmitting,
   onDraftTitleChange,
@@ -25,6 +30,17 @@ export function CardQuickAddPanel({
   onOpenFullEditor,
   onSubmit
 }: CardQuickAddPanelProps) {
+  const titleInputRef = useRef<TextInput | null>(null);
+  const translationInputRef = useRef<TextInput | null>(null);
+
+  useEffect(() => {
+    if (saveFeedbackTick === 0) {
+      return;
+    }
+
+    titleInputRef.current?.focus();
+  }, [saveFeedbackTick]);
+
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
@@ -45,9 +61,10 @@ export function CardQuickAddPanel({
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
+        ref={titleInputRef}
         onChangeText={onDraftTitleChange}
         onSubmitEditing={() => {
-          void onSubmit();
+          translationInputRef.current?.focus();
         }}
         placeholder="Verb: to run"
         placeholderTextColor={colors.muted}
@@ -60,14 +77,22 @@ export function CardQuickAddPanel({
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
+        ref={translationInputRef}
         onChangeText={onDraftTranslationChange}
+        onSubmitEditing={() => {
+          void onSubmit();
+        }}
         placeholder="Correr"
         placeholderTextColor={colors.muted}
+        returnKeyType="done"
         style={styles.input}
         value={draftTranslation}
       />
 
       {formError != null ? <Text style={styles.formError}>{formError}</Text> : null}
+      {formError == null && saveFeedbackMessage != null ? (
+        <Text style={styles.saveFeedback}>{saveFeedbackMessage}</Text>
+      ) : null}
 
       <Pressable
         accessibilityRole="button"
@@ -137,6 +162,11 @@ const styles = StyleSheet.create({
   formError: {
     color: colors.error,
     fontSize: typography.caption
+  },
+  saveFeedback: {
+    color: colors.success,
+    fontSize: typography.caption,
+    fontWeight: '600'
   },
   submitButton: {
     alignItems: 'center',

@@ -10,6 +10,8 @@ type CardWorkspaceCardListProps = {
   cards: Card[];
   isLoading: boolean;
   onEditCard: (card: Card) => void;
+  emptyTitle?: string;
+  emptyMessage?: string;
 };
 
 function formatCardTimestampLabel(createdAt: string, updatedAt: string): string {
@@ -26,7 +28,9 @@ function formatCardTimestampLabel(createdAt: string, updatedAt: string): string 
 export function CardWorkspaceCardList({
   cards,
   isLoading,
-  onEditCard
+  onEditCard,
+  emptyTitle,
+  emptyMessage
 }: CardWorkspaceCardListProps) {
   if (isLoading) {
     return <CardWorkspaceFeedbackState isLoading message="Loading cards..." />;
@@ -50,8 +54,8 @@ export function CardWorkspaceCardList({
       )}
       ListEmptyComponent={
         <CardWorkspaceFeedbackState
-          message="Add a card or import a few."
-          title="No cards yet"
+          message={emptyMessage ?? 'Add a card or import a few.'}
+          title={emptyTitle ?? 'No cards yet'}
         />
       }
       scrollEnabled={false}

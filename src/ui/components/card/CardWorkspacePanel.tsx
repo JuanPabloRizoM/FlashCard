@@ -20,6 +20,8 @@ type CardWorkspacePanelProps = {
   draftImageUri: string;
   draftStudyPreview: CardEditorStudyPreviewType;
   formError: string | null;
+  saveFeedbackMessage: string | null;
+  saveFeedbackTick: number;
   importText: string;
   importPreview: CardImportPreview;
   importResultMessage: string | null;
@@ -57,6 +59,8 @@ export function CardWorkspacePanel({
   draftImageUri,
   draftStudyPreview,
   formError,
+  saveFeedbackMessage,
+  saveFeedbackTick,
   importText,
   importPreview,
   importResultMessage,
@@ -125,6 +129,8 @@ export function CardWorkspacePanel({
           onDraftImageUriChange={onDraftImageUriChange}
           onDraftTitleChange={onDraftTitleChange}
           onDraftTranslationChange={onDraftTranslationChange}
+          saveFeedbackMessage={saveFeedbackMessage}
+          saveFeedbackTick={saveFeedbackTick}
           onSubmit={onSaveCard}
           preview={draftStudyPreview}
         />

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { CardEditorStudyPreview as CardEditorStudyPreviewType } from '../../../features/study/cardStudyPreview';
+import { CardEditorBasicSection } from './CardEditorBasicSection';
 import { CardEditorDetailsSection } from './CardEditorDetailsSection';
 import { CardQuickAddPanel } from './CardQuickAddPanel';
 import { CardEditorStudyPreview } from './CardEditorStudyPreview';
@@ -16,6 +17,8 @@ type CardEditorPanelProps = {
   draftImageUri: string;
   preview: CardEditorStudyPreviewType;
   formError: string | null;
+  saveFeedbackMessage: string | null;
+  saveFeedbackTick: number;
   canSubmit: boolean;
   isSubmitting: boolean;
   onDraftTitleChange: (value: string) => void;
@@ -36,6 +39,8 @@ export function CardEditorPanel({
   draftImageUri,
   preview,
   formError,
+  saveFeedbackMessage,
+  saveFeedbackTick,
   canSubmit,
   isSubmitting,
   onDraftTitleChange,
@@ -84,6 +89,8 @@ export function CardEditorPanel({
         onOpenFullEditor={() => {
           setEditorVariant('full');
         }}
+        saveFeedbackMessage={saveFeedbackMessage}
+        saveFeedbackTick={saveFeedbackTick}
         onSubmit={onSubmit}
       />
     );
@@ -119,38 +126,14 @@ export function CardEditorPanel({
         ) : null}
       </View>
 
-      <View style={styles.sectionCard}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionEyebrow}>Basic</Text>
-          <Text style={styles.sectionHint}>Title and translation</Text>
-        </View>
-
-        <Text style={styles.label}>Card title</Text>
-        <TextInput
-          autoCapitalize="sentences"
-          autoCorrect={false}
-          onChangeText={onDraftTitleChange}
-          onSubmitEditing={() => {
-            void onSubmit();
-          }}
-          placeholder="Verb: to run"
-          placeholderTextColor={colors.muted}
-          returnKeyType="next"
-          style={[styles.input, formError != null ? styles.inputError : null]}
-          value={draftTitle}
-        />
-
-        <Text style={styles.label}>Translation</Text>
-        <TextInput
-          autoCapitalize="sentences"
-          autoCorrect={false}
-          onChangeText={onDraftTranslationChange}
-          placeholder="Correr"
-          placeholderTextColor={colors.muted}
-          style={styles.input}
-          value={draftTranslation}
-        />
-      </View>
+      <CardEditorBasicSection
+        draftTitle={draftTitle}
+        draftTranslation={draftTranslation}
+        hasError={formError != null}
+        onDraftTitleChange={onDraftTitleChange}
+        onDraftTranslationChange={onDraftTranslationChange}
+        onSubmit={onSubmit}
+      />
 
       <CardEditorDetailsSection
         draftApplication={draftApplication}
@@ -168,6 +151,9 @@ export function CardEditorPanel({
       <CardEditorStudyPreview preview={preview} />
 
       {formError != null ? <Text style={styles.formError}>{formError}</Text> : null}
+      {formError == null && saveFeedbackMessage != null ? (
+        <Text style={styles.saveFeedback}>{saveFeedbackMessage}</Text>
+      ) : null}
       <Pressable
         accessibilityRole="button"
         disabled={!canSubmit}
@@ -217,51 +203,14 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     lineHeight: 18
   },
-  sectionCard: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: spacing.s,
-    padding: spacing.m
-  },
-  sectionHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  sectionEyebrow: {
-    color: colors.textPrimary,
-    fontSize: typography.overline,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-    textTransform: 'uppercase'
-  },
-  sectionHint: {
-    color: colors.textSecondary,
-    fontSize: typography.caption
-  },
-  label: {
-    color: colors.textPrimary,
-    fontSize: typography.bodySmall,
-    fontWeight: '600'
-  },
-  input: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 14,
-    borderWidth: 1,
-    color: colors.textPrimary,
-    fontSize: typography.body,
-    paddingHorizontal: spacing.m,
-    paddingVertical: 14
-  },
-  inputError: {
-    borderColor: colors.error
-  },
   formError: {
     color: colors.error,
     fontSize: typography.caption
+  },
+  saveFeedback: {
+    color: colors.success,
+    fontSize: typography.caption,
+    fontWeight: '600'
   },
   submitButton: {
     alignItems: 'center',

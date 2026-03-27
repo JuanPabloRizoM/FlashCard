@@ -8,6 +8,7 @@ import { useDeckCards } from '../../features/cards/useDeckCards';
 import { useDeckImport } from '../../features/decks/useDeckImport';
 import { listDecks } from '../../storage/repositories/deckRepository';
 import type { RootTabParamList } from '../../navigation/types';
+import { CardListFilterBar } from '../components/card/CardListFilterBar';
 import { CardWorkspaceCardList } from '../components/card/CardWorkspaceCardList';
 import { CardWorkspaceDeckSelector } from '../components/card/CardWorkspaceDeckSelector';
 import { CardWorkspaceNoDecks } from '../components/card/CardWorkspaceNoDecks';
@@ -17,6 +18,7 @@ import {
 } from '../components/card/CardWorkspaceModeSwitch';
 import { CardWorkspacePanel } from '../components/card/CardWorkspacePanel';
 import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
+import { getCardListEmptyState, matchesCardListFilter, type CardListFilter } from '../components/card/cardListFilters';
 import { resolveSelectedDeckId } from '../components/card/cardWorkspaceUtils';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { colors, spacing, typography } from '../theme';
@@ -29,6 +31,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
   const [handoffDeckId, setHandoffDeckId] = useState<number | null>(routeSelectedDeckId);
   const [selectedDeckId, setSelectedDeckId] = useState<number | null>(routeSelectedDeckId);
   const [workspaceMode, setWorkspaceMode] = useState<CardWorkspaceMode>('create');
+  const [cardListFilter, setCardListFilter] = useState<CardListFilter>('all');
   const [deckScreenError, setDeckScreenError] = useState<string | null>(null);
   const [isLoadingDecks, setIsLoadingDecks] = useState(true);
 
@@ -54,6 +57,8 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     isLoading,
     isSubmitting,
     isImportSubmitting,
+    saveFeedbackMessage,
+    saveFeedbackTick,
     canSubmit,
     onDraftTitleChange,
     onDraftTranslationChange,
@@ -67,6 +72,11 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     onEditCard,
     onCancelEditing
   } = useDeckCards(selectedDeckId);
+  const filteredCards = useMemo(
+    () => cards.filter((card) => matchesCardListFilter(card, cardListFilter)),
+    [cardListFilter, cards]
+  );
+  const emptyListState = useMemo(() => getCardListEmptyState(cardListFilter), [cardListFilter]);
 
   const {
     importText: deckImportText,
@@ -230,15 +240,27 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           onImportDeck={onImportDeck}
           onImportTextChange={onImportTextChange}
           onSaveCard={onSaveCard}
+          saveFeedbackMessage={saveFeedbackMessage}
+          saveFeedbackTick={saveFeedbackTick}
           selectedDeckName={selectedDeck?.name ?? null}
         />
 
         <View style={styles.listHeader}>
           <Text style={styles.sectionTitle}>Cards</Text>
-          <Text style={styles.listCount}>{`${cards.length} total`}</Text>
+          <Text style={styles.listCount}>
+            {cardListFilter === 'all' ? `${cards.length} total` : `${filteredCards.length} of ${cards.length}`}
+          </Text>
         </View>
 
-        <CardWorkspaceCardList cards={cards} isLoading={isLoading} onEditCard={onEditCard} />
+        <CardListFilterBar activeFilter={cardListFilter} onChangeFilter={setCardListFilter} />
+
+        <CardWorkspaceCardList
+          cards={filteredCards}
+          emptyMessage={emptyListState.message}
+          emptyTitle={emptyListState.title}
+          isLoading={isLoading}
+          onEditCard={onEditCard}
+        />
       </ScrollView>
     </ScreenContainer>
   );

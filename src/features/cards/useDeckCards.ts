@@ -31,6 +31,8 @@ type UseDeckCardsResult = {
   isLoading: boolean;
   isSubmitting: boolean;
   isImportSubmitting: boolean;
+  saveFeedbackMessage: string | null;
+  saveFeedbackTick: number;
   canSubmit: boolean;
   onDraftTitleChange: (value: string) => void;
   onDraftTranslationChange: (value: string) => void;
@@ -45,14 +47,6 @@ type UseDeckCardsResult = {
   onCancelEditing: () => void;
 };
 
-function getCardSaveErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return 'Could not save the card. Please try again.';
-}
-
 export function useDeckCards(deckId: number | null): UseDeckCardsResult {
   const [cards, setCards] = useState<Card[]>([]);
   const [editingCardId, setEditingCardId] = useState<number | null>(null);
@@ -65,6 +59,8 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
   const [screenError, setScreenError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(deckId != null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saveFeedbackMessage, setSaveFeedbackMessage] = useState<string | null>(null);
+  const [saveFeedbackTick, setSaveFeedbackTick] = useState(0);
   const draftStudyPreview = useMemo(
     () =>
       buildCardEditorStudyPreview(
@@ -88,6 +84,19 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     setDraftImageUri('');
     setFormError(null);
   }, []);
+  useEffect(() => {
+    if (saveFeedbackMessage == null) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setSaveFeedbackMessage(null);
+    }, 1800);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [saveFeedbackMessage]);
   const {
     importText,
     importPreview,
@@ -102,30 +111,11 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     setScreenError
   });
 
-  const loadCards = useCallback(async () => {
-    if (deckId == null) {
-      setCards([]);
-      setScreenError(null);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const storedCards = await listCardsByDeck(deckId);
-      setCards(storedCards);
-      setScreenError(null);
-    } catch {
-      setScreenError('Could not load cards right now.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [deckId]);
-
   useEffect(() => {
     resetDraftState();
     setCards([]);
     setScreenError(null);
+    setSaveFeedbackMessage(null);
     setIsLoading(deckId != null);
   }, [deckId, resetDraftState]);
 
@@ -228,10 +218,12 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
         );
       }
 
+      setSaveFeedbackMessage(editingCardId == null ? 'Card added' : 'Card updated');
+      setSaveFeedbackTick((currentValue) => currentValue + 1);
       resetDraftState();
       setScreenError(null);
     } catch (error) {
-      setFormError(getCardSaveErrorMessage(error));
+      setFormError(error instanceof Error ? error.message : 'Could not save the card. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -240,6 +232,10 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
   function clearFormError() {
     if (formError != null) {
       setFormError(null);
+    }
+
+    if (saveFeedbackMessage != null) {
+      setSaveFeedbackMessage(null);
     }
   }
 
@@ -260,6 +256,8 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     isLoading,
     isSubmitting,
     isImportSubmitting,
+    saveFeedbackMessage,
+    saveFeedbackTick,
     canSubmit: deckId != null && normalizeCardTitle(draftTitle).length > 0 && !isSubmitting,
     onDraftTitleChange: (value) => {
       setDraftTitle(value);
