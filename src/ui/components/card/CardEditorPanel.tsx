@@ -1,11 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { CardEditorStudyPreview as CardEditorStudyPreviewType } from '../../../features/study/cardStudyPreview';
 import { CardEditorBasicSection } from './CardEditorBasicSection';
 import { CardEditorDetailsSection } from './CardEditorDetailsSection';
-import { CardQuickAddPanel } from './CardQuickAddPanel';
-import { CardEditorStudyPreview } from './CardEditorStudyPreview';
 import { colors, spacing, typography } from '../../theme';
 
 type CardEditorPanelProps = {
@@ -15,10 +12,8 @@ type CardEditorPanelProps = {
   draftDescription: string;
   draftApplication: string;
   draftImageUri: string;
-  preview: CardEditorStudyPreviewType;
   formError: string | null;
   saveFeedbackMessage: string | null;
-  saveFeedbackTick: number;
   canSubmit: boolean;
   isSubmitting: boolean;
   onDraftFrontChange: (value: string) => void;
@@ -37,10 +32,8 @@ export function CardEditorPanel({
   draftDescription,
   draftApplication,
   draftImageUri,
-  preview,
   formError,
   saveFeedbackMessage,
-  saveFeedbackTick,
   canSubmit,
   isSubmitting,
   onDraftFrontChange,
@@ -52,57 +45,30 @@ export function CardEditorPanel({
   onCancelEditing
 }: CardEditorPanelProps) {
   const isEditing = mode === 'edit';
-  const [editorVariant, setEditorVariant] = useState<'quick' | 'full'>(isEditing ? 'full' : 'quick');
-  const hasOptionalContent = useMemo(
-    () =>
-      draftDescription.trim().length > 0 ||
-      draftApplication.trim().length > 0 ||
-      draftImageUri.trim().length > 0,
-    [draftApplication, draftDescription, draftImageUri]
-  );
+  const hasOptionalContent =
+    draftDescription.trim().length > 0 ||
+    draftApplication.trim().length > 0 ||
+    draftImageUri.trim().length > 0;
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(isEditing || hasOptionalContent);
-
-  useEffect(() => {
-    setEditorVariant(isEditing ? 'full' : 'quick');
-  }, [isEditing]);
 
   useEffect(() => {
     if (isEditing || hasOptionalContent) {
       setIsDetailsExpanded(true);
-      setEditorVariant('full');
       return;
     }
 
     setIsDetailsExpanded(false);
   }, [hasOptionalContent, isEditing]);
 
-  if (!isEditing && editorVariant === 'quick') {
-    return (
-      <CardQuickAddPanel
-        canSubmit={canSubmit}
-        draftFront={draftFront}
-        draftBack={draftBack}
-        formError={formError}
-        isSubmitting={isSubmitting}
-        onDraftFrontChange={onDraftFrontChange}
-        onDraftBackChange={onDraftBackChange}
-        onOpenFullEditor={() => {
-          setEditorVariant('full');
-        }}
-        saveFeedbackMessage={saveFeedbackMessage}
-        saveFeedbackTick={saveFeedbackTick}
-        onSubmit={onSubmit}
-      />
-    );
-  }
-
   return (
     <View style={styles.formCard}>
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
-          <Text style={styles.sectionTitle}>{isEditing ? 'Edit card' : 'Create card'}</Text>
+          <Text style={styles.sectionTitle}>{isEditing ? 'Edit card' : 'New card'}</Text>
           <Text style={styles.sectionText}>
-            {isEditing ? 'Update the front, back, or extra details.' : 'Add details when you need more than front and back.'}
+            {isEditing
+              ? 'Update the front, back, or optional details.'
+              : 'Add a front and back, then fill in details only if you need them.'}
           </Text>
         </View>
         {isEditing && onCancelEditing != null ? (
@@ -113,16 +79,6 @@ export function CardEditorPanel({
           >
             <Text style={styles.secondaryButtonLabel}>Cancel</Text>
           </Pressable>
-        ) : !isEditing ? (
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => {
-              setEditorVariant('quick');
-            }}
-            style={({ pressed }) => [styles.secondaryButton, pressed ? styles.secondaryButtonPressed : null]}
-          >
-            <Text style={styles.secondaryButtonLabel}>Quick add</Text>
-          </Pressable>
         ) : null}
       </View>
 
@@ -132,7 +88,6 @@ export function CardEditorPanel({
         hasError={formError != null}
         onDraftFrontChange={onDraftFrontChange}
         onDraftBackChange={onDraftBackChange}
-        onSubmit={onSubmit}
       />
 
       <CardEditorDetailsSection
@@ -147,8 +102,6 @@ export function CardEditorPanel({
           setIsDetailsExpanded((value) => !value);
         }}
       />
-
-      <CardEditorStudyPreview preview={preview} />
 
       {formError != null ? <Text style={styles.formError}>{formError}</Text> : null}
       {formError == null && saveFeedbackMessage != null ? (

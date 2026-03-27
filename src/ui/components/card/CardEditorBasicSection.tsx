@@ -8,7 +8,6 @@ type CardEditorBasicSectionProps = {
   hasError: boolean;
   onDraftFrontChange: (value: string) => void;
   onDraftBackChange: (value: string) => void;
-  onSubmit: () => Promise<void>;
 };
 
 export function CardEditorBasicSection({
@@ -16,8 +15,7 @@ export function CardEditorBasicSection({
   draftBack,
   hasError,
   onDraftFrontChange,
-  onDraftBackChange,
-  onSubmit
+  onDraftBackChange
 }: CardEditorBasicSectionProps) {
   return (
     <View style={styles.sectionCard}>
@@ -31,9 +29,6 @@ export function CardEditorBasicSection({
         autoCapitalize="sentences"
         autoCorrect={false}
         onChangeText={onDraftFrontChange}
-        onSubmitEditing={() => {
-          void onSubmit();
-        }}
         placeholder="Question or prompt"
         placeholderTextColor={colors.muted}
         returnKeyType="next"
@@ -48,6 +43,7 @@ export function CardEditorBasicSection({
         onChangeText={onDraftBackChange}
         placeholder="Answer"
         placeholderTextColor={colors.muted}
+        returnKeyType="done"
         style={styles.input}
         value={draftBack}
       />

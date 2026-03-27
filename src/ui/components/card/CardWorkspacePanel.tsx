@@ -1,4 +1,3 @@
-import type { CardEditorStudyPreview as CardEditorStudyPreviewType } from '../../../features/study/cardStudyPreview';
 import type { CardImportPreview } from '../../../features/cards/cardImport';
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
 import { CardEditorPanel } from './CardEditorPanel';
@@ -18,10 +17,8 @@ type CardWorkspacePanelProps = {
   draftDescription: string;
   draftApplication: string;
   draftImageUri: string;
-  draftStudyPreview: CardEditorStudyPreviewType;
   formError: string | null;
   saveFeedbackMessage: string | null;
-  saveFeedbackTick: number;
   importText: string;
   importPreview: CardImportPreview;
   importResultMessage: string | null;
@@ -57,10 +54,8 @@ export function CardWorkspacePanel({
   draftDescription,
   draftApplication,
   draftImageUri,
-  draftStudyPreview,
   formError,
   saveFeedbackMessage,
-  saveFeedbackTick,
   importText,
   importPreview,
   importResultMessage,
@@ -130,9 +125,7 @@ export function CardWorkspacePanel({
           onDraftFrontChange={onDraftFrontChange}
           onDraftBackChange={onDraftBackChange}
           saveFeedbackMessage={saveFeedbackMessage}
-          saveFeedbackTick={saveFeedbackTick}
           onSubmit={onSaveCard}
-          preview={draftStudyPreview}
         />
       );
   }

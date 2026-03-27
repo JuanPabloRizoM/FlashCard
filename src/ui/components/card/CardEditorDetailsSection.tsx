@@ -27,8 +27,8 @@ export function CardEditorDetailsSection({
     <View style={styles.optionalCard}>
       <View style={styles.optionalHeader}>
         <View style={styles.optionalCopy}>
-          <Text style={styles.sectionEyebrow}>More details</Text>
-          <Text style={styles.sectionHint}>Description, application, and image</Text>
+          <Text style={styles.sectionEyebrow}>Optional details</Text>
+          <Text style={styles.sectionHint}>Description, notes, and image</Text>
         </View>
         <Pressable
           accessibilityRole="button"
@@ -54,13 +54,13 @@ export function CardEditorDetailsSection({
             value={draftDescription}
           />
 
-          <Text style={styles.label}>Application</Text>
+          <Text style={styles.label}>Application / Notes</Text>
           <TextInput
             autoCapitalize="sentences"
             autoCorrect={false}
             multiline
             onChangeText={onDraftApplicationChange}
-            placeholder="Use when describing speed or urgency."
+            placeholder="Helpful context or notes."
             placeholderTextColor={colors.muted}
             style={[styles.input, styles.definitionInput]}
             textAlignVertical="top"

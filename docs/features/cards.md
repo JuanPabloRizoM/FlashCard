@@ -75,11 +75,11 @@ The repository is responsible for:
 The Cards tab is now the primary card workspace:
 - the user opens the `Cards` tab directly or enters it from a deck overview
 - the workspace selects a deck and loads cards for that deck only
-- the user can create a card with required `front` and `back` fields plus optional supporting fields
+- the user can create a card with one unified editor using required `front` and `back` plus optional supporting fields
 - the user can edit an existing card without leaving the workspace
 - the user can paste structured multiline text and preview valid/invalid rows before importing
 - the user can paste a full exported deck into the Cards workspace, preview the parsed deck plus card lines, and confirm deck import
-- the same study-guidance preview updates in real time for both create and edit flows
+- the editor keeps optional details secondary instead of splitting creation into separate modes
 - deck detail remains a read-only overview with a clear entry point into the Cards workspace
 - deck detail also exposes deck export text with copy-to-clipboard support
 - empty and loading states render safely when a deck has no cards

@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { Card } from '../../core/models/Card';
-import type { CardEditorStudyPreview } from '../study/cardStudyPreview';
-import { buildCardEditorStudyPreview } from '../study/cardStudyPreview';
 import {
   getFirstCardValidationError,
-  normalizeCreateCardInput,
   normalizeCardFront,
   validateCreateCardInput
 } from '../../services/validation/cardValidation';
@@ -21,7 +18,6 @@ type UseDeckCardsResult = {
   draftDescription: string;
   draftApplication: string;
   draftImageUri: string;
-  draftStudyPreview: CardEditorStudyPreview;
   importText: string;
   importPreview: CardImportPreview;
   importResultMessage: string | null;
@@ -31,7 +27,6 @@ type UseDeckCardsResult = {
   isSubmitting: boolean;
   isImportSubmitting: boolean;
   saveFeedbackMessage: string | null;
-  saveFeedbackTick: number;
   canSubmit: boolean;
   onDraftFrontChange: (value: string) => void;
   onDraftBackChange: (value: string) => void;
@@ -59,21 +54,6 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
   const [isLoading, setIsLoading] = useState(deckId != null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [saveFeedbackMessage, setSaveFeedbackMessage] = useState<string | null>(null);
-  const [saveFeedbackTick, setSaveFeedbackTick] = useState(0);
-  const draftStudyPreview = useMemo(
-    () =>
-      buildCardEditorStudyPreview(
-        normalizeCreateCardInput({
-          deckId: deckId ?? 0,
-          front: draftFront,
-          back: draftBack,
-          description: draftDescription,
-          application: draftApplication,
-          imageUri: draftImageUri
-        })
-      ),
-    [deckId, draftApplication, draftDescription, draftFront, draftBack, draftImageUri]
-  );
   const resetDraftState = useCallback(() => {
     setEditingCardId(null);
     setDraftFront('');
@@ -218,7 +198,6 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
       }
 
       setSaveFeedbackMessage(editingCardId == null ? 'Card added' : 'Card updated');
-      setSaveFeedbackTick((currentValue) => currentValue + 1);
       resetDraftState();
       setScreenError(null);
     } catch (error) {
@@ -246,7 +225,6 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     draftDescription,
     draftApplication,
     draftImageUri,
-    draftStudyPreview,
     importText,
     importPreview,
     importResultMessage,
@@ -256,7 +234,6 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     isSubmitting,
     isImportSubmitting,
     saveFeedbackMessage,
-    saveFeedbackTick,
     canSubmit:
       deckId != null &&
       normalizeCardFront(draftFront).length > 0 &&

@@ -48,7 +48,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     draftDescription,
     draftApplication,
     draftImageUri,
-    draftStudyPreview,
     importText,
     importPreview,
     importResultMessage,
@@ -58,7 +57,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     isSubmitting,
     isImportSubmitting,
     saveFeedbackMessage,
-    saveFeedbackTick,
     canSubmit,
     onDraftFrontChange,
     onDraftBackChange,
@@ -218,7 +216,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           draftApplication={draftApplication}
           draftDescription={draftDescription}
           draftImageUri={draftImageUri}
-          draftStudyPreview={draftStudyPreview}
           draftFront={draftFront}
           draftBack={draftBack}
           editingCardId={editingCardId}
@@ -245,7 +242,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           onImportTextChange={onImportTextChange}
           onSaveCard={onSaveCard}
           saveFeedbackMessage={saveFeedbackMessage}
-          saveFeedbackTick={saveFeedbackTick}
           selectedDeckName={selectedDeck?.name ?? null}
         />
 

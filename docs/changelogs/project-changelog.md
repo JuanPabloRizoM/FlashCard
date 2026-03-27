@@ -23,6 +23,15 @@
 ---
 
 [2026-03-27]
+- Change: Simplified Cards authoring into one unified editor, removed the remaining Card support block from the Cards workspace, and kept optional details grouped as secondary fields.
+- Reason: Cards should feel like one focused content editor instead of a split create flow with study-oriented support UI.
+- Files: src/ui/screens/CardsScreen.tsx, src/features/cards/useDeckCards.ts, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardEditorBasicSection.tsx, src/ui/components/card/CardEditorDetailsSection.tsx, src/ui/components/card/CardWorkspacePanel.tsx, docs/features/cards.md
+- Risk: Low
+- Notes: Create/edit behavior is unchanged, import modes are unchanged, and the removed support UI was not moved elsewhere in this pass.
+
+---
+
+[2026-03-27]
 - Change: Refactored the real card model from `title/translation/definition/example` to `front/back/description`, migrated SQLite card storage safely, and aligned authoring/import/export flows to the new universal contract.
 - Reason: FlashCards should use a general-purpose flashcard model instead of a language-specific translation model.
 - Files: src/core/models/Card.ts, src/core/types/card.ts, src/services/validation/cardValidation.ts, src/storage/migrations.ts, src/storage/repositories/cardRepository.ts, src/storage/repositories/webCardRepository.ts, src/storage/webAppStore.ts, src/storage/repositories/deckRepository.ts, src/storage/repositories/webDeckRepository.ts, src/features/cards/useDeckCards.ts, src/features/cards/cardImport.ts, src/features/decks/deckPortability.ts, src/engine/PromptModeResolver.ts, src/features/study/cardStudyPreview.ts, src/core/types/study.ts, src/ui/components/card/*
