@@ -116,6 +116,10 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     }
   }, [editingCardId]);
 
+  useEffect(() => {
+    setCardListFilter('all');
+  }, [selectedDeckId]);
+
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
