@@ -56,11 +56,19 @@
 
 ### storage/
 - `database.ts`
-- `appSettingsStorage.ts`
+- `database.native.ts`
+- `database.web.ts`
+- `appSettingsStorage.native.ts`
+- `appSettingsStorage.web.ts`
+- `webStorage.ts`
+- `webAppStore.ts`
 - `migrations.ts`
 - `repositories/deckRepository.ts`
 - `repositories/cardRepository.ts`
 - `repositories/studyProgressRepository.ts`
+- `repositories/webDeckRepository.ts`
+- `repositories/webCardRepository.ts`
+- `repositories/webStudyProgressRepository.ts`
 
 ---
 
@@ -149,6 +157,7 @@
 - UI layer must remain free of study/business/storage logic
 - Settings may control app-level defaults, but those defaults must be consumed through feature layers rather than screens reaching into engine internals
 - Lightweight settings persistence belongs to the settings/storage boundary, not to Study screens or engine files
+- Native app persistence may use SQLite, but web persistence must fail safely or use a web-compatible fallback rather than assuming SQLite support
 - Deck export/import formatting belongs to the deck/card feature layers, while confirmed writes still belong to repositories
 - Study progress persistence belongs to repository + feature layers, not screens
 - Study session setup, focused-mode filtering, and session-size selection belong to the feature layer, not the engine or UI

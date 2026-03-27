@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import type { StudyProgress } from '../../core/models/StudyProgress';
 import type { PromptMode } from '../../core/types/study';
 import type {
@@ -16,6 +17,12 @@ import {
   validateUpsertStudyProgressResultInput
 } from '../../services/validation/studyProgressValidation';
 import { getDatabase } from '../database';
+import {
+  getByCardAndPrompt as getWebStudyProgressByCardAndPrompt,
+  listByCardId as listWebStudyProgressByCardId,
+  listByDeckId as listWebStudyProgressByDeckId,
+  upsertResult as upsertWebStudyProgressResult
+} from './webStudyProgressRepository';
 
 type StudyProgressRow = {
   id: number;
@@ -96,6 +103,10 @@ async function loadStudyProgress(cardId: number, promptMode: PromptMode): Promis
 }
 
 export async function getByCardAndPrompt(input: StudyProgressKey): Promise<StudyProgress | null> {
+  if (Platform.OS === 'web') {
+    return getWebStudyProgressByCardAndPrompt(input);
+  }
+
   const validationError = getFirstStudyProgressKeyValidationError(validateStudyProgressKey(input));
 
   if (validationError != null) {
@@ -132,6 +143,10 @@ export async function getByCardAndPrompt(input: StudyProgressKey): Promise<Study
 export async function upsertResult(
   input: UpsertStudyProgressResultInput
 ): Promise<StudyProgress> {
+  if (Platform.OS === 'web') {
+    return upsertWebStudyProgressResult(input);
+  }
+
   const validationError = getFirstStudyProgressUpsertValidationError(
     validateUpsertStudyProgressResultInput(input)
   );
@@ -189,6 +204,10 @@ export async function upsertResult(
 }
 
 export async function listByCardId(cardId: number): Promise<StudyProgress[]> {
+  if (Platform.OS === 'web') {
+    return listWebStudyProgressByCardId(cardId);
+  }
+
   const validationError = validateStudyProgressCardId(cardId);
 
   if (validationError != null) {
@@ -223,6 +242,10 @@ export async function listByCardId(cardId: number): Promise<StudyProgress[]> {
 }
 
 export async function listByDeckId(deckId: number): Promise<StudyProgress[]> {
+  if (Platform.OS === 'web') {
+    return listWebStudyProgressByDeckId(deckId);
+  }
+
   const validationError = validateStudyProgressDeckId(deckId);
 
   if (validationError != null) {

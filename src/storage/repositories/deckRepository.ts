@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import type { Deck } from '../../core/models/Deck';
 import type { CreateCardInput } from '../../core/types/card';
 import type { CreateDeckInput, DeckType } from '../../core/types/deck';
@@ -13,6 +14,11 @@ import {
   validateCreateCardInput
 } from '../../services/validation/cardValidation';
 import { getDatabase } from '../database';
+import {
+  createDeck as createWebDeck,
+  createDeckWithImportedCards as createWebDeckWithImportedCards,
+  listDecks as listWebDecks
+} from './webDeckRepository';
 
 type DeckRow = {
   id: number;
@@ -37,6 +43,10 @@ function mapDeckRow(row: DeckRow): Deck {
 }
 
 export async function listDecks(): Promise<Deck[]> {
+  if (Platform.OS === 'web') {
+    return listWebDecks();
+  }
+
   const db = await getDatabase();
   const rows = await db.getAllAsync<DeckRow>(
     `
@@ -50,6 +60,10 @@ export async function listDecks(): Promise<Deck[]> {
 }
 
 export async function createDeck(input: CreateDeckInput): Promise<Deck> {
+  if (Platform.OS === 'web') {
+    return createWebDeck(input);
+  }
+
   const db = await getDatabase();
   const normalizedInput = normalizeCreateDeckInput(input);
   const validationError = getFirstDeckValidationError(validateCreateDeckInput(normalizedInput));
@@ -103,6 +117,10 @@ export async function createDeckWithImportedCards(
   deckInput: CreateDeckInput,
   cardInputs: Omit<CreateCardInput, 'deckId'>[]
 ): Promise<{ deck: Deck; importedCardCount: number }> {
+  if (Platform.OS === 'web') {
+    return createWebDeckWithImportedCards(deckInput, cardInputs);
+  }
+
   const db = await getDatabase();
   const normalizedDeckInput = normalizeCreateDeckInput(deckInput);
   const deckValidationError = getFirstDeckValidationError(validateCreateDeckInput(normalizedDeckInput));

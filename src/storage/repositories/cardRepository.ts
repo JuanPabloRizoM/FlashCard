@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import type { Card } from '../../core/models/Card';
 import type { CreateCardInput, UpdateCardInput } from '../../core/types/card';
 import {
@@ -8,6 +9,13 @@ import {
   validateCreateCardInput
 } from '../../services/validation/cardValidation';
 import { getDatabase } from '../database';
+import {
+  createCard as createWebCard,
+  createCardsBatch as createWebCardsBatch,
+  listAllCards as listAllWebCards,
+  listCardsByDeck as listWebCardsByDeck,
+  updateCard as updateWebCard
+} from './webCardRepository';
 
 type CardRow = {
   id: number;
@@ -47,6 +55,10 @@ async function ensureDeckExists(deckId: number): Promise<void> {
 }
 
 export async function listCardsByDeck(deckId: number): Promise<Card[]> {
+  if (Platform.OS === 'web') {
+    return listWebCardsByDeck(deckId);
+  }
+
   if (!Number.isInteger(deckId) || deckId <= 0) {
     throw new Error(INVALID_CARD_DECK_MESSAGE);
   }
@@ -68,6 +80,10 @@ export async function listCardsByDeck(deckId: number): Promise<Card[]> {
 }
 
 export async function listAllCards(): Promise<Card[]> {
+  if (Platform.OS === 'web') {
+    return listAllWebCards();
+  }
+
   const db = await getDatabase();
   const rows = await db.getAllAsync<CardRow>(
     `
@@ -81,6 +97,10 @@ export async function listAllCards(): Promise<Card[]> {
 }
 
 export async function createCard(input: CreateCardInput): Promise<Card> {
+  if (Platform.OS === 'web') {
+    return createWebCard(input);
+  }
+
   const normalizedInput = normalizeCreateCardInput(input);
   const validationError = getFirstCardValidationError(validateCreateCardInput(normalizedInput));
 
@@ -135,6 +155,10 @@ export async function createCard(input: CreateCardInput): Promise<Card> {
 }
 
 export async function createCardsBatch(inputs: CreateCardInput[]): Promise<Card[]> {
+  if (Platform.OS === 'web') {
+    return createWebCardsBatch(inputs);
+  }
+
   if (inputs.length === 0) {
     return [];
   }
@@ -202,6 +226,10 @@ export async function createCardsBatch(inputs: CreateCardInput[]): Promise<Card[
 }
 
 export async function updateCard(input: UpdateCardInput): Promise<Card> {
+  if (Platform.OS === 'web') {
+    return updateWebCard(input);
+  }
+
   const cardIdError = validateCardId(input.id);
 
   if (cardIdError != null) {

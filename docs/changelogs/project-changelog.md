@@ -190,3 +190,30 @@
 - Files: src/features/decks/deckPortability.ts, src/features/decks/useDeckImport.ts, src/storage/repositories/deckRepository.ts, src/features/cards/cardImport.ts, src/features/decks/useDecks.ts, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/components/deck/DeckExportPanel.tsx, src/ui/components/deck/DeckImportPanel.tsx, src/ui/components/card/CardWorkspaceFeedbackState.tsx, docs/features/cards.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
 - Risk: Medium
 - Notes: Export/Import v1 is copy-paste only, reuses the card import line format, blocks deck-name collisions before write, and keeps the confirmed deck creation plus valid card inserts inside one repository transaction.
+
+---
+
+[2026-03-26]
+- Change: Replaced the web runtime’s SQLite-dependent persistence path with a safe localStorage-backed fallback for decks, cards, study progress, and settings hydration.
+- Reason: The deployed web app could render its shell but crashed or failed persistence with an `xFileControl` SQLite web runtime error.
+- Files: src/storage/database.ts, src/storage/appSettingsStorage.ts, src/storage/webStorage.ts, src/storage/webAppStore.ts, src/storage/repositories/deckRepository.ts, src/storage/repositories/cardRepository.ts, src/storage/repositories/studyProgressRepository.ts, src/storage/repositories/webDeckRepository.ts, src/storage/repositories/webCardRepository.ts, src/storage/repositories/webStudyProgressRepository.ts, docs/architecture/project-structure.md
+- Risk: Medium
+- Notes: Native/mobile still uses SQLite, while web now avoids the unsupported SQLite code path entirely and falls back to memory if browser localStorage is unavailable.
+
+---
+
+[2026-03-26]
+- Change: Split the database module into native and web entry points so the web bundle no longer imports the native `expo-sqlite` database module at all.
+- Reason: The prior web fallback fix still left a top-level `expo-sqlite` import in the shared database module, which allowed deployed web builds to keep reaching the SQLite/open-database path.
+- Files: src/storage/database.native.ts, src/storage/database.web.ts, docs/architecture/project-structure.md, docs/changelogs/project-changelog.md
+- Risk: Low
+- Notes: Web now initializes only the fallback web app store, while native/mobile continues using the SQLite-backed database module.
+
+---
+
+[2026-03-26]
+- Change: Split app settings storage into native and web modules so the web bundle no longer includes the SQLite-backed settings implementation.
+- Reason: Even after the database split, the shared settings storage module still caused a SQLite `kv-store` chunk to appear in the web export.
+- Files: src/storage/appSettingsStorage.native.ts, src/storage/appSettingsStorage.web.ts, docs/architecture/project-structure.md, docs/changelogs/project-changelog.md
+- Risk: Low
+- Notes: Web settings now stay on the same browser-safe storage fallback path as the rest of the web app, while native/mobile keeps SQLite-backed settings persistence.
