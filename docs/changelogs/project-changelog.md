@@ -23,6 +23,15 @@
 ---
 
 [2026-03-27]
+- Change: Simplified the Cards authoring UI by removing technique-specific messaging from the editor preview and relabeling the primary card fields from Title/Translation to Front/Back.
+- Reason: Card creation should feel universal and content-focused instead of mixing in study-methodology language.
+- Files: src/ui/components/card/CardEditorStudyPreview.tsx, src/ui/components/card/CardQuickAddPanel.tsx, src/ui/components/card/CardEditorBasicSection.tsx, src/ui/components/card/CardEditorPanel.tsx
+- Risk: Low
+- Notes: Internal data structures still use the existing title/translation fields; this pass is visible UI language only.
+
+---
+
+[2026-03-27]
 - Change: Polished the Cards workspace for repeated use with a faster Quick Add loop, lightweight save feedback, and low-noise list filters for maintenance work.
 - Reason: The card-building flow was structurally sound, but repeated entry and day-to-day list maintenance still had avoidable friction.
 - Files: src/features/cards/useDeckCards.ts, src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardQuickAddPanel.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardEditorBasicSection.tsx, src/ui/components/card/CardWorkspacePanel.tsx, src/ui/components/card/CardWorkspaceCardList.tsx, src/ui/components/card/CardListFilterBar.tsx, src/ui/components/card/cardListFilters.ts, src/ui/components/card/CardListStatus.tsx

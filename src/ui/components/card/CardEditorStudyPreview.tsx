@@ -8,24 +8,11 @@ type CardEditorStudyPreviewProps = {
   preview: CardEditorStudyPreviewType;
 };
 
-function getTechniqueTone(status: CardEditorStudyPreviewType['techniqueSupport'][number]['status']) {
-  switch (status) {
-    case 'ready':
-      return styles.techniqueReady;
-    case 'limited':
-      return styles.techniqueLimited;
-    default:
-      return styles.techniqueUnavailable;
-  }
-}
-
 export function CardEditorStudyPreview({ preview }: CardEditorStudyPreviewProps) {
   return (
     <View style={styles.panel}>
-      <Text style={styles.sectionTitle}>Study support preview</Text>
-      <Text style={styles.supportText}>
-        This updates as you type and never blocks saving.
-      </Text>
+      <Text style={styles.sectionTitle}>Card support</Text>
+      <Text style={styles.supportText}>This updates as you type.</Text>
 
       <CardStudyFeedback feedback={preview.feedback} />
 
@@ -42,18 +29,6 @@ export function CardEditorStudyPreview({ preview }: CardEditorStudyPreviewProps)
             >
               <Text style={styles.promptLabel}>{prompt.label}</Text>
               <Text style={styles.promptGuidance}>{prompt.guidance}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.subsectionTitle}>Technique usefulness</Text>
-        <View style={styles.techniqueWrap}>
-          {preview.techniqueSupport.map((technique) => (
-            <View key={technique.techniqueId} style={[styles.techniqueCard, getTechniqueTone(technique.status)]}>
-              <Text style={styles.techniqueLabel}>{technique.label}</Text>
-              <Text style={styles.techniqueMessage}>{technique.message}</Text>
             </View>
           ))}
         </View>
@@ -116,33 +91,5 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
-  },
-  techniqueWrap: {
-    gap: spacing.s
-  },
-  techniqueCard: {
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: 12,
-    gap: spacing.xs,
-    padding: spacing.m
-  },
-  techniqueReady: {
-    backgroundColor: colors.successSoft
-  },
-  techniqueLimited: {
-    backgroundColor: colors.warningSoft
-  },
-  techniqueUnavailable: {
-    backgroundColor: colors.errorSoft
-  },
-  techniqueLabel: {
-    color: colors.textPrimary,
-    fontSize: typography.caption,
-    fontWeight: '700'
-  },
-  techniqueMessage: {
-    color: colors.textSecondary,
-    fontSize: typography.caption
   }
 });

@@ -23,10 +23,10 @@ export function CardEditorBasicSection({
     <View style={styles.sectionCard}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionEyebrow}>Basic</Text>
-        <Text style={styles.sectionHint}>Title and translation</Text>
+        <Text style={styles.sectionHint}>Front and back</Text>
       </View>
 
-      <Text style={styles.label}>Card title</Text>
+      <Text style={styles.label}>Front</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
@@ -34,19 +34,19 @@ export function CardEditorBasicSection({
         onSubmitEditing={() => {
           void onSubmit();
         }}
-        placeholder="Verb: to run"
+        placeholder="Question or prompt"
         placeholderTextColor={colors.muted}
         returnKeyType="next"
         style={[styles.input, hasError ? styles.inputError : null]}
         value={draftTitle}
       />
 
-      <Text style={styles.label}>Translation</Text>
+      <Text style={styles.label}>Back</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
         onChangeText={onDraftTranslationChange}
-        placeholder="Correr"
+        placeholder="Answer"
         placeholderTextColor={colors.muted}
         style={styles.input}
         value={draftTranslation}

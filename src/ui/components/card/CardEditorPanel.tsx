@@ -102,7 +102,7 @@ export function CardEditorPanel({
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>{isEditing ? 'Edit card' : 'Create card'}</Text>
           <Text style={styles.sectionText}>
-            {isEditing ? 'Update the card details.' : 'Add details when you need more than a basic card.'}
+            {isEditing ? 'Update the front, back, or extra details.' : 'Add details when you need more than front and back.'}
           </Text>
         </View>
         {isEditing && onCancelEditing != null ? (

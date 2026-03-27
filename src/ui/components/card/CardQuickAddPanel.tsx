@@ -46,7 +46,7 @@ export function CardQuickAddPanel({
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>Quick add</Text>
-          <Text style={styles.sectionText}>Title, translation, save.</Text>
+          <Text style={styles.sectionText}>Front, back, save.</Text>
         </View>
         <Pressable
           accessibilityRole="button"
@@ -57,7 +57,7 @@ export function CardQuickAddPanel({
         </Pressable>
       </View>
 
-      <Text style={styles.label}>Card title</Text>
+      <Text style={styles.label}>Front</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
@@ -66,14 +66,14 @@ export function CardQuickAddPanel({
         onSubmitEditing={() => {
           translationInputRef.current?.focus();
         }}
-        placeholder="Verb: to run"
+        placeholder="Question or prompt"
         placeholderTextColor={colors.muted}
         returnKeyType="next"
         style={[styles.input, formError != null ? styles.inputError : null]}
         value={draftTitle}
       />
 
-      <Text style={styles.label}>Translation</Text>
+      <Text style={styles.label}>Back</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
@@ -82,7 +82,7 @@ export function CardQuickAddPanel({
         onSubmitEditing={() => {
           void onSubmit();
         }}
-        placeholder="Correr"
+        placeholder="Answer"
         placeholderTextColor={colors.muted}
         returnKeyType="done"
         style={styles.input}
