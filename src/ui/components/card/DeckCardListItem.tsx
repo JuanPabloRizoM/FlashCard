@@ -24,7 +24,7 @@ export function DeckCardListItem({
     <View style={styles.cardItem}>
       <View style={styles.cardHeaderRow}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{card.title}</Text>
+          <Text style={styles.cardTitle}>{card.front}</Text>
           <Text style={styles.cardMeta}>{timestampLabel}</Text>
         </View>
         {actionLabel != null && onActionPress != null ? (
@@ -37,14 +37,14 @@ export function DeckCardListItem({
           </Pressable>
         ) : null}
       </View>
-      {card.translation != null ? (
+      {card.back.length > 0 ? (
         <Text numberOfLines={2} style={styles.cardTranslation}>
-          {card.translation}
+          {card.back}
         </Text>
       ) : null}
-      {card.definition != null ? (
+      {card.description != null ? (
         <Text numberOfLines={2} style={styles.cardDefinition}>
-          {card.definition}
+          {card.description}
         </Text>
       ) : null}
       <CardListStatus card={card} feedback={feedback} />

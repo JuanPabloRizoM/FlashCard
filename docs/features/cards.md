@@ -20,16 +20,15 @@ It currently supports:
 ### Card
 - `id`: SQLite primary key
 - `deckId`: required parent deck reference
-- `title`: required card title
-- `translation`: optional field
-- `definition`: optional field
-- `example`: optional field
+- `front`: required prompt/question side
+- `back`: required answer side
+- `description`: optional supporting field
 - `application`: optional field
 - `imageUri`: optional field
 - `createdAt`: persistence timestamp
 - `updatedAt`: persistence timestamp
 
-Cards are structured data, not a simple front/back pair.
+Cards use a universal flashcard model with required `front` and `back` fields plus optional supporting details.
 
 ---
 
@@ -40,10 +39,9 @@ Card data is stored in the `cards` table.
 Current schema:
 - integer primary key `id`
 - required foreign key `deck_id`
-- required `title`
-- optional `translation`
-- optional `definition`
-- optional `example`
+- required `front`
+- required `back`
+- optional `description`
 - optional `application`
 - optional `image_uri`
 - `created_at` timestamp
@@ -57,9 +55,9 @@ The `cards` table uses a foreign key to `decks(id)` and cascades on deck deletio
 
 Current repository methods:
 - `listCardsByDeck(deckId)`
-- `createCard({ deckId, title, translation?, definition?, example?, application?, imageUri? })`
+- `createCard({ deckId, front, back, description?, application?, imageUri? })`
 - `createCardsBatch([...])`
-- `updateCard({ id, deckId, title, translation?, definition?, example?, application?, imageUri? })`
+- `updateCard({ id, deckId, front, back, description?, application?, imageUri? })`
 - `createDeckWithImportedCards({ name, ...deckFields }, cards[])`
 
 The repository is responsible for:
@@ -77,7 +75,7 @@ The repository is responsible for:
 The Cards tab is now the primary card workspace:
 - the user opens the `Cards` tab directly or enters it from a deck overview
 - the workspace selects a deck and loads cards for that deck only
-- the user can create a card with a required title and optional supporting fields
+- the user can create a card with required `front` and `back` fields plus optional supporting fields
 - the user can edit an existing card without leaving the workspace
 - the user can paste structured multiline text and preview valid/invalid rows before importing
 - the user can paste a full exported deck into the Cards workspace, preview the parsed deck plus card lines, and confirm deck import
@@ -90,9 +88,9 @@ Import v1 format:
 - one card per line
 - fields separated by `|`
 - supported:
-  - `title | translation`
-  - `title | translation | definition`
-  - `title | translation | definition | application`
+  - `front | back`
+  - `front | back | description`
+  - `front | back | description | application`
 - empty trailing optional fields are allowed if the line still matches the supported field order
 - invalid rows are previewed with per-line reasons and are not written until the user confirms import
 
@@ -109,10 +107,11 @@ Deck Export/Import v1 format:
 ## Validation Rules
 
 - `deckId` must be a positive integer
-- `title` is required
-- `title` must be 120 characters or fewer
-- optional `translation` must be 240 characters or fewer
-- optional `definition`, `example`, and `application` must be 600 characters or fewer
+- `front` is required
+- `back` is required
+- `front` must be 120 characters or fewer
+- `back` must be 240 characters or fewer
+- optional `description` and `application` must be 600 characters or fewer
 - optional `imageUri` must be 2048 characters or fewer
 
 ---

@@ -9,11 +9,11 @@ export const PROMPT_MODES = [
 export type PromptMode = (typeof PROMPT_MODES)[number];
 
 export const PROMPT_MODE_LABELS: Record<PromptMode, string> = {
-  title_to_translation: 'Title -> Translation',
-  translation_to_title: 'Translation -> Title',
-  image_to_title: 'Image -> Title',
-  title_to_definition: 'Title -> Definition',
-  title_to_application: 'Title -> Application'
+  title_to_translation: 'Front -> Back',
+  translation_to_title: 'Back -> Front',
+  image_to_title: 'Image -> Front',
+  title_to_definition: 'Front -> Description',
+  title_to_application: 'Front -> Application'
 };
 
 export const STUDY_TECHNIQUE_IDS = [

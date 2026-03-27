@@ -15,7 +15,7 @@ import {
 } from '../core/types/card';
 import { STUDY_PROGRESS_RESULTS } from '../core/types/studyProgress';
 
-const DATABASE_VERSION = 4;
+const DATABASE_VERSION = 5;
 const DECK_COLOR_GLOB = '#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]';
 const DECK_TYPE_SQL = DECK_TYPES.map((type) => `'${type}'`).join(', ');
 const PROMPT_MODE_SQL = PROMPT_MODES.map((mode) => `'${mode}'`).join(', ');
@@ -48,14 +48,12 @@ function getCreateCardsTableSql(): string {
     CREATE TABLE IF NOT EXISTS cards (
       id INTEGER PRIMARY KEY NOT NULL,
       deck_id INTEGER NOT NULL,
-      title TEXT NOT NULL
-        CHECK(length(trim(title)) > 0 AND length(title) <= ${MAX_CARD_TITLE_LENGTH}),
-      translation TEXT
-        CHECK(translation IS NULL OR length(translation) <= ${MAX_CARD_SHORT_TEXT_LENGTH}),
-      definition TEXT
-        CHECK(definition IS NULL OR length(definition) <= ${MAX_CARD_LONG_TEXT_LENGTH}),
-      example TEXT
-        CHECK(example IS NULL OR length(example) <= ${MAX_CARD_LONG_TEXT_LENGTH}),
+      front TEXT NOT NULL
+        CHECK(length(trim(front)) > 0 AND length(front) <= ${MAX_CARD_TITLE_LENGTH}),
+      back TEXT NOT NULL
+        CHECK(length(trim(back)) > 0 AND length(back) <= ${MAX_CARD_SHORT_TEXT_LENGTH}),
+      description TEXT
+        CHECK(description IS NULL OR length(description) <= ${MAX_CARD_LONG_TEXT_LENGTH}),
       application TEXT
         CHECK(application IS NULL OR length(application) <= ${MAX_CARD_LONG_TEXT_LENGTH}),
       image_uri TEXT
@@ -131,6 +129,46 @@ async function migrateDecksV1ToV2(db: SQLiteDatabase): Promise<void> {
   });
 }
 
+async function migrateCardsV4ToV5(db: SQLiteDatabase): Promise<void> {
+  await db.withTransactionAsync(async () => {
+    await db.execAsync('PRAGMA foreign_keys = OFF;');
+    await db.execAsync(`
+      ${getCreateCardsTableSql().replace('CREATE TABLE IF NOT EXISTS cards', 'CREATE TABLE cards_v5')}
+      INSERT INTO cards_v5 (
+        id,
+        deck_id,
+        front,
+        back,
+        description,
+        application,
+        image_uri,
+        created_at,
+        updated_at
+      )
+      SELECT
+        id,
+        deck_id,
+        title,
+        COALESCE(
+          NULLIF(trim(translation), ''),
+          NULLIF(trim(definition), ''),
+          NULLIF(trim(application), ''),
+          title
+        ),
+        definition,
+        application,
+        image_uri,
+        created_at,
+        updated_at
+      FROM cards;
+      DROP TABLE cards;
+      ALTER TABLE cards_v5 RENAME TO cards;
+      ${getCreateCardsDeckCreatedAtIndexSql()}
+      PRAGMA foreign_keys = ON;
+    `);
+  });
+}
+
 export async function migrateDatabaseIfNeeded(db: SQLiteDatabase): Promise<void> {
   await db.execAsync('PRAGMA journal_mode = WAL;');
 
@@ -171,7 +209,12 @@ export async function migrateDatabaseIfNeeded(db: SQLiteDatabase): Promise<void>
       ${getCreateStudyProgressTableSql()}
       ${getCreateStudyProgressCardPromptIndexSql()}
     `);
-    currentVersion = DATABASE_VERSION;
+    currentVersion = 4;
+  }
+
+  if (currentVersion === 4) {
+    await migrateCardsV4ToV5(db);
+    currentVersion = 5;
   }
 
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);

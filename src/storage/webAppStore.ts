@@ -94,21 +94,47 @@ function normalizeCard(candidate: unknown): Card | null {
     return null;
   }
 
-  const card = candidate as Partial<Card>;
+  const card = candidate as Partial<Card> & {
+    title?: string;
+    translation?: string | null;
+    definition?: string | null;
+    example?: string | null;
+  };
   const id = normalizePositiveInteger(card.id, 0);
   const deckId = normalizePositiveInteger(card.deckId, 0);
+  const front =
+    typeof card.front === 'string'
+      ? card.front
+      : typeof card.title === 'string'
+        ? card.title
+        : '';
+  const back =
+    typeof card.back === 'string'
+      ? card.back
+      : typeof card.translation === 'string'
+        ? card.translation
+        : typeof card.definition === 'string'
+          ? card.definition
+          : typeof card.application === 'string'
+            ? card.application
+            : front;
+  const description =
+    typeof card.description === 'string'
+      ? card.description
+      : typeof card.definition === 'string'
+        ? card.definition
+        : null;
 
-  if (id === 0 || deckId === 0 || typeof card.title !== 'string' || card.title.trim().length === 0) {
+  if (id === 0 || deckId === 0 || front.trim().length === 0 || back.trim().length === 0) {
     return null;
   }
 
   return {
     id,
     deckId,
-    title: card.title,
-    translation: typeof card.translation === 'string' ? card.translation : null,
-    definition: typeof card.definition === 'string' ? card.definition : null,
-    example: typeof card.example === 'string' ? card.example : null,
+    front,
+    back,
+    description,
     application: typeof card.application === 'string' ? card.application : null,
     imageUri: typeof card.imageUri === 'string' ? card.imageUri : null,
     createdAt: normalizeTimestamp(card.createdAt),

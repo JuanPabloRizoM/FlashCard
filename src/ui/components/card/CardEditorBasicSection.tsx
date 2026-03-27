@@ -3,20 +3,20 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors, spacing, typography } from '../../theme';
 
 type CardEditorBasicSectionProps = {
-  draftTitle: string;
-  draftTranslation: string;
+  draftFront: string;
+  draftBack: string;
   hasError: boolean;
-  onDraftTitleChange: (value: string) => void;
-  onDraftTranslationChange: (value: string) => void;
+  onDraftFrontChange: (value: string) => void;
+  onDraftBackChange: (value: string) => void;
   onSubmit: () => Promise<void>;
 };
 
 export function CardEditorBasicSection({
-  draftTitle,
-  draftTranslation,
+  draftFront,
+  draftBack,
   hasError,
-  onDraftTitleChange,
-  onDraftTranslationChange,
+  onDraftFrontChange,
+  onDraftBackChange,
   onSubmit
 }: CardEditorBasicSectionProps) {
   return (
@@ -30,7 +30,7 @@ export function CardEditorBasicSection({
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
-        onChangeText={onDraftTitleChange}
+        onChangeText={onDraftFrontChange}
         onSubmitEditing={() => {
           void onSubmit();
         }}
@@ -38,18 +38,18 @@ export function CardEditorBasicSection({
         placeholderTextColor={colors.muted}
         returnKeyType="next"
         style={[styles.input, hasError ? styles.inputError : null]}
-        value={draftTitle}
+        value={draftFront}
       />
 
       <Text style={styles.label}>Back</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
-        onChangeText={onDraftTranslationChange}
+        onChangeText={onDraftBackChange}
         placeholder="Answer"
         placeholderTextColor={colors.muted}
         style={styles.input}
-        value={draftTranslation}
+        value={draftBack}
       />
     </View>
   );

@@ -64,11 +64,11 @@ Current prompt modes:
 Prompt modes are only available when the required card fields exist.
 
 Examples:
-- `title_to_translation` requires `title` and `translation`
-- `translation_to_title` requires `translation` and `title`
-- `image_to_title` requires `imageUri` and `title`
-- `title_to_definition` requires `title` and `definition`
-- `title_to_application` requires `title` and `application`
+- `title_to_translation` requires `front` and `back`
+- `translation_to_title` requires `back` and `front`
+- `image_to_title` requires `imageUri` and `front`
+- `title_to_definition` requires `front` and `description`
+- `title_to_application` requires `front` and `application`
 
 Cards without a valid prompt mode for the selected technique are skipped safely.
 
@@ -131,12 +131,11 @@ Outside the Study screen, the app now also shows:
 - prompt-mode coverage counts and percentages
 - technique availability hints
 - soft card warnings for missing study fields
-- real-time card editor guidance for prompt support and technique usefulness
+- real-time card editor guidance for prompt support
 
 In the current card editor flow, the app now previews:
 - which prompt modes the draft card already supports
 - which fields are still missing for stronger coverage
-- whether `Basic Review`, `Reverse Review`, and `Mixed Recall` will be useful or unsupported
 
 Current answer processing tracks:
 - current item index

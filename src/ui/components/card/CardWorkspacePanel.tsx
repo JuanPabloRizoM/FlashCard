@@ -13,9 +13,9 @@ type CardWorkspacePanelProps = {
   isEditorLocked: boolean;
   isImportLocked: boolean;
   canSubmit: boolean;
-  draftTitle: string;
-  draftTranslation: string;
-  draftDefinition: string;
+  draftFront: string;
+  draftBack: string;
+  draftDescription: string;
   draftApplication: string;
   draftImageUri: string;
   draftStudyPreview: CardEditorStudyPreviewType;
@@ -30,9 +30,9 @@ type CardWorkspacePanelProps = {
   deckImportResultMessage: string | null;
   isImportSubmitting: boolean;
   isDeckImportSubmitting: boolean;
-  onDraftTitleChange: (value: string) => void;
-  onDraftTranslationChange: (value: string) => void;
-  onDraftDefinitionChange: (value: string) => void;
+  onDraftFrontChange: (value: string) => void;
+  onDraftBackChange: (value: string) => void;
+  onDraftDescriptionChange: (value: string) => void;
   onDraftApplicationChange: (value: string) => void;
   onDraftImageUriChange: (value: string) => void;
   onSaveCard: () => Promise<void>;
@@ -52,9 +52,9 @@ export function CardWorkspacePanel({
   isEditorLocked,
   isImportLocked,
   canSubmit,
-  draftTitle,
-  draftTranslation,
-  draftDefinition,
+  draftFront,
+  draftBack,
+  draftDescription,
   draftApplication,
   draftImageUri,
   draftStudyPreview,
@@ -69,9 +69,9 @@ export function CardWorkspacePanel({
   deckImportResultMessage,
   isImportSubmitting,
   isDeckImportSubmitting,
-  onDraftTitleChange,
-  onDraftTranslationChange,
-  onDraftDefinitionChange,
+  onDraftFrontChange,
+  onDraftBackChange,
+  onDraftDescriptionChange,
   onDraftApplicationChange,
   onDraftImageUriChange,
   onSaveCard,
@@ -116,19 +116,19 @@ export function CardWorkspacePanel({
         <CardEditorPanel
           canSubmit={canSubmit && !isImportSubmitting}
           draftApplication={draftApplication}
-          draftDefinition={draftDefinition}
+          draftDescription={draftDescription}
           draftImageUri={draftImageUri}
-          draftTitle={draftTitle}
-          draftTranslation={draftTranslation}
+          draftFront={draftFront}
+          draftBack={draftBack}
           formError={formError}
           isSubmitting={isEditorLocked}
           mode={editingCardId == null ? 'create' : 'edit'}
           onCancelEditing={editingCardId != null ? onCancelEditing : undefined}
           onDraftApplicationChange={onDraftApplicationChange}
-          onDraftDefinitionChange={onDraftDefinitionChange}
+          onDraftDescriptionChange={onDraftDescriptionChange}
           onDraftImageUriChange={onDraftImageUriChange}
-          onDraftTitleChange={onDraftTitleChange}
-          onDraftTranslationChange={onDraftTranslationChange}
+          onDraftFrontChange={onDraftFrontChange}
+          onDraftBackChange={onDraftBackChange}
           saveFeedbackMessage={saveFeedbackMessage}
           saveFeedbackTick={saveFeedbackTick}
           onSubmit={onSaveCard}

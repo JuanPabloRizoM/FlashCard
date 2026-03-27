@@ -1,16 +1,10 @@
 import type { Card } from '../../core/models/Card';
 import { PromptModeResolver } from '../../engine/PromptModeResolver';
-import {
-  PROMPT_MODES,
-  PROMPT_MODE_LABELS,
-  STUDY_TECHNIQUE_LABELS,
-  type PromptMode,
-  type StudyTechniqueId
-} from '../../core/types/study';
+import { PROMPT_MODES, PROMPT_MODE_LABELS, type PromptMode } from '../../core/types/study';
 
 export type StudyInsightCardInput = Pick<
   Card,
-  'title' | 'translation' | 'definition' | 'application' | 'imageUri'
+  'front' | 'back' | 'description' | 'application' | 'imageUri'
 >;
 
 export type CardStudyFeedback = {
@@ -30,35 +24,20 @@ export type CardPromptSupportPreview = {
   guidance: string;
 };
 
-export type CardTechniquePreview = {
-  techniqueId: StudyTechniqueId;
-  label: string;
-  status: 'ready' | 'limited' | 'unavailable';
-  message: string;
-};
-
 export type CardEditorStudyPreview = {
   feedback: CardStudyFeedback;
   promptSupport: CardPromptSupportPreview[];
-  techniqueSupport: CardTechniquePreview[];
 };
 
 const promptModeResolver = new PromptModeResolver();
-
-const TECHNIQUE_PROMPT_MODES: Record<StudyTechniqueId, PromptMode[]> = {
-  basic_review: ['title_to_translation', 'title_to_definition', 'title_to_application'],
-  reverse_review: ['translation_to_title', 'image_to_title'],
-  mixed_recall: [...PROMPT_MODES]
-};
 
 function toResolverCard(card: StudyInsightCardInput): Card {
   return {
     id: 0,
     deckId: 0,
-    title: card.title,
-    translation: card.translation,
-    definition: card.definition,
-    example: null,
+    front: card.front,
+    back: card.back,
+    description: card.description,
     application: card.application,
     imageUri: card.imageUri,
     createdAt: '',
@@ -69,12 +48,12 @@ function toResolverCard(card: StudyInsightCardInput): Card {
 function getMissingFieldBadges(card: StudyInsightCardInput): string[] {
   const badges: string[] = [];
 
-  if (card.translation == null) {
-    badges.push('Missing translation');
+  if (card.back.length === 0) {
+    badges.push('Missing back');
   }
 
-  if (card.definition == null) {
-    badges.push('Missing definition');
+  if (card.description == null) {
+    badges.push('Missing description');
   }
 
   if (card.application == null) {
@@ -97,16 +76,16 @@ function getPromptSupportGuidance(
     return 'Supported now';
   }
 
-  if (card.title.length === 0) {
-    return 'Add title';
+  if (card.front.length === 0) {
+    return 'Add front';
   }
 
   switch (mode) {
     case 'title_to_translation':
     case 'translation_to_title':
-      return 'Add translation';
+      return 'Add back';
     case 'title_to_definition':
-      return 'Add definition';
+      return 'Add description';
     case 'title_to_application':
       return 'Add application';
     case 'image_to_title':
@@ -114,40 +93,6 @@ function getPromptSupportGuidance(
     default:
       return 'Complete more fields';
   }
-}
-
-function getCardTechniquePreview(
-  techniqueId: StudyTechniqueId,
-  supportedPromptModes: PromptMode[]
-): CardTechniquePreview {
-  const supportedTechniqueModes = TECHNIQUE_PROMPT_MODES[techniqueId].filter((mode) =>
-    supportedPromptModes.includes(mode)
-  );
-
-  if (supportedTechniqueModes.length === 0) {
-    return {
-      techniqueId,
-      label: STUDY_TECHNIQUE_LABELS[techniqueId],
-      status: 'unavailable',
-      message: 'Not supported yet'
-    };
-  }
-
-  if (supportedTechniqueModes.length === 1) {
-    return {
-      techniqueId,
-      label: STUDY_TECHNIQUE_LABELS[techniqueId],
-      status: 'limited',
-      message: 'Only one prompt path'
-    };
-  }
-
-  return {
-    techniqueId,
-    label: STUDY_TECHNIQUE_LABELS[techniqueId],
-    status: 'ready',
-    message: 'Useful variety'
-  };
 }
 
 export function buildCardStudyFeedback(card: StudyInsightCardInput): CardStudyFeedback {
@@ -184,7 +129,7 @@ export function buildCardStudyFeedback(card: StudyInsightCardInput): CardStudyFe
     supportedPromptCount,
     readiness: 'poor',
     readinessLabel: 'Not ready',
-    readinessMessage: 'Add a translation, definition, application, or image to make this card studyable.',
+    readinessMessage: 'Add a back, description, application, or image to make this card studyable.',
     missingFieldBadges: getMissingFieldBadges(card)
   };
 }
@@ -203,9 +148,6 @@ export function buildCardEditorStudyPreview(card: StudyInsightCardInput): CardEd
         mode,
         feedback.supportedPromptModes.includes(mode)
       )
-    })),
-    techniqueSupport: (Object.keys(TECHNIQUE_PROMPT_MODES) as StudyTechniqueId[]).map((techniqueId) =>
-      getCardTechniquePreview(techniqueId, feedback.supportedPromptModes)
-    )
+    }))
   };
 }

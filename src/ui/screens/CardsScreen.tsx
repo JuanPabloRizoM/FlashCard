@@ -43,9 +43,9 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
   const {
     cards,
     editingCardId,
-    draftTitle,
-    draftTranslation,
-    draftDefinition,
+    draftFront,
+    draftBack,
+    draftDescription,
     draftApplication,
     draftImageUri,
     draftStudyPreview,
@@ -60,9 +60,9 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     saveFeedbackMessage,
     saveFeedbackTick,
     canSubmit,
-    onDraftTitleChange,
-    onDraftTranslationChange,
-    onDraftDefinitionChange,
+    onDraftFrontChange,
+    onDraftBackChange,
+    onDraftDescriptionChange,
     onDraftApplicationChange,
     onDraftImageUriChange,
     onImportTextChange,
@@ -216,11 +216,11 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           deckImportResultMessage={deckImportResultMessage}
           deckImportText={deckImportText}
           draftApplication={draftApplication}
-          draftDefinition={draftDefinition}
+          draftDescription={draftDescription}
           draftImageUri={draftImageUri}
           draftStudyPreview={draftStudyPreview}
-          draftTitle={draftTitle}
-          draftTranslation={draftTranslation}
+          draftFront={draftFront}
+          draftBack={draftBack}
           editingCardId={editingCardId}
           formError={formError}
           importPreview={importPreview}
@@ -236,10 +236,10 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           onClearImport={onClearImport}
           onDeckImportTextChange={onDeckImportTextChange}
           onDraftApplicationChange={onDraftApplicationChange}
-          onDraftDefinitionChange={onDraftDefinitionChange}
+          onDraftDescriptionChange={onDraftDescriptionChange}
           onDraftImageUriChange={onDraftImageUriChange}
-          onDraftTitleChange={onDraftTitleChange}
-          onDraftTranslationChange={onDraftTranslationChange}
+          onDraftFrontChange={onDraftFrontChange}
+          onDraftBackChange={onDraftBackChange}
           onImportCards={onImportCards}
           onImportDeck={onImportDeck}
           onImportTextChange={onImportTextChange}

@@ -88,7 +88,7 @@ function getDeckReadiness(
     return {
       readiness: 'needs_improvement',
       readinessLabel: 'Needs improvement',
-      readinessMessage: 'Some cards are studyable, but missing fields still limit technique coverage.'
+      readinessMessage: 'Some cards are studyable, but missing fields still limit prompt coverage.'
     };
   }
 

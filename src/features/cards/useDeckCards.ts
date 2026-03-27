@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-
 import type { Card } from '../../core/models/Card';
 import type { CardEditorStudyPreview } from '../study/cardStudyPreview';
 import { buildCardEditorStudyPreview } from '../study/cardStudyPreview';
 import {
   getFirstCardValidationError,
   normalizeCreateCardInput,
-  normalizeCardTitle,
+  normalizeCardFront,
   validateCreateCardInput
 } from '../../services/validation/cardValidation';
 import { createCard, listCardsByDeck, updateCard } from '../../storage/repositories/cardRepository';
@@ -17,9 +16,9 @@ import type { CardImportPreview } from './cardImport';
 type UseDeckCardsResult = {
   cards: Card[];
   editingCardId: number | null;
-  draftTitle: string;
-  draftTranslation: string;
-  draftDefinition: string;
+  draftFront: string;
+  draftBack: string;
+  draftDescription: string;
   draftApplication: string;
   draftImageUri: string;
   draftStudyPreview: CardEditorStudyPreview;
@@ -34,9 +33,9 @@ type UseDeckCardsResult = {
   saveFeedbackMessage: string | null;
   saveFeedbackTick: number;
   canSubmit: boolean;
-  onDraftTitleChange: (value: string) => void;
-  onDraftTranslationChange: (value: string) => void;
-  onDraftDefinitionChange: (value: string) => void;
+  onDraftFrontChange: (value: string) => void;
+  onDraftBackChange: (value: string) => void;
+  onDraftDescriptionChange: (value: string) => void;
   onDraftApplicationChange: (value: string) => void;
   onDraftImageUriChange: (value: string) => void;
   onImportTextChange: (value: string) => void;
@@ -50,9 +49,9 @@ type UseDeckCardsResult = {
 export function useDeckCards(deckId: number | null): UseDeckCardsResult {
   const [cards, setCards] = useState<Card[]>([]);
   const [editingCardId, setEditingCardId] = useState<number | null>(null);
-  const [draftTitle, setDraftTitle] = useState('');
-  const [draftTranslation, setDraftTranslation] = useState('');
-  const [draftDefinition, setDraftDefinition] = useState('');
+  const [draftFront, setDraftFront] = useState('');
+  const [draftBack, setDraftBack] = useState('');
+  const [draftDescription, setDraftDescription] = useState('');
   const [draftApplication, setDraftApplication] = useState('');
   const [draftImageUri, setDraftImageUri] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
@@ -66,20 +65,20 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
       buildCardEditorStudyPreview(
         normalizeCreateCardInput({
           deckId: deckId ?? 0,
-          title: draftTitle,
-          translation: draftTranslation,
-          definition: draftDefinition,
+          front: draftFront,
+          back: draftBack,
+          description: draftDescription,
           application: draftApplication,
           imageUri: draftImageUri
         })
       ),
-    [deckId, draftApplication, draftDefinition, draftImageUri, draftTitle, draftTranslation]
+    [deckId, draftApplication, draftDescription, draftFront, draftBack, draftImageUri]
   );
   const resetDraftState = useCallback(() => {
     setEditingCardId(null);
-    setDraftTitle('');
-    setDraftTranslation('');
-    setDraftDefinition('');
+    setDraftFront('');
+    setDraftBack('');
+    setDraftDescription('');
     setDraftApplication('');
     setDraftImageUri('');
     setFormError(null);
@@ -175,9 +174,9 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     const validationError = getFirstCardValidationError(
       validateCreateCardInput({
         deckId,
-        title: draftTitle,
-        translation: draftTranslation,
-        definition: draftDefinition,
+        front: draftFront,
+        back: draftBack,
+        description: draftDescription,
         application: draftApplication,
         imageUri: draftImageUri
       })
@@ -194,9 +193,9 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
       if (editingCardId == null) {
         const newCard = await createCard({
           deckId,
-          title: draftTitle,
-          translation: draftTranslation,
-          definition: draftDefinition,
+          front: draftFront,
+          back: draftBack,
+          description: draftDescription,
           application: draftApplication,
           imageUri: draftImageUri
         });
@@ -206,9 +205,9 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
         const updatedCard = await updateCard({
           id: editingCardId,
           deckId,
-          title: draftTitle,
-          translation: draftTranslation,
-          definition: draftDefinition,
+          front: draftFront,
+          back: draftBack,
+          description: draftDescription,
           application: draftApplication,
           imageUri: draftImageUri
         });
@@ -242,9 +241,9 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
   return {
     cards,
     editingCardId,
-    draftTitle,
-    draftTranslation,
-    draftDefinition,
+    draftFront,
+    draftBack,
+    draftDescription,
     draftApplication,
     draftImageUri,
     draftStudyPreview,
@@ -258,17 +257,21 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     isImportSubmitting,
     saveFeedbackMessage,
     saveFeedbackTick,
-    canSubmit: deckId != null && normalizeCardTitle(draftTitle).length > 0 && !isSubmitting,
-    onDraftTitleChange: (value) => {
-      setDraftTitle(value);
+    canSubmit:
+      deckId != null &&
+      normalizeCardFront(draftFront).length > 0 &&
+      draftBack.trim().length > 0 &&
+      !isSubmitting,
+    onDraftFrontChange: (value) => {
+      setDraftFront(value);
       clearFormError();
     },
-    onDraftTranslationChange: (value) => {
-      setDraftTranslation(value);
+    onDraftBackChange: (value) => {
+      setDraftBack(value);
       clearFormError();
     },
-    onDraftDefinitionChange: (value) => {
-      setDraftDefinition(value);
+    onDraftDescriptionChange: (value) => {
+      setDraftDescription(value);
       clearFormError();
     },
     onDraftApplicationChange: (value) => {
@@ -285,9 +288,9 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     onClearImport,
     onEditCard: (card) => {
       setEditingCardId(card.id);
-      setDraftTitle(card.title);
-      setDraftTranslation(card.translation ?? '');
-      setDraftDefinition(card.definition ?? '');
+      setDraftFront(card.front);
+      setDraftBack(card.back);
+      setDraftDescription(card.description ?? '');
       setDraftApplication(card.application ?? '');
       setDraftImageUri(card.imageUri ?? '');
       setFormError(null);

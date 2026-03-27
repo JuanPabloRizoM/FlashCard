@@ -79,11 +79,10 @@ function normalizeDeckImportCards(rows: CardImportPreviewRow[]): ImportableDeckC
     }
 
     cards.push({
-      title: row.input.title,
-      translation: row.input.translation,
-      definition: row.input.definition,
+      front: row.input.front,
+      back: row.input.back,
+      description: row.input.description,
       application: row.input.application,
-      example: row.input.example,
       imageUri: row.input.imageUri
     });
 
@@ -92,10 +91,10 @@ function normalizeDeckImportCards(rows: CardImportPreviewRow[]): ImportableDeckC
 }
 
 function buildCardExportLine(card: Card): string {
-  const fields = [card.title, card.translation ?? ''];
+  const fields = [card.front, card.back];
 
-  if (card.definition != null || card.application != null) {
-    fields.push(card.definition ?? '');
+  if (card.description != null || card.application != null) {
+    fields.push(card.description ?? '');
   }
 
   if (card.application != null) {

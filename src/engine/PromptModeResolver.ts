@@ -12,32 +12,32 @@ type PromptFactory = {
 const PROMPT_FACTORIES: PromptFactory[] = [
   {
     mode: 'title_to_translation',
-    isSupported: (card) => card.title.length > 0 && card.translation != null,
-    buildPrompt: (card) => ({ kind: 'text', label: 'Title', value: card.title }),
-    buildResponse: (card) => ({ label: 'Translation', value: card.translation ?? '' })
+    isSupported: (card) => card.front.length > 0 && card.back.length > 0,
+    buildPrompt: (card) => ({ kind: 'text', label: 'Front', value: card.front }),
+    buildResponse: (card) => ({ label: 'Back', value: card.back })
   },
   {
     mode: 'translation_to_title',
-    isSupported: (card) => card.translation != null && card.title.length > 0,
-    buildPrompt: (card) => ({ kind: 'text', label: 'Translation', value: card.translation ?? '' }),
-    buildResponse: (card) => ({ label: 'Title', value: card.title })
+    isSupported: (card) => card.back.length > 0 && card.front.length > 0,
+    buildPrompt: (card) => ({ kind: 'text', label: 'Back', value: card.back }),
+    buildResponse: (card) => ({ label: 'Front', value: card.front })
   },
   {
     mode: 'image_to_title',
-    isSupported: (card) => card.imageUri != null && card.title.length > 0,
+    isSupported: (card) => card.imageUri != null && card.front.length > 0,
     buildPrompt: (card) => ({ kind: 'image', label: 'Image', value: card.imageUri ?? '' }),
-    buildResponse: (card) => ({ label: 'Title', value: card.title })
+    buildResponse: (card) => ({ label: 'Front', value: card.front })
   },
   {
     mode: 'title_to_definition',
-    isSupported: (card) => card.title.length > 0 && card.definition != null,
-    buildPrompt: (card) => ({ kind: 'text', label: 'Title', value: card.title }),
-    buildResponse: (card) => ({ label: 'Definition', value: card.definition ?? '' })
+    isSupported: (card) => card.front.length > 0 && card.description != null,
+    buildPrompt: (card) => ({ kind: 'text', label: 'Front', value: card.front }),
+    buildResponse: (card) => ({ label: 'Description', value: card.description ?? '' })
   },
   {
     mode: 'title_to_application',
-    isSupported: (card) => card.title.length > 0 && card.application != null,
-    buildPrompt: (card) => ({ kind: 'text', label: 'Title', value: card.title }),
+    isSupported: (card) => card.front.length > 0 && card.application != null,
+    buildPrompt: (card) => ({ kind: 'text', label: 'Front', value: card.front }),
     buildResponse: (card) => ({ label: 'Application', value: card.application ?? '' })
   }
 ];

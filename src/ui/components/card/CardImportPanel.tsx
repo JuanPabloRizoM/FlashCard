@@ -63,7 +63,7 @@ export function CardImportPanel({
       }}
       onClearImport={onClearImport}
       onImportTextChange={onImportTextChange}
-      subtitle={selectedDeckName != null ? `Paste lines for ${selectedDeckName}.` : 'Choose a deck first.'}
+      subtitle={selectedDeckName != null ? `Paste front | back lines for ${selectedDeckName}.` : 'Choose a deck first.'}
       title="Import cards"
     >
       {preview.hasContent ? (

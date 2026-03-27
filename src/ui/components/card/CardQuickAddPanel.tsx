@@ -4,41 +4,41 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors, spacing, typography } from '../../theme';
 
 type CardQuickAddPanelProps = {
-  draftTitle: string;
-  draftTranslation: string;
+  draftFront: string;
+  draftBack: string;
   formError: string | null;
   saveFeedbackMessage: string | null;
   saveFeedbackTick: number;
   canSubmit: boolean;
   isSubmitting: boolean;
-  onDraftTitleChange: (value: string) => void;
-  onDraftTranslationChange: (value: string) => void;
+  onDraftFrontChange: (value: string) => void;
+  onDraftBackChange: (value: string) => void;
   onOpenFullEditor: () => void;
   onSubmit: () => Promise<void>;
 };
 
 export function CardQuickAddPanel({
-  draftTitle,
-  draftTranslation,
+  draftFront,
+  draftBack,
   formError,
   saveFeedbackMessage,
   saveFeedbackTick,
   canSubmit,
   isSubmitting,
-  onDraftTitleChange,
-  onDraftTranslationChange,
+  onDraftFrontChange,
+  onDraftBackChange,
   onOpenFullEditor,
   onSubmit
 }: CardQuickAddPanelProps) {
-  const titleInputRef = useRef<TextInput | null>(null);
-  const translationInputRef = useRef<TextInput | null>(null);
+  const frontInputRef = useRef<TextInput | null>(null);
+  const backInputRef = useRef<TextInput | null>(null);
 
   useEffect(() => {
     if (saveFeedbackTick === 0) {
       return;
     }
 
-    titleInputRef.current?.focus();
+    frontInputRef.current?.focus();
   }, [saveFeedbackTick]);
 
   return (
@@ -61,24 +61,24 @@ export function CardQuickAddPanel({
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
-        ref={titleInputRef}
-        onChangeText={onDraftTitleChange}
+        ref={frontInputRef}
+        onChangeText={onDraftFrontChange}
         onSubmitEditing={() => {
-          translationInputRef.current?.focus();
+          backInputRef.current?.focus();
         }}
         placeholder="Question or prompt"
         placeholderTextColor={colors.muted}
         returnKeyType="next"
         style={[styles.input, formError != null ? styles.inputError : null]}
-        value={draftTitle}
+        value={draftFront}
       />
 
       <Text style={styles.label}>Back</Text>
       <TextInput
         autoCapitalize="sentences"
         autoCorrect={false}
-        ref={translationInputRef}
-        onChangeText={onDraftTranslationChange}
+        ref={backInputRef}
+        onChangeText={onDraftBackChange}
         onSubmitEditing={() => {
           void onSubmit();
         }}
@@ -86,7 +86,7 @@ export function CardQuickAddPanel({
         placeholderTextColor={colors.muted}
         returnKeyType="done"
         style={styles.input}
-        value={draftTranslation}
+        value={draftBack}
       />
 
       {formError != null ? <Text style={styles.formError}>{formError}</Text> : null}

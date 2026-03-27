@@ -23,11 +23,11 @@
 ---
 
 [2026-03-27]
-- Change: Simplified the Cards authoring UI by removing technique-specific messaging from the editor preview and relabeling the primary card fields from Title/Translation to Front/Back.
-- Reason: Card creation should feel universal and content-focused instead of mixing in study-methodology language.
-- Files: src/ui/components/card/CardEditorStudyPreview.tsx, src/ui/components/card/CardQuickAddPanel.tsx, src/ui/components/card/CardEditorBasicSection.tsx, src/ui/components/card/CardEditorPanel.tsx
-- Risk: Low
-- Notes: Internal data structures still use the existing title/translation fields; this pass is visible UI language only.
+- Change: Refactored the real card model from `title/translation/definition/example` to `front/back/description`, migrated SQLite card storage safely, and aligned authoring/import/export flows to the new universal contract.
+- Reason: FlashCards should use a general-purpose flashcard model instead of a language-specific translation model.
+- Files: src/core/models/Card.ts, src/core/types/card.ts, src/services/validation/cardValidation.ts, src/storage/migrations.ts, src/storage/repositories/cardRepository.ts, src/storage/repositories/webCardRepository.ts, src/storage/webAppStore.ts, src/storage/repositories/deckRepository.ts, src/storage/repositories/webDeckRepository.ts, src/features/cards/useDeckCards.ts, src/features/cards/cardImport.ts, src/features/decks/deckPortability.ts, src/engine/PromptModeResolver.ts, src/features/study/cardStudyPreview.ts, src/core/types/study.ts, src/ui/components/card/*
+- Risk: Medium
+- Notes: Legacy cards migrate with an explicit compatibility bridge that derives `back` from existing `translation`, then `definition`, then `application`, then `title` if needed so old data remains usable under the new required front/back contract.
 
 ---
 

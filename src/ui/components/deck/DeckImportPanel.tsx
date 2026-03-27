@@ -82,7 +82,7 @@ export function DeckImportPanel({
       {preview.headerError != null ? <Text style={styles.errorText}>{preview.headerError}</Text> : null}
       {importResultMessage != null ? <Text style={styles.resultText}>{importResultMessage}</Text> : null}
       {preview.cardPreview.hasContent ? (
-        <TextImportPreviewList emptyValidDetailLabel="Title only" rows={preview.cardPreview.rows} />
+        <TextImportPreviewList emptyValidDetailLabel="Front and back only" rows={preview.cardPreview.rows} />
       ) : null}
       {statusText != null ? <Text style={styles.supportText}>{statusText}</Text> : null}
     </TextImportWorkspace>

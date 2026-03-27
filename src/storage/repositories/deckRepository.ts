@@ -170,22 +170,20 @@ export async function createDeckWithImportedCards(
           `
             INSERT INTO cards (
               deck_id,
-              title,
-              translation,
-              definition,
-              example,
+              front,
+              back,
+              description,
               application,
               image_uri,
               created_at,
               updated_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `,
           deckId,
-          cardInput.title,
-          cardInput.translation,
-          cardInput.definition,
-          cardInput.example,
+          cardInput.front,
+          cardInput.back,
+          cardInput.description,
           cardInput.application,
           cardInput.imageUri,
           timestamp,

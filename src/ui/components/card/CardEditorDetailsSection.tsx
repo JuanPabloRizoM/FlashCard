@@ -4,22 +4,22 @@ import { colors, spacing, typography } from '../../theme';
 
 type CardEditorDetailsSectionProps = {
   isExpanded: boolean;
-  draftDefinition: string;
+  draftDescription: string;
   draftApplication: string;
   draftImageUri: string;
   onToggleExpanded: () => void;
-  onDraftDefinitionChange: (value: string) => void;
+  onDraftDescriptionChange: (value: string) => void;
   onDraftApplicationChange: (value: string) => void;
   onDraftImageUriChange: (value: string) => void;
 };
 
 export function CardEditorDetailsSection({
   isExpanded,
-  draftDefinition,
+  draftDescription,
   draftApplication,
   draftImageUri,
   onToggleExpanded,
-  onDraftDefinitionChange,
+  onDraftDescriptionChange,
   onDraftApplicationChange,
   onDraftImageUriChange
 }: CardEditorDetailsSectionProps) {
@@ -28,7 +28,7 @@ export function CardEditorDetailsSection({
       <View style={styles.optionalHeader}>
         <View style={styles.optionalCopy}>
           <Text style={styles.sectionEyebrow}>More details</Text>
-          <Text style={styles.sectionHint}>Definition, usage, and image</Text>
+          <Text style={styles.sectionHint}>Description, application, and image</Text>
         </View>
         <Pressable
           accessibilityRole="button"
@@ -41,17 +41,17 @@ export function CardEditorDetailsSection({
 
       {isExpanded ? (
         <View style={styles.optionalFields}>
-          <Text style={styles.label}>Definition</Text>
+          <Text style={styles.label}>Description</Text>
           <TextInput
             autoCapitalize="sentences"
             autoCorrect={false}
             multiline
-            onChangeText={onDraftDefinitionChange}
+            onChangeText={onDraftDescriptionChange}
             placeholder="Move quickly on foot."
             placeholderTextColor={colors.muted}
             style={[styles.input, styles.definitionInput]}
             textAlignVertical="top"
-            value={draftDefinition}
+            value={draftDescription}
           />
 
           <Text style={styles.label}>Application</Text>

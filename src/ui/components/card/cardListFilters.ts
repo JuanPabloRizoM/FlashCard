@@ -10,7 +10,7 @@ export const CARD_LIST_FILTER_LABELS: Record<CardListFilter, string> = {
 };
 
 export function getCardCompletenessLevel(card: Card): 'basic' | 'expanded' | 'detailed' {
-  const detailCount = [card.definition, card.application, card.imageUri].filter(
+  const detailCount = [card.description, card.application, card.imageUri].filter(
     (value) => value != null && value.trim().length > 0
   ).length;
 

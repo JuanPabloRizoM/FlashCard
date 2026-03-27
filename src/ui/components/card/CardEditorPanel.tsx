@@ -10,9 +10,9 @@ import { colors, spacing, typography } from '../../theme';
 
 type CardEditorPanelProps = {
   mode: 'create' | 'edit';
-  draftTitle: string;
-  draftTranslation: string;
-  draftDefinition: string;
+  draftFront: string;
+  draftBack: string;
+  draftDescription: string;
   draftApplication: string;
   draftImageUri: string;
   preview: CardEditorStudyPreviewType;
@@ -21,9 +21,9 @@ type CardEditorPanelProps = {
   saveFeedbackTick: number;
   canSubmit: boolean;
   isSubmitting: boolean;
-  onDraftTitleChange: (value: string) => void;
-  onDraftTranslationChange: (value: string) => void;
-  onDraftDefinitionChange: (value: string) => void;
+  onDraftFrontChange: (value: string) => void;
+  onDraftBackChange: (value: string) => void;
+  onDraftDescriptionChange: (value: string) => void;
   onDraftApplicationChange: (value: string) => void;
   onDraftImageUriChange: (value: string) => void;
   onSubmit: () => Promise<void>;
@@ -32,9 +32,9 @@ type CardEditorPanelProps = {
 
 export function CardEditorPanel({
   mode,
-  draftTitle,
-  draftTranslation,
-  draftDefinition,
+  draftFront,
+  draftBack,
+  draftDescription,
   draftApplication,
   draftImageUri,
   preview,
@@ -43,9 +43,9 @@ export function CardEditorPanel({
   saveFeedbackTick,
   canSubmit,
   isSubmitting,
-  onDraftTitleChange,
-  onDraftTranslationChange,
-  onDraftDefinitionChange,
+  onDraftFrontChange,
+  onDraftBackChange,
+  onDraftDescriptionChange,
   onDraftApplicationChange,
   onDraftImageUriChange,
   onSubmit,
@@ -55,10 +55,10 @@ export function CardEditorPanel({
   const [editorVariant, setEditorVariant] = useState<'quick' | 'full'>(isEditing ? 'full' : 'quick');
   const hasOptionalContent = useMemo(
     () =>
-      draftDefinition.trim().length > 0 ||
+      draftDescription.trim().length > 0 ||
       draftApplication.trim().length > 0 ||
       draftImageUri.trim().length > 0,
-    [draftApplication, draftDefinition, draftImageUri]
+    [draftApplication, draftDescription, draftImageUri]
   );
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(isEditing || hasOptionalContent);
 
@@ -80,12 +80,12 @@ export function CardEditorPanel({
     return (
       <CardQuickAddPanel
         canSubmit={canSubmit}
-        draftTitle={draftTitle}
-        draftTranslation={draftTranslation}
+        draftFront={draftFront}
+        draftBack={draftBack}
         formError={formError}
         isSubmitting={isSubmitting}
-        onDraftTitleChange={onDraftTitleChange}
-        onDraftTranslationChange={onDraftTranslationChange}
+        onDraftFrontChange={onDraftFrontChange}
+        onDraftBackChange={onDraftBackChange}
         onOpenFullEditor={() => {
           setEditorVariant('full');
         }}
@@ -127,21 +127,21 @@ export function CardEditorPanel({
       </View>
 
       <CardEditorBasicSection
-        draftTitle={draftTitle}
-        draftTranslation={draftTranslation}
+        draftFront={draftFront}
+        draftBack={draftBack}
         hasError={formError != null}
-        onDraftTitleChange={onDraftTitleChange}
-        onDraftTranslationChange={onDraftTranslationChange}
+        onDraftFrontChange={onDraftFrontChange}
+        onDraftBackChange={onDraftBackChange}
         onSubmit={onSubmit}
       />
 
       <CardEditorDetailsSection
         draftApplication={draftApplication}
-        draftDefinition={draftDefinition}
+        draftDescription={draftDescription}
         draftImageUri={draftImageUri}
         isExpanded={isDetailsExpanded}
         onDraftApplicationChange={onDraftApplicationChange}
-        onDraftDefinitionChange={onDraftDefinitionChange}
+        onDraftDescriptionChange={onDraftDescriptionChange}
         onDraftImageUriChange={onDraftImageUriChange}
         onToggleExpanded={() => {
           setIsDetailsExpanded((value) => !value);

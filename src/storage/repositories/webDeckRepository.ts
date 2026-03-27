@@ -126,10 +126,9 @@ export async function createDeckWithImportedCards(
     const importedCards = normalizedCardInputs.map((cardInput, index) => ({
       id: currentState.nextCardId + index,
       deckId: nextDeck.id,
-      title: cardInput.title,
-      translation: cardInput.translation,
-      definition: cardInput.definition,
-      example: cardInput.example,
+      front: cardInput.front,
+      back: cardInput.back ?? '',
+      description: cardInput.description,
       application: cardInput.application,
       imageUri: cardInput.imageUri,
       createdAt: timestamp,

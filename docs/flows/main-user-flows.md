@@ -29,8 +29,8 @@
 3. The deck detail view loads cards that belong only to that deck and shows study readiness plus card feedback.
 4. The user taps `Create cards` to open the `Cards` tab with the same deck preselected.
 5. The Cards workspace loads cards for that deck and opens the card editor for create or edit work.
-6. The user enters a required card title and optional supporting fields.
-7. The card editor previews supported prompt modes, technique usefulness, and missing-field guidance in real time without blocking save.
+6. The user enters required `front` and `back` fields plus any optional supporting fields.
+7. The card editor previews supported prompt modes and missing-field guidance in real time without blocking save.
 8. Card input is normalized and validated before save.
 9. The repository verifies the `deckId`, inserts or updates the card in SQLite, and reload-safe persistence is maintained through the deck relation.
 10. The saved card appears immediately in the Cards workspace, and the deck detail card list refreshes when the user returns to the `Decks` tab.

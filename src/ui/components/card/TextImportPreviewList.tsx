@@ -5,9 +5,9 @@ import { colors, spacing, typography } from '../../theme';
 type PreviewRow = {
   lineNumber: number;
   rawLine: string;
-  title: string;
-  translation: string | null;
-  definition: string | null;
+  front: string;
+  back: string | null;
+  description: string | null;
   application: string | null;
   isValid: boolean;
   error?: string | null;
@@ -32,7 +32,7 @@ export function TextImportPreviewList({
       <Text style={styles.previewTitle}>Preview</Text>
       <View style={styles.previewList}>
         {visibleRows.map((row) => {
-          const validDetails = [row.translation, row.definition, row.application].filter(Boolean).join(' | ');
+          const validDetails = [row.back, row.description, row.application].filter(Boolean).join(' | ');
 
           return (
             <View
@@ -41,7 +41,7 @@ export function TextImportPreviewList({
             >
               <Text style={styles.previewLineLabel}>{`Line ${row.lineNumber}`}</Text>
               <Text style={styles.previewMainText}>
-                {row.title.length > 0 ? row.title : row.rawLine.trim() || 'Empty line'}
+                {row.front.length > 0 ? row.front : row.rawLine.trim() || 'Empty line'}
               </Text>
               {row.isValid ? (
                 <Text style={styles.previewDetailText}>{validDetails || emptyValidDetailLabel}</Text>

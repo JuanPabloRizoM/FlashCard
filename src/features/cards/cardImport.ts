@@ -8,9 +8,9 @@ import {
 export type CardImportPreviewRow = {
   lineNumber: number;
   rawLine: string;
-  title: string;
-  translation: string | null;
-  definition: string | null;
+  front: string;
+  back: string | null;
+  description: string | null;
   application: string | null;
   isValid: boolean;
   error: string | null;
@@ -33,11 +33,15 @@ const MAX_IMPORT_FIELDS = 4;
 
 function buildImportError(fields: string[]): string | null {
   if (fields.length < MIN_IMPORT_FIELDS || fields.length > MAX_IMPORT_FIELDS) {
-    return 'Use `title | translation`, with optional `definition | application`, keeping empty fields in order when needed.';
+    return 'Use `front | back`, with optional `description | application`, keeping empty fields in order when needed.';
   }
 
   if (fields[0]?.trim().length === 0) {
-    return 'Title is required.';
+    return 'Front is required.';
+  }
+
+  if (fields[1]?.trim().length === 0) {
+    return 'Back is required.';
   }
 
   return null;
@@ -48,9 +52,9 @@ function buildPreviewRow(rawLine: string, lineNumber: number, deckId: number | n
     return {
       lineNumber,
       rawLine,
-      title: '',
-      translation: null,
-      definition: null,
+      front: '',
+      back: null,
+      description: null,
       application: null,
       isValid: false,
       error: 'Line is empty.',
@@ -65,9 +69,9 @@ function buildPreviewRow(rawLine: string, lineNumber: number, deckId: number | n
     return {
       lineNumber,
       rawLine,
-      title: fields[0] ?? '',
-      translation: fields[1] ?? null,
-      definition: fields[2] ?? null,
+      front: fields[0] ?? '',
+      back: fields[1] ?? null,
+      description: fields[2] ?? null,
       application: fields[3] ?? null,
       isValid: false,
       error: importError,
@@ -79,9 +83,9 @@ function buildPreviewRow(rawLine: string, lineNumber: number, deckId: number | n
     return {
       lineNumber,
       rawLine,
-      title: fields[0] ?? '',
-      translation: fields[1] ?? null,
-      definition: fields[2] ?? null,
+      front: fields[0] ?? '',
+      back: fields[1] ?? null,
+      description: fields[2] ?? null,
       application: fields[3] ?? null,
       isValid: false,
       error: 'Choose a deck before importing cards.',
@@ -91,9 +95,9 @@ function buildPreviewRow(rawLine: string, lineNumber: number, deckId: number | n
 
   const input: CreateCardInput = {
     deckId,
-    title: fields[0] ?? '',
-    translation: fields[1] ?? '',
-    definition: fields[2] ?? '',
+    front: fields[0] ?? '',
+    back: fields[1] ?? '',
+    description: fields[2] ?? '',
     application: fields[3] ?? ''
   };
   const normalizedInput = normalizeCreateCardInput(input);
@@ -102,9 +106,9 @@ function buildPreviewRow(rawLine: string, lineNumber: number, deckId: number | n
   return {
     lineNumber,
     rawLine,
-    title: normalizedInput.title,
-    translation: normalizedInput.translation,
-    definition: normalizedInput.definition,
+    front: normalizedInput.front,
+    back: normalizedInput.back,
+    description: normalizedInput.description,
     application: normalizedInput.application,
     isValid: validationError == null,
     error: validationError,

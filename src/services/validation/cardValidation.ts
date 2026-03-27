@@ -8,24 +8,23 @@ import {
 
 export const INVALID_CARD_DECK_MESSAGE = 'Choose a valid deck before creating cards.';
 export const INVALID_CARD_ID_MESSAGE = 'Choose a valid card before saving changes.';
-export const INVALID_CARD_TITLE_MESSAGE = 'Enter a card title.';
+export const INVALID_CARD_FRONT_MESSAGE = 'Enter the front of the card.';
+export const INVALID_CARD_BACK_MESSAGE = 'Enter the back of the card.';
 
 export type CardValidationErrors = {
   deckId: string | null;
-  title: string | null;
-  translation: string | null;
-  definition: string | null;
-  example: string | null;
+  front: string | null;
+  back: string | null;
+  description: string | null;
   application: string | null;
   imageUri: string | null;
 };
 
 export type NormalizedCreateCardInput = {
   deckId: number;
-  title: string;
-  translation: string | null;
-  definition: string | null;
-  example: string | null;
+  front: string;
+  back: string;
+  description: string | null;
   application: string | null;
   imageUri: string | null;
 };
@@ -40,17 +39,20 @@ function normalizeOptionalText(value?: string | null): string | null {
   return normalizedValue.length > 0 ? normalizedValue : null;
 }
 
-export function normalizeCardTitle(title: string): string {
-  return title.replace(/\s+/g, ' ').trim();
+export function normalizeCardFront(front: string): string {
+  return front.replace(/\s+/g, ' ').trim();
+}
+
+function normalizeRequiredText(value: string): string {
+  return value.replace(/\s+/g, ' ').trim();
 }
 
 export function normalizeCreateCardInput(input: CreateCardInput): NormalizedCreateCardInput {
   return {
     deckId: input.deckId,
-    title: normalizeCardTitle(input.title),
-    translation: normalizeOptionalText(input.translation),
-    definition: normalizeOptionalText(input.definition),
-    example: normalizeOptionalText(input.example),
+    front: normalizeCardFront(input.front),
+    back: normalizeRequiredText(input.back),
+    description: normalizeOptionalText(input.description),
     application: normalizeOptionalText(input.application),
     imageUri: normalizeOptionalText(input.imageUri)
   };
@@ -64,26 +66,22 @@ export function validateCreateCardInput(input: CreateCardInput): CardValidationE
       Number.isInteger(normalizedInput.deckId) && normalizedInput.deckId > 0
         ? null
         : INVALID_CARD_DECK_MESSAGE,
-    title:
-      normalizedInput.title.length === 0
-        ? INVALID_CARD_TITLE_MESSAGE
-        : normalizedInput.title.length > MAX_CARD_TITLE_LENGTH
-          ? `Card titles must be ${MAX_CARD_TITLE_LENGTH} characters or fewer.`
+    front:
+      normalizedInput.front.length === 0
+        ? INVALID_CARD_FRONT_MESSAGE
+        : normalizedInput.front.length > MAX_CARD_TITLE_LENGTH
+          ? `Front values must be ${MAX_CARD_TITLE_LENGTH} characters or fewer.`
           : null,
-    translation:
-      normalizedInput.translation != null &&
-      normalizedInput.translation.length > MAX_CARD_SHORT_TEXT_LENGTH
-        ? `Translations must be ${MAX_CARD_SHORT_TEXT_LENGTH} characters or fewer.`
-        : null,
-    definition:
-      normalizedInput.definition != null &&
-      normalizedInput.definition.length > MAX_CARD_LONG_TEXT_LENGTH
-        ? `Definitions must be ${MAX_CARD_LONG_TEXT_LENGTH} characters or fewer.`
-        : null,
-    example:
-      normalizedInput.example != null &&
-      normalizedInput.example.length > MAX_CARD_LONG_TEXT_LENGTH
-        ? `Examples must be ${MAX_CARD_LONG_TEXT_LENGTH} characters or fewer.`
+    back:
+      normalizedInput.back.length === 0
+        ? INVALID_CARD_BACK_MESSAGE
+        : normalizedInput.back.length > MAX_CARD_SHORT_TEXT_LENGTH
+          ? `Back values must be ${MAX_CARD_SHORT_TEXT_LENGTH} characters or fewer.`
+          : null,
+    description:
+      normalizedInput.description != null &&
+      normalizedInput.description.length > MAX_CARD_LONG_TEXT_LENGTH
+        ? `Descriptions must be ${MAX_CARD_LONG_TEXT_LENGTH} characters or fewer.`
         : null,
     application:
       normalizedInput.application != null &&
@@ -101,10 +99,9 @@ export function validateCreateCardInput(input: CreateCardInput): CardValidationE
 export function getFirstCardValidationError(errors: CardValidationErrors): string | null {
   return (
     errors.deckId ??
-    errors.title ??
-    errors.translation ??
-    errors.definition ??
-    errors.example ??
+    errors.front ??
+    errors.back ??
+    errors.description ??
     errors.application ??
     errors.imageUri
   );

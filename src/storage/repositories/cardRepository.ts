@@ -21,10 +21,9 @@ import {
 type CardRow = {
   id: number;
   deck_id: number;
-  title: string;
-  translation: string | null;
-  definition: string | null;
-  example: string | null;
+  front: string;
+  back: string;
+  description: string | null;
   application: string | null;
   image_uri: string | null;
   created_at: string;
@@ -35,10 +34,9 @@ function mapCardRow(row: CardRow): Card {
   return {
     id: row.id,
     deckId: row.deck_id,
-    title: row.title,
-    translation: row.translation,
-    definition: row.definition,
-    example: row.example,
+    front: row.front,
+    back: row.back,
+    description: row.description,
     application: row.application,
     imageUri: row.image_uri,
     createdAt: row.created_at,
@@ -69,7 +67,7 @@ export async function listCardsByDeck(deckId: number): Promise<Card[]> {
   const db = await getDatabase();
   const rows = await db.getAllAsync<CardRow>(
     `
-      SELECT id, deck_id, title, translation, definition, example, application, image_uri, created_at, updated_at
+      SELECT id, deck_id, front, back, description, application, image_uri, created_at, updated_at
       FROM cards
       WHERE deck_id = ?
       ORDER BY created_at DESC, id DESC
@@ -88,7 +86,7 @@ export async function listAllCards(): Promise<Card[]> {
   const db = await getDatabase();
   const rows = await db.getAllAsync<CardRow>(
     `
-      SELECT id, deck_id, title, translation, definition, example, application, image_uri, created_at, updated_at
+      SELECT id, deck_id, front, back, description, application, image_uri, created_at, updated_at
       FROM cards
       ORDER BY created_at DESC, id DESC
     `
@@ -117,22 +115,20 @@ export async function createCard(input: CreateCardInput): Promise<Card> {
     `
       INSERT INTO cards (
         deck_id,
-        title,
-        translation,
-        definition,
-        example,
+        front,
+        back,
+        description,
         application,
         image_uri,
         created_at,
         updated_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `,
     normalizedInput.deckId,
-    normalizedInput.title,
-    normalizedInput.translation,
-    normalizedInput.definition,
-    normalizedInput.example,
+    normalizedInput.front,
+    normalizedInput.back,
+    normalizedInput.description,
     normalizedInput.application,
     normalizedInput.imageUri,
     timestamp,
@@ -141,7 +137,7 @@ export async function createCard(input: CreateCardInput): Promise<Card> {
 
   const insertedCard = await db.getFirstAsync<CardRow>(
     `
-      SELECT id, deck_id, title, translation, definition, example, application, image_uri, created_at, updated_at
+      SELECT id, deck_id, front, back, description, application, image_uri, created_at, updated_at
       FROM cards
       WHERE id = ?
     `,
@@ -186,22 +182,20 @@ export async function createCardsBatch(inputs: CreateCardInput[]): Promise<Card[
         `
           INSERT INTO cards (
             deck_id,
-            title,
-            translation,
-            definition,
-            example,
+            front,
+            back,
+            description,
             application,
             image_uri,
             created_at,
             updated_at
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
         input.deckId,
-        input.title,
-        input.translation,
-        input.definition,
-        input.example,
+        input.front,
+        input.back,
+        input.description,
         input.application,
         input.imageUri,
         timestamp,
@@ -215,7 +209,7 @@ export async function createCardsBatch(inputs: CreateCardInput[]): Promise<Card[
   const placeholders = insertedIds.map(() => '?').join(', ');
   const rows = await db.getAllAsync<CardRow>(
     `
-      SELECT id, deck_id, title, translation, definition, example, application, image_uri, created_at, updated_at
+      SELECT id, deck_id, front, back, description, application, image_uri, created_at, updated_at
       FROM cards
       WHERE id IN (${placeholders})
       ORDER BY created_at DESC, id DESC
@@ -253,20 +247,18 @@ export async function updateCard(input: UpdateCardInput): Promise<Card> {
       UPDATE cards
       SET
         deck_id = ?,
-        title = ?,
-        translation = ?,
-        definition = ?,
-        example = ?,
+        front = ?,
+        back = ?,
+        description = ?,
         application = ?,
         image_uri = ?,
         updated_at = ?
       WHERE id = ?
     `,
     normalizedInput.deckId,
-    normalizedInput.title,
-    normalizedInput.translation,
-    normalizedInput.definition,
-    normalizedInput.example,
+    normalizedInput.front,
+    normalizedInput.back,
+    normalizedInput.description,
     normalizedInput.application,
     normalizedInput.imageUri,
     timestamp,
@@ -279,7 +271,7 @@ export async function updateCard(input: UpdateCardInput): Promise<Card> {
 
   const updatedCard = await db.getFirstAsync<CardRow>(
     `
-      SELECT id, deck_id, title, translation, definition, example, application, image_uri, created_at, updated_at
+      SELECT id, deck_id, front, back, description, application, image_uri, created_at, updated_at
       FROM cards
       WHERE id = ?
     `,

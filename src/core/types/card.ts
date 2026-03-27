@@ -5,10 +5,9 @@ export const MAX_CARD_IMAGE_URI_LENGTH = 2048;
 
 export type CreateCardInput = {
   deckId: number;
-  title: string;
-  translation?: string | null;
-  definition?: string | null;
-  example?: string | null;
+  front: string;
+  back: string;
+  description?: string | null;
   application?: string | null;
   imageUri?: string | null;
 };
