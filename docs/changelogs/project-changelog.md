@@ -23,6 +23,15 @@
 ---
 
 [2026-03-27]
+- Change: Flattened the Cards editor into one continuous form block and removed the last visible Basic/Optional section split and collapse behavior.
+- Reason: Card authoring should read like one natural content form instead of stacked mini-modules.
+- Files: src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardEditorBasicSection.tsx, src/ui/components/card/CardEditorDetailsSection.tsx, docs/features/cards.md
+- Risk: Low
+- Notes: Front and Back remain required, optional fields stay visible in the same form, and create/edit behavior is unchanged.
+
+---
+
+[2026-03-27]
 - Change: Simplified Cards authoring into one unified editor, removed the remaining Card support block from the Cards workspace, and kept optional details grouped as secondary fields.
 - Reason: Cards should feel like one focused content editor instead of a split create flow with study-oriented support UI.
 - Files: src/ui/screens/CardsScreen.tsx, src/features/cards/useDeckCards.ts, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardEditorBasicSection.tsx, src/ui/components/card/CardEditorDetailsSection.tsx, src/ui/components/card/CardWorkspacePanel.tsx, docs/features/cards.md

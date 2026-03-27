@@ -1,8 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-
-import { CardEditorBasicSection } from './CardEditorBasicSection';
-import { CardEditorDetailsSection } from './CardEditorDetailsSection';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors, spacing, typography } from '../../theme';
 
 type CardEditorPanelProps = {
@@ -45,20 +41,6 @@ export function CardEditorPanel({
   onCancelEditing
 }: CardEditorPanelProps) {
   const isEditing = mode === 'edit';
-  const hasOptionalContent =
-    draftDescription.trim().length > 0 ||
-    draftApplication.trim().length > 0 ||
-    draftImageUri.trim().length > 0;
-  const [isDetailsExpanded, setIsDetailsExpanded] = useState(isEditing || hasOptionalContent);
-
-  useEffect(() => {
-    if (isEditing || hasOptionalContent) {
-      setIsDetailsExpanded(true);
-      return;
-    }
-
-    setIsDetailsExpanded(false);
-  }, [hasOptionalContent, isEditing]);
 
   return (
     <View style={styles.formCard}>
@@ -82,26 +64,69 @@ export function CardEditorPanel({
         ) : null}
       </View>
 
-      <CardEditorBasicSection
-        draftFront={draftFront}
-        draftBack={draftBack}
-        hasError={formError != null}
-        onDraftFrontChange={onDraftFrontChange}
-        onDraftBackChange={onDraftBackChange}
-      />
+      <View style={styles.fieldGroup}>
+        <Text style={styles.label}>Front</Text>
+        <TextInput
+          autoCapitalize="sentences"
+          autoCorrect={false}
+          onChangeText={onDraftFrontChange}
+          placeholder="Question or prompt"
+          placeholderTextColor={colors.muted}
+          returnKeyType="next"
+          style={[styles.input, formError != null ? styles.inputError : null]}
+          value={draftFront}
+        />
 
-      <CardEditorDetailsSection
-        draftApplication={draftApplication}
-        draftDescription={draftDescription}
-        draftImageUri={draftImageUri}
-        isExpanded={isDetailsExpanded}
-        onDraftApplicationChange={onDraftApplicationChange}
-        onDraftDescriptionChange={onDraftDescriptionChange}
-        onDraftImageUriChange={onDraftImageUriChange}
-        onToggleExpanded={() => {
-          setIsDetailsExpanded((value) => !value);
-        }}
-      />
+        <Text style={styles.label}>Back</Text>
+        <TextInput
+          autoCapitalize="sentences"
+          autoCorrect={false}
+          onChangeText={onDraftBackChange}
+          placeholder="Answer"
+          placeholderTextColor={colors.muted}
+          returnKeyType="done"
+          style={[styles.input, formError != null ? styles.inputError : null]}
+          value={draftBack}
+        />
+
+        <Text style={styles.label}>Description (optional)</Text>
+        <TextInput
+          autoCapitalize="sentences"
+          autoCorrect={false}
+          multiline
+          onChangeText={onDraftDescriptionChange}
+          placeholder="Add a description"
+          placeholderTextColor={colors.muted}
+          style={[styles.input, styles.multilineInput]}
+          textAlignVertical="top"
+          value={draftDescription}
+        />
+
+        <Text style={styles.label}>Application / Notes (optional)</Text>
+        <TextInput
+          autoCapitalize="sentences"
+          autoCorrect={false}
+          multiline
+          onChangeText={onDraftApplicationChange}
+          placeholder="Add notes or context"
+          placeholderTextColor={colors.muted}
+          style={[styles.input, styles.multilineInput]}
+          textAlignVertical="top"
+          value={draftApplication}
+        />
+
+        <Text style={styles.label}>Image URL (optional)</Text>
+        <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="url"
+          onChangeText={onDraftImageUriChange}
+          placeholder="Add an image URL"
+          placeholderTextColor={colors.muted}
+          style={styles.input}
+          value={draftImageUri}
+        />
+      </View>
 
       {formError != null ? <Text style={styles.formError}>{formError}</Text> : null}
       {formError == null && saveFeedbackMessage != null ? (
@@ -146,6 +171,9 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.xs
   },
+  fieldGroup: {
+    gap: spacing.s
+  },
   sectionTitle: {
     color: colors.textPrimary,
     fontSize: typography.subtitle,
@@ -155,6 +183,27 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
+  },
+  label: {
+    color: colors.textPrimary,
+    fontSize: typography.bodySmall,
+    fontWeight: '600'
+  },
+  input: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: 14,
+    borderWidth: 1,
+    color: colors.textPrimary,
+    fontSize: typography.body,
+    paddingHorizontal: spacing.m,
+    paddingVertical: 14
+  },
+  inputError: {
+    borderColor: colors.error
+  },
+  multilineInput: {
+    minHeight: 80
   },
   formError: {
     color: colors.error,
