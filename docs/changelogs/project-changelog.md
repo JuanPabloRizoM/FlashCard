@@ -23,6 +23,15 @@
 ---
 
 [2026-03-27]
+- Change: Replaced the placeholder-like bottom tab icons with purpose-built product icons and refined the Cards editor into a lighter Basic + More details flow.
+- Reason: The app navigation and card workspace were still functional but visually rougher than the rest of the product.
+- Files: src/navigation/AppNavigator.tsx, src/ui/components/navigation/TabBarIcon.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardEditorDetailsSection.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/screens/CardsScreen.tsx
+- Risk: Low
+- Notes: The tab structure and card behavior remain unchanged; the update is strictly visual and interaction-level polish.
+
+---
+
+[2026-03-27]
 - Change: Simplified the Cards workspace with a compact deck context bar, segmented workspace switch, and reduced import/create copy so only one primary workspace panel is visible at a time.
 - Reason: The Cards tab had become too text-heavy and visually stacked, which made the main actions slower to scan.
 - Files: src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardWorkspaceModeSwitch.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/components/card/CardWorkspacePanel.tsx, src/ui/components/card/CardWorkspaceNoDecks.tsx, src/ui/components/card/TextImportWorkspace.tsx, src/ui/components/card/CardImportPanel.tsx, src/ui/components/deck/DeckImportPanel.tsx

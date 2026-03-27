@@ -1,6 +1,8 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import type { CardEditorStudyPreview as CardEditorStudyPreviewType } from '../../../features/study/cardStudyPreview';
+import { CardEditorDetailsSection } from './CardEditorDetailsSection';
 import { CardEditorStudyPreview } from './CardEditorStudyPreview';
 import { colors, spacing, typography } from '../../theme';
 
@@ -44,17 +46,30 @@ export function CardEditorPanel({
   onCancelEditing
 }: CardEditorPanelProps) {
   const isEditing = mode === 'edit';
+  const hasOptionalContent = useMemo(
+    () =>
+      draftDefinition.trim().length > 0 ||
+      draftApplication.trim().length > 0 ||
+      draftImageUri.trim().length > 0,
+    [draftApplication, draftDefinition, draftImageUri]
+  );
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(isEditing || hasOptionalContent);
+
+  useEffect(() => {
+    if (isEditing || hasOptionalContent) {
+      setIsDetailsExpanded(true);
+      return;
+    }
+
+    setIsDetailsExpanded(false);
+  }, [hasOptionalContent, isEditing]);
 
   return (
     <View style={styles.formCard}>
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
-          <Text style={styles.sectionTitle}>{isEditing ? 'Edit card' : 'Create a card'}</Text>
-          <Text style={styles.sectionText}>
-            {isEditing
-              ? 'Update this card.'
-              : 'Add a card for this deck.'}
-          </Text>
+          <Text style={styles.sectionTitle}>{isEditing ? 'Edit card' : 'Create card'}</Text>
+          <Text style={styles.sectionText}>{isEditing ? 'Update the card details.' : 'Start with the basics.'}</Text>
         </View>
         {isEditing && onCancelEditing != null ? (
           <Pressable
@@ -67,68 +82,50 @@ export function CardEditorPanel({
         ) : null}
       </View>
 
-      <Text style={styles.label}>Card title</Text>
-      <TextInput
-        autoCapitalize="sentences"
-        autoCorrect={false}
-        onChangeText={onDraftTitleChange}
-        onSubmitEditing={() => {
-          void onSubmit();
+      <View style={styles.sectionCard}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionEyebrow}>Basic</Text>
+          <Text style={styles.sectionHint}>Title and translation</Text>
+        </View>
+
+        <Text style={styles.label}>Card title</Text>
+        <TextInput
+          autoCapitalize="sentences"
+          autoCorrect={false}
+          onChangeText={onDraftTitleChange}
+          onSubmitEditing={() => {
+            void onSubmit();
+          }}
+          placeholder="Verb: to run"
+          placeholderTextColor={colors.muted}
+          returnKeyType="next"
+          style={[styles.input, formError != null ? styles.inputError : null]}
+          value={draftTitle}
+        />
+
+        <Text style={styles.label}>Translation</Text>
+        <TextInput
+          autoCapitalize="sentences"
+          autoCorrect={false}
+          onChangeText={onDraftTranslationChange}
+          placeholder="Correr"
+          placeholderTextColor={colors.muted}
+          style={styles.input}
+          value={draftTranslation}
+        />
+      </View>
+
+      <CardEditorDetailsSection
+        draftApplication={draftApplication}
+        draftDefinition={draftDefinition}
+        draftImageUri={draftImageUri}
+        isExpanded={isDetailsExpanded}
+        onDraftApplicationChange={onDraftApplicationChange}
+        onDraftDefinitionChange={onDraftDefinitionChange}
+        onDraftImageUriChange={onDraftImageUriChange}
+        onToggleExpanded={() => {
+          setIsDetailsExpanded((value) => !value);
         }}
-        placeholder="Verb: to run"
-        placeholderTextColor={colors.muted}
-        style={[styles.input, formError != null ? styles.inputError : null]}
-        value={draftTitle}
-        returnKeyType="next"
-      />
-
-      <Text style={styles.label}>Translation</Text>
-      <TextInput
-        autoCapitalize="sentences"
-        autoCorrect={false}
-        onChangeText={onDraftTranslationChange}
-        placeholder="Correr"
-        placeholderTextColor={colors.muted}
-        style={styles.input}
-        value={draftTranslation}
-      />
-
-      <Text style={styles.label}>Definition</Text>
-      <TextInput
-        autoCapitalize="sentences"
-        autoCorrect={false}
-        multiline
-        onChangeText={onDraftDefinitionChange}
-        placeholder="Move quickly on foot."
-        placeholderTextColor={colors.muted}
-        style={[styles.input, styles.definitionInput]}
-        textAlignVertical="top"
-        value={draftDefinition}
-      />
-
-      <Text style={styles.label}>Application</Text>
-      <TextInput
-        autoCapitalize="sentences"
-        autoCorrect={false}
-        multiline
-        onChangeText={onDraftApplicationChange}
-        placeholder="Use when describing speed or urgency."
-        placeholderTextColor={colors.muted}
-        style={[styles.input, styles.definitionInput]}
-        textAlignVertical="top"
-        value={draftApplication}
-      />
-
-      <Text style={styles.label}>Image URL</Text>
-      <TextInput
-        autoCapitalize="none"
-        autoCorrect={false}
-        keyboardType="url"
-        onChangeText={onDraftImageUriChange}
-        placeholder="https://..."
-        placeholderTextColor={colors.muted}
-        style={styles.input}
-        value={draftImageUri}
       />
 
       <CardEditorStudyPreview preview={preview} />
@@ -160,7 +157,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 20,
     borderWidth: 1,
-    gap: spacing.s,
+    gap: spacing.m,
     padding: spacing.l
   },
   headerRow: {
@@ -183,13 +180,37 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     lineHeight: 18
   },
+  sectionCard: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: spacing.s,
+    padding: spacing.m
+  },
+  sectionHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  sectionEyebrow: {
+    color: colors.textPrimary,
+    fontSize: typography.overline,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase'
+  },
+  sectionHint: {
+    color: colors.textSecondary,
+    fontSize: typography.caption
+  },
   label: {
     color: colors.textPrimary,
     fontSize: typography.bodySmall,
     fontWeight: '600'
   },
   input: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: 14,
     borderWidth: 1,
@@ -197,9 +218,6 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     paddingHorizontal: spacing.m,
     paddingVertical: 14
-  },
-  definitionInput: {
-    minHeight: 96
   },
   inputError: {
     borderColor: colors.error

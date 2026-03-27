@@ -24,10 +24,8 @@ export function CardWorkspaceDeckSelector({
     <View style={styles.panel}>
       <View style={styles.headerRow}>
         <View style={styles.contextWrap}>
-          <Text style={styles.contextLabel}>Deck</Text>
-          <Text style={styles.contextValue}>
-            {selectedDeckName ?? 'Choose a deck'}
-          </Text>
+          <Text style={styles.contextLabel}>{isEditing ? 'Editing in' : 'Creating in'}</Text>
+          <Text style={styles.contextValue}>{selectedDeckName ?? 'Choose a deck'}</Text>
         </View>
         {isEditing ? (
           <View style={styles.statusBadge}>
@@ -93,7 +91,7 @@ const styles = StyleSheet.create({
   },
   contextValue: {
     color: colors.textPrimary,
-    fontSize: typography.body,
+    fontSize: typography.bodySmall,
     fontWeight: '700'
   },
   statusBadge: {

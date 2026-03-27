@@ -17,7 +17,7 @@ import {
 } from '../components/card/CardWorkspaceModeSwitch';
 import { CardWorkspacePanel } from '../components/card/CardWorkspacePanel';
 import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
-import { getWorkspaceTitle, resolveSelectedDeckId } from '../components/card/cardWorkspaceUtils';
+import { resolveSelectedDeckId } from '../components/card/cardWorkspaceUtils';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { colors, spacing, typography } from '../theme';
 
@@ -189,11 +189,12 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           onChangeMode={setWorkspaceMode}
         />
 
-        <View style={styles.workspaceHeader}>
-          <Text style={styles.sectionTitle}>{getWorkspaceTitle(workspaceMode, editingCardId != null)}</Text>
-          {deckScreenError != null ? <Text style={styles.errorText}>{deckScreenError}</Text> : null}
-          {screenError != null ? <Text style={styles.errorText}>{screenError}</Text> : null}
-        </View>
+        {deckScreenError != null || screenError != null ? (
+          <View style={styles.workspaceHeader}>
+            {deckScreenError != null ? <Text style={styles.errorText}>{deckScreenError}</Text> : null}
+            {screenError != null ? <Text style={styles.errorText}>{screenError}</Text> : null}
+          </View>
+        ) : null}
 
         <CardWorkspacePanel
           canSubmit={canSubmit}
