@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Card } from '../../../core/models/Card';
 import type { CardStudyFeedback as CardStudyFeedbackType } from '../../../features/study/cardStudyPreview';
-import { CardStudyFeedback } from './CardStudyFeedback';
+import { CardListStatus } from './CardListStatus';
 import { colors, spacing, typography } from '../../theme';
 
 type DeckCardListItemProps = {
@@ -37,9 +37,17 @@ export function DeckCardListItem({
           </Pressable>
         ) : null}
       </View>
-      {card.translation != null ? <Text style={styles.cardTranslation}>{card.translation}</Text> : null}
-      {card.definition != null ? <Text style={styles.cardDefinition}>{card.definition}</Text> : null}
-      <CardStudyFeedback feedback={feedback} />
+      {card.translation != null ? (
+        <Text numberOfLines={2} style={styles.cardTranslation}>
+          {card.translation}
+        </Text>
+      ) : null}
+      {card.definition != null ? (
+        <Text numberOfLines={2} style={styles.cardDefinition}>
+          {card.definition}
+        </Text>
+      ) : null}
+      <CardListStatus card={card} feedback={feedback} />
     </View>
   );
 }

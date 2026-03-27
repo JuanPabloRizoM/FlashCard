@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import type { CardEditorStudyPreview as CardEditorStudyPreviewType } from '../../../features/study/cardStudyPreview';
 import { CardEditorDetailsSection } from './CardEditorDetailsSection';
+import { CardQuickAddPanel } from './CardQuickAddPanel';
 import { CardEditorStudyPreview } from './CardEditorStudyPreview';
 import { colors, spacing, typography } from '../../theme';
 
@@ -46,6 +47,7 @@ export function CardEditorPanel({
   onCancelEditing
 }: CardEditorPanelProps) {
   const isEditing = mode === 'edit';
+  const [editorVariant, setEditorVariant] = useState<'quick' | 'full'>(isEditing ? 'full' : 'quick');
   const hasOptionalContent = useMemo(
     () =>
       draftDefinition.trim().length > 0 ||
@@ -56,20 +58,45 @@ export function CardEditorPanel({
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(isEditing || hasOptionalContent);
 
   useEffect(() => {
+    setEditorVariant(isEditing ? 'full' : 'quick');
+  }, [isEditing]);
+
+  useEffect(() => {
     if (isEditing || hasOptionalContent) {
       setIsDetailsExpanded(true);
+      setEditorVariant('full');
       return;
     }
 
     setIsDetailsExpanded(false);
   }, [hasOptionalContent, isEditing]);
 
+  if (!isEditing && editorVariant === 'quick') {
+    return (
+      <CardQuickAddPanel
+        canSubmit={canSubmit}
+        draftTitle={draftTitle}
+        draftTranslation={draftTranslation}
+        formError={formError}
+        isSubmitting={isSubmitting}
+        onDraftTitleChange={onDraftTitleChange}
+        onDraftTranslationChange={onDraftTranslationChange}
+        onOpenFullEditor={() => {
+          setEditorVariant('full');
+        }}
+        onSubmit={onSubmit}
+      />
+    );
+  }
+
   return (
     <View style={styles.formCard}>
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>{isEditing ? 'Edit card' : 'Create card'}</Text>
-          <Text style={styles.sectionText}>{isEditing ? 'Update the card details.' : 'Start with the basics.'}</Text>
+          <Text style={styles.sectionText}>
+            {isEditing ? 'Update the card details.' : 'Add details when you need more than a basic card.'}
+          </Text>
         </View>
         {isEditing && onCancelEditing != null ? (
           <Pressable
@@ -78,6 +105,16 @@ export function CardEditorPanel({
             style={({ pressed }) => [styles.secondaryButton, pressed ? styles.secondaryButtonPressed : null]}
           >
             <Text style={styles.secondaryButtonLabel}>Cancel</Text>
+          </Pressable>
+        ) : !isEditing ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              setEditorVariant('quick');
+            }}
+            style={({ pressed }) => [styles.secondaryButton, pressed ? styles.secondaryButtonPressed : null]}
+          >
+            <Text style={styles.secondaryButtonLabel}>Quick add</Text>
           </Pressable>
         ) : null}
       </View>

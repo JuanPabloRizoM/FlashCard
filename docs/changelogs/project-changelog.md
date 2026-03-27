@@ -23,6 +23,15 @@
 ---
 
 [2026-03-27]
+- Change: Added a Quick Add path to the Cards workspace, kept the full editor available for richer cards, and tightened card-row status into a more compact workspace summary.
+- Reason: Repeated card creation still had too much friction for simple cards, and the existing card list felt more like raw data than product content.
+- Files: src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardQuickAddPanel.tsx, src/ui/components/card/CardEditorDetailsSection.tsx, src/ui/components/card/DeckCardListItem.tsx, src/ui/components/card/CardListStatus.tsx
+- Risk: Low
+- Notes: Quick Add is the default create flow, edit mode still opens the full editor, and repository/persistence behavior is unchanged.
+
+---
+
+[2026-03-27]
 - Change: Replaced the placeholder-like bottom tab icons with purpose-built product icons and refined the Cards editor into a lighter Basic + More details flow.
 - Reason: The app navigation and card workspace were still functional but visually rougher than the rest of the product.
 - Files: src/navigation/AppNavigator.tsx, src/ui/components/navigation/TabBarIcon.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardEditorDetailsSection.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/screens/CardsScreen.tsx
