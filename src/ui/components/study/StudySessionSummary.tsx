@@ -138,14 +138,14 @@ const styles = StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
-    gap: spacing.s,
-    padding: spacing.m
+    gap: spacing.m,
+    padding: spacing.l
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   headerRow: {
@@ -155,23 +155,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   completionBadge: {
-    backgroundColor: '#dbeafe',
+    backgroundColor: colors.primarySoft,
     borderRadius: 999,
     paddingHorizontal: spacing.s,
     paddingVertical: spacing.xs
   },
   completionBadgeLabel: {
     color: colors.primary,
-    fontSize: 11,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   supportText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.body
   },
   summaryNote: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
@@ -192,39 +193,43 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   metricCard: {
-    backgroundColor: colors.background,
-    borderRadius: 12,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 14,
     flexBasis: '48%',
     gap: spacing.xs,
     padding: spacing.m
   },
   metricLabel: {
-    color: colors.muted,
-    fontSize: typography.caption,
+    color: colors.textMuted,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   metricValue: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.title,
     fontWeight: '700'
   },
   accuracySuccess: {
-    borderColor: '#86efac',
+    backgroundColor: colors.successSoft,
+    borderColor: colors.success,
     borderWidth: 1
   },
   accuracySteady: {
-    borderColor: '#fde68a',
+    backgroundColor: colors.warningSoft,
+    borderColor: colors.warning,
     borderWidth: 1
   },
   accuracyNeedsReview: {
-    borderColor: '#fca5a5',
+    backgroundColor: colors.errorSoft,
+    borderColor: colors.error,
     borderWidth: 1
   },
   primaryButton: {
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: spacing.m,
     paddingVertical: 14
   },
@@ -235,6 +240,7 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     alignItems: 'center',
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: 12,
     borderWidth: 1,
@@ -242,7 +248,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14
   },
   secondaryButtonLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '600'
   },
@@ -250,7 +256,7 @@ const styles = StyleSheet.create({
     opacity: 0.5
   },
   actionHint: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   }

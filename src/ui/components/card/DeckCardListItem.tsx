@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
   cardItem: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
-    gap: spacing.xs,
+    gap: spacing.s,
     padding: spacing.m
   },
   cardHeaderRow: {
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   cardTitle: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '700'
   },
@@ -74,16 +74,17 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   cardDefinition: {
-    color: colors.muted,
-    fontSize: typography.body,
+    color: colors.textSecondary,
+    fontSize: typography.bodySmall,
     lineHeight: 22
   },
   cardMeta: {
-    color: colors.muted,
+    color: colors.textMuted,
     fontSize: typography.caption
   },
   actionButton: {
-    borderColor: colors.border,
+    backgroundColor: colors.primarySoft,
+    borderColor: colors.primarySoft,
     borderRadius: 999,
     borderWidth: 1,
     paddingHorizontal: spacing.m,

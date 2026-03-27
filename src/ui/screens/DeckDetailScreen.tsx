@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Clipboard,
   FlatList,
   Pressable,
@@ -10,19 +9,25 @@ import {
 import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+
 import type { Deck } from '../../core/models/Deck';
 import { DECK_TYPE_LABELS } from '../../core/types/deck';
+import type { RootTabParamList } from '../../navigation/types';
 import { useDeckCards } from '../../features/cards/useDeckCards';
 import { buildDeckExportText } from '../../features/decks/deckPortability';
 import { buildCardStudyFeedback } from '../../features/study/cardStudyPreview';
 import { buildDeckStudyInsights } from '../../features/study/studyInsights';
-import type { RootTabParamList } from '../../navigation/types';
+import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { DeckCardListItem } from '../components/card/DeckCardListItem';
 import { DeckExportPanel } from '../components/deck/DeckExportPanel';
 import { DeckStudyInsightCard } from '../components/deck/DeckStudyInsightCard';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { colors, spacing, typography } from '../theme';
-type DeckDetailScreenProps = { deck: Deck; onBack: () => void };
+
+type DeckDetailScreenProps = {
+  deck: Deck;
+  onBack: () => void;
+};
 
 function formatCardTimestampLabel(createdAt: string): string {
   const date = new Date(createdAt);
@@ -33,11 +38,13 @@ function formatCardTimestampLabel(createdAt: string): string {
 
   return `Created ${date.toLocaleDateString()}`;
 }
+
 export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const { cards, screenError, isLoading } = useDeckCards(deck.id);
   const [isExportVisible, setIsExportVisible] = useState(false);
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
+
   const deckInsights = useMemo(() => buildDeckStudyInsights(cards), [cards]);
   const exportText = useMemo(() => buildDeckExportText(deck, cards), [cards, deck]);
   const cardFeedbackById = useMemo(
@@ -59,14 +66,17 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
 
       setCopyMessage('Export text copied to the clipboard.');
     } catch {
-      setCopyMessage('Could not copy the export text automatically. Select and copy it manually.');
+      setCopyMessage('Could not copy automatically. Select and copy the export text manually.');
     }
   }
 
   return (
     <ScreenContainer
+      subtitle={
+        deck.description ??
+        `${DECK_TYPE_LABELS[deck.type]} deck with readiness insights, card overview, and export tools.`
+      }
       title={deck.name}
-      subtitle={deck.description ?? `${DECK_TYPE_LABELS[deck.type]} deck`}
     >
       <View style={styles.layout}>
         <Pressable accessibilityRole="button" onPress={onBack} style={styles.backButton}>
@@ -74,11 +84,14 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
         </Pressable>
 
         <View style={styles.deckMetaRow}>
-          <Text style={styles.deckType}>{DECK_TYPE_LABELS[deck.type]}</Text>
-          <Text style={styles.deckCounter}>{`${cards.length} cards`}</Text>
+          <View style={styles.metaBadge}>
+            <Text style={styles.deckType}>{DECK_TYPE_LABELS[deck.type]}</Text>
+          </View>
+          <Text style={styles.deckCounter}>{`${cards.length} cards in this deck`}</Text>
         </View>
 
         <DeckStudyInsightCard insights={deckInsights} />
+
         <DeckExportPanel
           copyMessage={copyMessage}
           deckName={deck.name}
@@ -93,12 +106,14 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
             }
           }}
         />
+
         {screenError != null ? <Text style={styles.screenError}>{screenError}</Text> : null}
+
         <View style={styles.sectionHeader}>
           <View style={styles.sectionCopy}>
             <Text style={styles.sectionTitle}>Cards</Text>
             <Text style={styles.sectionText}>
-              Create and edit cards from the Cards tab workspace with this deck preselected.
+              Use the Cards workspace when you want to add, import, or edit cards without crowding this overview.
             </Text>
           </View>
           <Pressable
@@ -111,16 +126,20 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
             <Text style={styles.primaryButtonLabel}>Create cards</Text>
           </Pressable>
         </View>
+
         {isLoading ? (
-          <View style={styles.feedbackState}>
-            <ActivityIndicator color={colors.primary} />
-            <Text style={styles.feedbackText}>Loading cards...</Text>
-          </View>
+          <CardWorkspaceFeedbackState isLoading message="Loading cards..." />
         ) : (
           <FlatList
             contentContainerStyle={cards.length === 0 ? styles.emptyListContent : styles.listContent}
             data={cards}
             keyExtractor={(card) => card.id.toString()}
+            ListEmptyComponent={
+              <CardWorkspaceFeedbackState
+                message="Open the Cards workspace to create the first card in this deck."
+                title="No cards yet"
+              />
+            }
             renderItem={({ item }) => {
               const feedback = cardFeedbackById[item.id] ?? buildCardStudyFeedback(item);
 
@@ -132,14 +151,6 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
                 />
               );
             }}
-            ListEmptyComponent={
-              <View style={styles.feedbackState}>
-                <Text style={styles.feedbackTitle}>No cards yet</Text>
-                <Text style={styles.feedbackText}>
-                  Open the Cards tab workspace to create the first card in this deck.
-                </Text>
-              </View>
-            }
           />
         )}
       </View>
@@ -165,14 +176,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  metaBadge: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: 999,
+    paddingHorizontal: spacing.s,
+    paddingVertical: spacing.xs
+  },
   deckType: {
     color: colors.primary,
-    fontSize: typography.caption,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   deckCounter: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption
   },
   screenError: {
@@ -190,24 +208,24 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   sectionText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
   primaryButton: {
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: spacing.m,
     paddingVertical: spacing.s
   },
   primaryButtonPressed: {
-    opacity: 0.9
+    backgroundColor: colors.primaryPressed
   },
   primaryButtonLabel: {
     color: colors.surface,
@@ -220,27 +238,5 @@ const styles = StyleSheet.create({
   },
   emptyListContent: {
     flexGrow: 1
-  },
-  feedbackState: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.surfaceMuted,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: spacing.s,
-    justifyContent: 'center',
-    minHeight: 160,
-    padding: spacing.l
-  },
-  feedbackTitle: {
-    color: colors.text,
-    fontSize: typography.body,
-    fontWeight: '700'
-  },
-  feedbackText: {
-    color: colors.muted,
-    fontSize: typography.body,
-    lineHeight: 22,
-    textAlign: 'center'
   }
 });

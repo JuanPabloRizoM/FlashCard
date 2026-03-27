@@ -64,20 +64,20 @@ export function CardEditorStudyPreview({ preview }: CardEditorStudyPreviewProps)
 
 const styles = StyleSheet.create({
   panel: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
     gap: spacing.m,
     padding: spacing.m
   },
   sectionTitle: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '700'
   },
   supportText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
@@ -85,32 +85,35 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   subsectionTitle: {
-    color: colors.text,
-    fontSize: typography.caption,
+    color: colors.textPrimary,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   promptWrap: {
     gap: spacing.s
   },
   promptCard: {
+    borderColor: colors.border,
+    borderWidth: 1,
     borderRadius: 12,
     gap: spacing.xs,
-    padding: spacing.s
+    padding: spacing.m
   },
   promptSupported: {
-    backgroundColor: '#dcfce7'
+    backgroundColor: colors.successSoft
   },
   promptMissing: {
     backgroundColor: colors.surface
   },
   promptLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '700'
   },
   promptGuidance: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
@@ -118,26 +121,28 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   techniqueCard: {
+    borderColor: colors.border,
+    borderWidth: 1,
     borderRadius: 12,
     gap: spacing.xs,
-    padding: spacing.s
+    padding: spacing.m
   },
   techniqueReady: {
-    backgroundColor: '#dcfce7'
+    backgroundColor: colors.successSoft
   },
   techniqueLimited: {
-    backgroundColor: '#fef3c7'
+    backgroundColor: colors.warningSoft
   },
   techniqueUnavailable: {
-    backgroundColor: '#fee2e2'
+    backgroundColor: colors.errorSoft
   },
   techniqueLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '700'
   },
   techniqueMessage: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption
   }
 });

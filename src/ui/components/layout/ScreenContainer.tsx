@@ -14,8 +14,10 @@ export function ScreenContainer({ title, subtitle, children }: ScreenContainerPr
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <View style={styles.headerCard}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
+        </View>
         {children}
       </View>
     </SafeAreaView>
@@ -30,16 +32,26 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: spacing.l,
-    paddingVertical: spacing.m,
-    gap: spacing.s
+    paddingTop: spacing.s,
+    paddingBottom: spacing.m,
+    gap: spacing.m
+  },
+  headerCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 24,
+    borderWidth: 1,
+    gap: spacing.s,
+    paddingHorizontal: spacing.l,
+    paddingVertical: spacing.l
   },
   title: {
-    color: colors.text,
-    fontSize: typography.title,
+    color: colors.textPrimary,
+    fontSize: typography.hero,
     fontWeight: '700'
   },
   subtitle: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.body,
     lineHeight: 24
   }

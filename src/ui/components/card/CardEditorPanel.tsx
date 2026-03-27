@@ -158,10 +158,10 @@ const styles = StyleSheet.create({
   formCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.s,
-    padding: spacing.m
+    padding: spacing.l
   },
   headerRow: {
     alignItems: 'flex-start',
@@ -174,26 +174,26 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   sectionText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
   label: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.bodySmall,
     fontWeight: '600'
   },
   input: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     paddingHorizontal: spacing.m,
     paddingVertical: 14
@@ -211,15 +211,15 @@ const styles = StyleSheet.create({
   submitButton: {
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: spacing.m,
     paddingVertical: 14
   },
   submitButtonDisabled: {
-    backgroundColor: colors.muted
+    backgroundColor: colors.borderStrong
   },
   submitButtonPressed: {
-    opacity: 0.9
+    backgroundColor: colors.primaryPressed
   },
   submitButtonLabel: {
     color: colors.surface,
@@ -227,6 +227,7 @@ const styles = StyleSheet.create({
     fontWeight: '700'
   },
   secondaryButton: {
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: 999,
     borderWidth: 1,
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
     opacity: 0.75
   },
   secondaryButtonLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '700'
   }

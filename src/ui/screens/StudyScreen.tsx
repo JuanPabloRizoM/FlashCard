@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { STUDY_TECHNIQUE_LABELS } from '../../core/types/study';
 import { useStudySession } from '../../features/study/useStudySession';
+import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { StudySessionBanner } from '../components/study/StudySessionBanner';
 import { StudySessionCard } from '../components/study/StudySessionCard';
@@ -37,6 +38,7 @@ export function StudyScreen() {
     onRestartSession,
     onRetryIncorrectAnswers
   } = useStudySession();
+
   const hasStudyContent = currentItem != null || sessionSummary != null;
   const isSessionActive = currentItem != null;
   const isSetupLocked = isSubmittingAnswer || isStartingSession || isSessionActive;
@@ -44,15 +46,23 @@ export function StudyScreen() {
   return (
     <ScreenContainer
       title="Study"
-      subtitle="Study sessions run through the engine layer. Prompt modes depend on the fields each card actually has, and saved defaults can be tuned from Settings."
+      subtitle="Set up a focused session, keep the controls calm, and let the engine handle the prompt logic underneath."
     >
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.panel}>
+          <Text style={styles.eyebrow}>Session setup</Text>
           <Text style={styles.sectionTitle}>Choose a deck</Text>
+          <Text style={styles.supportText}>
+            Saved defaults come from Settings, but you can still tune this session before you begin.
+          </Text>
+
           {isLoadingDecks ? (
-            <Text style={styles.supportText}>Loading decks...</Text>
+            <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
           ) : decks.length === 0 ? (
-            <Text style={styles.supportText}>Create a deck and cards before starting a study session.</Text>
+            <CardWorkspaceFeedbackState
+              message="Create a deck and cards before starting a study session."
+              title="Nothing ready to study yet"
+            />
           ) : (
             <View style={styles.choiceRow}>
               {decks.map((deck) => (
@@ -99,10 +109,10 @@ export function StudyScreen() {
         {screenError != null ? <Text style={styles.errorText}>{screenError}</Text> : null}
 
         {sessionStartResult?.status === 'empty' ? (
-          <View style={styles.panel}>
-            <Text style={styles.sectionTitle}>Empty study state</Text>
-            <Text style={styles.supportText}>{sessionStartResult.reason}</Text>
-          </View>
+          <CardWorkspaceFeedbackState
+            message={sessionStartResult.reason}
+            title="Study session unavailable"
+          />
         ) : null}
 
         {hasStudyContent && selectedDeck != null ? (
@@ -147,7 +157,6 @@ export function StudyScreen() {
             techniqueLabel={STUDY_TECHNIQUE_LABELS[selectedTechniqueId]}
           />
         ) : null}
-
       </ScrollView>
     </ScreenContainer>
   );
@@ -161,19 +170,26 @@ const styles = StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.s,
-    padding: spacing.m
+    padding: spacing.l
+  },
+  eyebrow: {
+    color: colors.primary,
+    fontSize: typography.overline,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase'
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   supportText: {
-    color: colors.muted,
-    fontSize: typography.body,
+    color: colors.textSecondary,
+    fontSize: typography.bodySmall,
     lineHeight: 22
   },
   choiceRow: {
@@ -182,7 +198,7 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   choiceChip: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: 999,
     borderWidth: 1,
@@ -190,22 +206,22 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.s
   },
   choiceChipActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     borderColor: colors.primary
   },
   choiceChipDisabled: {
     opacity: 0.5
   },
   choiceLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '600'
   },
   choiceLabelActive: {
-    color: colors.surface
+    color: colors.primary
   },
   errorText: {
     color: colors.error,
     fontSize: typography.caption
-  },
+  }
 });

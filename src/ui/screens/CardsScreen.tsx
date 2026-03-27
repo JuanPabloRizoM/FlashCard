@@ -151,7 +151,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     return (
       <ScreenContainer
         title="Cards"
-        subtitle="Use this workspace to create and manage cards for one deck at a time."
+        subtitle="Create, import, and revise cards for one deck at a time without losing sight of study quality."
       >
         <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
       </ScreenContainer>
@@ -162,7 +162,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     return (
       <ScreenContainer
         title="Cards"
-        subtitle="Use this workspace to import a deck or manage cards for one deck at a time."
+        subtitle="This workspace handles both deck import and card authoring once you have a deck selected."
       >
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <CardWorkspaceFeedbackState
@@ -187,7 +187,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
   return (
     <ScreenContainer
       title="Cards"
-      subtitle="Create and manage cards here. Deck detail stays focused on overview and study readiness."
+      subtitle="This is the main card workspace: choose a deck, import in bulk, and keep each card study-ready as you write."
     >
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <CardWorkspaceDeckSelector
@@ -262,8 +262,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   errorText: {
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   listCount: {
-    color: colors.muted,
+    color: colors.textMuted,
     fontSize: typography.caption
   }
 });

@@ -137,10 +137,10 @@ const styles = StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.m,
-    padding: spacing.m
+    padding: spacing.l
   },
   headerRow: {
     alignItems: 'flex-start',
@@ -153,41 +153,41 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   supportText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
   input: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     minHeight: 180,
     paddingHorizontal: spacing.m,
     paddingVertical: spacing.m
   },
   summaryCard: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     gap: spacing.xs,
     padding: spacing.m
   },
   summaryTitle: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '700'
   },
   summaryText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
@@ -205,37 +205,40 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   previewTitle: {
-    color: colors.text,
-    fontSize: typography.caption,
+    color: colors.textPrimary,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   previewList: {
     gap: spacing.s
   },
   previewRow: {
+    borderColor: colors.border,
+    borderWidth: 1,
     borderRadius: 12,
     gap: spacing.xs,
-    padding: spacing.s
+    padding: spacing.m
   },
   previewRowValid: {
-    backgroundColor: '#dcfce7'
+    backgroundColor: colors.successSoft
   },
   previewRowInvalid: {
-    backgroundColor: '#fee2e2'
+    backgroundColor: colors.errorSoft
   },
   previewLineLabel: {
-    color: colors.muted,
+    color: colors.textMuted,
     fontSize: typography.caption,
     fontWeight: '700'
   },
   previewMainText: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '600'
   },
   previewDetailText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
@@ -247,12 +250,12 @@ const styles = StyleSheet.create({
   primaryButton: {
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: spacing.m,
     paddingVertical: spacing.s
   },
   primaryButtonDisabled: {
-    backgroundColor: colors.muted
+    backgroundColor: colors.borderStrong
   },
   primaryButtonLabel: {
     color: colors.surface,
@@ -261,7 +264,7 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: 12,
     borderWidth: 1,
@@ -272,7 +275,7 @@ const styles = StyleSheet.create({
     opacity: 0.5
   },
   secondaryButtonLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '700'
   }

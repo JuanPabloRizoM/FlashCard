@@ -1,9 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import {
-  APP_NAME,
-  APP_VERSION_LABEL
-} from '../../core/types/settings';
+import { APP_NAME, APP_VERSION_LABEL } from '../../core/types/settings';
 import {
   STUDY_SESSION_MODE_LABELS,
   STUDY_SESSION_MODES,
@@ -21,21 +18,28 @@ const FUTURE_TOOLS = [
 ] as const;
 
 export function SettingsScreen() {
-  const { settings, saveError, setDefaultStudyMode, setDefaultSessionSize, resetStudyDefaults } = useAppSettings();
+  const {
+    settings,
+    saveError,
+    setDefaultStudyMode,
+    setDefaultSessionSize,
+    resetStudyDefaults
+  } = useAppSettings();
+
   const isDefaultsModified =
     settings.defaultStudyMode !== 'mixed' || settings.defaultSessionSize !== 10;
 
   return (
     <ScreenContainer
       title="Settings"
-      subtitle="Useful defaults and product context only. Everything shown here has a real effect or clear informational value."
+      subtitle="Keep the defaults calm and predictable. Everything here either changes real behavior or clarifies how the app works."
     >
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.sectionCard}>
+          <Text style={styles.eyebrow}>Study preferences</Text>
           <Text style={styles.sectionTitle}>Study defaults</Text>
           <Text style={styles.supportText}>
-            These defaults apply when the Study screen is idle and when you start a new session.
-            They are saved on this device and restored after restart.
+            These defaults apply when the Study screen is idle and when you start a new session. They are saved on this device.
           </Text>
           {saveError != null ? <Text style={styles.errorText}>{saveError}</Text> : null}
 
@@ -115,6 +119,7 @@ export function SettingsScreen() {
         </View>
 
         <View style={styles.sectionCard}>
+          <Text style={styles.eyebrow}>Product scope</Text>
           <Text style={styles.sectionTitle}>App information</Text>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>App</Text>
@@ -125,16 +130,15 @@ export function SettingsScreen() {
             <Text style={styles.infoValue}>{APP_VERSION_LABEL}</Text>
           </View>
           <Text style={styles.supportText}>
-            This build focuses on local deck management, structured card creation, and adaptive study
-            sessions. Cloud sync, imports, and AI-assisted authoring are not part of the current scope.
+            This build focuses on local deck management, structured card creation, and adaptive study sessions. Cloud sync, imports, and AI-assisted authoring are outside the current scope.
           </Text>
         </View>
 
         <View style={styles.sectionCard}>
+          <Text style={styles.eyebrow}>Roadmap</Text>
           <Text style={styles.sectionTitle}>Coming later</Text>
           <Text style={styles.supportText}>
-            These are roadmap items, not active settings. They appear here so the tab remains useful
-            without implying unfinished features already exist.
+            These are roadmap items, not active settings. They are listed here to keep the tab honest and useful without implying unfinished tools already exist.
           </Text>
           <View style={styles.roadmapList}>
             {FUTURE_TOOLS.map((item) => (
@@ -158,18 +162,25 @@ const styles = StyleSheet.create({
   sectionCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.m,
-    padding: spacing.m
+    padding: spacing.l
+  },
+  eyebrow: {
+    color: colors.primary,
+    fontSize: typography.overline,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase'
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   supportText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
@@ -181,9 +192,10 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   settingLabel: {
-    color: colors.text,
-    fontSize: typography.caption,
+    color: colors.textPrimary,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   choiceRow: {
@@ -192,7 +204,7 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   choiceChip: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: 999,
     borderWidth: 1,
@@ -200,16 +212,16 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.s
   },
   choiceChipActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     borderColor: colors.primary
   },
   choiceLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '600'
   },
   choiceLabelActive: {
-    color: colors.surface
+    color: colors.primary
   },
   inlineRow: {
     alignItems: 'center',
@@ -222,8 +234,9 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   secondaryButton: {
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     paddingHorizontal: spacing.m,
     paddingVertical: spacing.s
@@ -232,7 +245,7 @@ const styles = StyleSheet.create({
     opacity: 0.5
   },
   secondaryButtonLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '700'
   },
@@ -242,13 +255,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   infoLabel: {
-    color: colors.muted,
-    fontSize: typography.caption,
+    color: colors.textMuted,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   infoValue: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '600'
   },
@@ -256,20 +270,20 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   roadmapItem: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     gap: spacing.xs,
     padding: spacing.m
   },
   roadmapTitle: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '600'
   },
   roadmapStatus: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption
   }
 });

@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import type { SQLiteDatabase } from 'expo-sqlite';
 import type { Deck } from '../../core/models/Deck';
 import type { CreateCardInput } from '../../core/types/card';
 import type { CreateDeckInput, DeckType } from '../../core/types/deck';
@@ -148,7 +149,7 @@ export async function createDeckWithImportedCards(
   let deckId: number | null = null;
 
   try {
-    await db.withExclusiveTransactionAsync(async (tx) => {
+    await db.withExclusiveTransactionAsync(async (tx: SQLiteDatabase) => {
       const deckResult = await tx.runAsync(
         `
           INSERT INTO decks (name, description, type, color, created_at, updated_at)

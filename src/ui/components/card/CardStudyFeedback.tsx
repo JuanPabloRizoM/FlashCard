@@ -52,10 +52,12 @@ export function CardStudyFeedback({ feedback }: CardStudyFeedbackProps) {
 
 const styles = StyleSheet.create({
   wrap: {
-    backgroundColor: colors.background,
-    borderRadius: 12,
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: 14,
+    borderWidth: 1,
     gap: spacing.s,
-    padding: spacing.s
+    padding: spacing.m
   },
   headerRow: {
     alignItems: 'center',
@@ -69,31 +71,32 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs
   },
   readinessGood: {
-    backgroundColor: '#dcfce7'
+    backgroundColor: colors.successSoft
   },
   readinessLimited: {
-    backgroundColor: '#fef3c7'
+    backgroundColor: colors.warningSoft
   },
   readinessPoor: {
-    backgroundColor: '#fee2e2'
+    backgroundColor: colors.errorSoft
   },
   readinessLabel: {
-    color: colors.text,
-    fontSize: 11,
+    color: colors.textPrimary,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   promptCount: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption
   },
   message: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     lineHeight: 18
   },
   supportedModes: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
@@ -111,8 +114,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs
   },
   missingBadgeLabel: {
-    color: colors.muted,
-    fontSize: 11,
+    color: colors.textSecondary,
+    fontSize: typography.overline,
     fontWeight: '600'
   }
 });

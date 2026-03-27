@@ -45,13 +45,14 @@ const styles = StyleSheet.create({
   deckCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
-    gap: spacing.xs,
+    gap: spacing.s,
     padding: spacing.m
   },
   deckCardPressed: {
-    opacity: 0.9
+    borderColor: colors.borderStrong,
+    opacity: 0.96
   },
   deckCardHeader: {
     alignItems: 'center',
@@ -60,18 +61,19 @@ const styles = StyleSheet.create({
   },
   deckType: {
     color: colors.primary,
-    fontSize: typography.caption,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   deckName: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   deckDescription: {
-    color: colors.muted,
-    fontSize: typography.body,
+    color: colors.textSecondary,
+    fontSize: typography.bodySmall,
     lineHeight: 22
   },
   deckInsightRow: {
@@ -80,12 +82,12 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   deckInsightText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     fontWeight: '600'
   },
   deckMeta: {
-    color: colors.muted,
+    color: colors.textMuted,
     fontSize: typography.caption
   }
 });

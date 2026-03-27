@@ -1,19 +1,12 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
-} from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useState } from 'react';
 
 import type { Deck } from '../../core/models/Deck';
 import { useDecks } from '../../features/decks/useDecks';
+import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { DeckListItem } from '../components/deck/DeckListItem';
-import { DeckDetailScreen } from './DeckDetailScreen';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
+import { DeckDetailScreen } from './DeckDetailScreen';
 import { colors, spacing, typography } from '../theme';
 
 function formatDeckTimestampLabel(deck: Deck): string {
@@ -60,11 +53,17 @@ export function DecksScreen() {
   return (
     <ScreenContainer
       title="Decks"
-      subtitle="Create a deck now. New decks default to the General type until deck setup expands."
+      subtitle="Start with a clear deck, keep it lightweight, and grow it into a stronger study space over time."
     >
       <View style={styles.layout}>
         <View style={styles.formCard}>
-          <Text style={styles.label}>New deck name</Text>
+          <Text style={styles.eyebrow}>Start simple</Text>
+          <Text style={styles.cardTitle}>Create a new deck</Text>
+          <Text style={styles.helperText}>
+            Give the deck a clear name now. You can move into cards, import, and study readiness checks right after.
+          </Text>
+
+          <Text style={styles.label}>Deck name</Text>
           <TextInput
             autoCapitalize="sentences"
             autoCorrect={false}
@@ -73,12 +72,14 @@ export function DecksScreen() {
               void onCreateDeck();
             }}
             placeholder="Spanish verbs"
-            placeholderTextColor={colors.muted}
+            placeholderTextColor={colors.textMuted}
+            returnKeyType="done"
             style={[styles.input, formError != null ? styles.inputError : null]}
             value={draftName}
-            returnKeyType="done"
           />
+
           {formError != null ? <Text style={styles.formError}>{formError}</Text> : null}
+
           <Pressable
             accessibilityRole="button"
             disabled={!canSubmit}
@@ -100,20 +101,28 @@ export function DecksScreen() {
         {screenError != null ? <Text style={styles.screenError}>{screenError}</Text> : null}
 
         <View style={styles.listHeader}>
-          <Text style={styles.listTitle}>Saved decks</Text>
+          <View style={styles.listHeaderCopy}>
+            <Text style={styles.listTitle}>Saved decks</Text>
+            <Text style={styles.listSubtitle}>
+              Open a deck to review cards, readiness, and export options.
+            </Text>
+          </View>
           <Text style={styles.listCount}>{`${decks.length} total`}</Text>
         </View>
 
         {isLoading ? (
-          <View style={styles.feedbackState}>
-            <ActivityIndicator color={colors.primary} />
-            <Text style={styles.feedbackText}>Loading decks...</Text>
-          </View>
+          <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
         ) : (
           <FlatList
             contentContainerStyle={decks.length === 0 ? styles.emptyListContent : styles.listContent}
             data={decks}
             keyExtractor={(deck) => deck.id.toString()}
+            ListEmptyComponent={
+              <CardWorkspaceFeedbackState
+                message="Create your first deck to start organizing cards for calmer, more focused study sessions."
+                title="No decks yet"
+              />
+            }
             renderItem={({ item }) => {
               const insights = deckInsightsByDeckId[item.id];
 
@@ -128,14 +137,6 @@ export function DecksScreen() {
                 />
               );
             }}
-            ListEmptyComponent={
-              <View style={styles.feedbackState}>
-                <Text style={styles.feedbackTitle}>No decks yet</Text>
-                <Text style={styles.feedbackText}>
-                  Create your first deck to start organizing cards for future study sessions.
-                </Text>
-              </View>
-            }
           />
         )}
       </View>
@@ -151,22 +152,39 @@ const styles = StyleSheet.create({
   formCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.s,
-    padding: spacing.m
+    padding: spacing.l
+  },
+  eyebrow: {
+    color: colors.primary,
+    fontSize: typography.overline,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase'
+  },
+  cardTitle: {
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
+    fontWeight: '700'
+  },
+  helperText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption,
+    lineHeight: 18
   },
   label: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.bodySmall,
     fontWeight: '600'
   },
   input: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     paddingHorizontal: spacing.m,
     paddingVertical: 14
@@ -181,15 +199,15 @@ const styles = StyleSheet.create({
   submitButton: {
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: spacing.m,
     paddingVertical: 14
   },
   submitButtonDisabled: {
-    backgroundColor: colors.muted
+    backgroundColor: colors.borderStrong
   },
   submitButtonPressed: {
-    opacity: 0.9
+    backgroundColor: colors.primaryPressed
   },
   submitButtonLabel: {
     color: colors.surface,
@@ -201,17 +219,26 @@ const styles = StyleSheet.create({
     fontSize: typography.caption
   },
   listHeader: {
-    alignItems: 'center',
+    alignItems: 'flex-end',
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  listHeaderCopy: {
+    flex: 1,
+    gap: spacing.xs
+  },
   listTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
+  listSubtitle: {
+    color: colors.textSecondary,
+    fontSize: typography.caption,
+    lineHeight: 18
+  },
   listCount: {
-    color: colors.muted,
+    color: colors.textMuted,
     fontSize: typography.caption
   },
   listContent: {
@@ -220,27 +247,5 @@ const styles = StyleSheet.create({
   },
   emptyListContent: {
     flexGrow: 1
-  },
-  feedbackState: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.surfaceMuted,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: spacing.s,
-    justifyContent: 'center',
-    minHeight: 160,
-    padding: spacing.l
-  },
-  feedbackTitle: {
-    color: colors.text,
-    fontSize: typography.body,
-    fontWeight: '700'
-  },
-  feedbackText: {
-    color: colors.muted,
-    fontSize: typography.body,
-    lineHeight: 22,
-    textAlign: 'center'
   }
 });

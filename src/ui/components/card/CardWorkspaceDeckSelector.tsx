@@ -63,14 +63,14 @@ const styles = StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
-    gap: spacing.s,
-    padding: spacing.m
+    gap: spacing.m,
+    padding: spacing.l
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   choiceRow: {
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   choiceChip: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: 999,
     borderWidth: 1,
@@ -87,22 +87,22 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.s
   },
   choiceChipActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     borderColor: colors.primary
   },
   choiceChipDisabled: {
     opacity: 0.5
   },
   choiceLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '600'
   },
   choiceLabelActive: {
-    color: colors.surface
+    color: colors.primary
   },
   supportText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   }

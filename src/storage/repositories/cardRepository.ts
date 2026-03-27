@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import type { SQLiteDatabase } from 'expo-sqlite';
 import type { Card } from '../../core/models/Card';
 import type { CreateCardInput, UpdateCardInput } from '../../core/types/card';
 import {
@@ -179,7 +180,7 @@ export async function createCardsBatch(inputs: CreateCardInput[]): Promise<Card[
   const timestamp = new Date().toISOString();
   const insertedIds: number[] = [];
 
-  await db.withExclusiveTransactionAsync(async (tx) => {
+  await db.withExclusiveTransactionAsync(async (tx: SQLiteDatabase) => {
     for (const input of normalizedInputs) {
       const result = await tx.runAsync(
         `

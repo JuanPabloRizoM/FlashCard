@@ -54,13 +54,13 @@ const styles = StyleSheet.create({
   },
   answerButton: {
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 14,
     flex: 1,
     paddingHorizontal: spacing.m,
     paddingVertical: 14
   },
   answerButtonMuted: {
-    backgroundColor: colors.muted
+    backgroundColor: colors.warning
   },
   answerButtonSuccess: {
     backgroundColor: colors.success
@@ -71,6 +71,6 @@ const styles = StyleSheet.create({
     fontWeight: '700'
   },
   buttonDisabled: {
-    opacity: 0.5
+    opacity: 0.55
   }
 });

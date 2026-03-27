@@ -3,79 +3,113 @@
 ## Philosophy
 
 - Clean
-- Clear
-- Non-generic
+- Friendly
+- Calm
 - Functional over decorative
 
 ---
 
 ## Core Principles
 
-1. Clarity > Visual complexity
-2. Consistency > Creativity
-3. Reusable components only
-4. Minimal cognitive load
+1. Clarity over visual noise
+2. Consistency over one-off styling
+3. Comfortable spacing for longer study sessions
+4. Soft feedback instead of harsh UI contrast
+
+---
+
+## Visual Direction
+
+- Product feel: focused, mature, approachable
+- Avoid: neon tones, dashboard-like density, noisy micro-surfaces
+- Prefer: soft surfaces, clear hierarchy, readable helper copy, obvious primary actions
+
+---
+
+## Palette
+
+- Background: `#F7F8FC`
+- Surface: `#FFFFFF`
+- Surface muted: `#EEF1F7`
+- Text primary: `#162033`
+- Text secondary: `#5B6780`
+- Text muted: `#8A94A6`
+- Primary: `#4F7CFF`
+- Primary pressed: `#3E68E8`
+- Primary soft: `#E8F0FF`
+- Success: `#35B67A`
+- Success soft: `#E7F8EF`
+- Warning: `#F0A54A`
+- Warning soft: `#FFF3E3`
+- Error: `#E35D6A`
+- Error soft: `#FDECEF`
+- Border: `#D8DFEA`
+- Border strong: `#C4CEDD`
 
 ---
 
 ## Components
 
-- Button
-- Card
-- Input
-- StudyCard
-- DeckItem
+- Screen header card
+- Surface card
+- Primary button
+- Secondary button
+- Choice chip
+- Feedback state card
+- Readiness badge
+- Study card
 
 ---
 
 ## Layout
 
-- Spacing system (8pt grid)
-- Consistent padding
-- Clear hierarchy
-
----
-
-## Colors
-
-- Primary
-- Secondary
-- Background
-- Surface
-- Error
-- Success
+- 8pt spacing base with larger breathing room on main cards
+- Rounded surfaces for group clarity
+- Helper text should stay close to the control it explains
+- Empty and loading states should remain centered and calm
 
 ---
 
 ## Typography
 
+- Hero
 - Title
 - Subtitle
 - Body
+- Body small
 - Caption
+- Overline
 
 ---
 
-## States
+## State Rules
 
 Must exist for:
 - Empty state
 - Loading state
 - Error state
+- Success/summary state
+
+States should be:
+- actionable
+- low-noise
+- visually consistent with the same surface language used elsewhere
 
 ---
 
 ## Study Screen Rules
 
-- Focus on content
-- No distractions
-- Clear front/back separation
-- Smooth transitions
+- Should feel like a focused session mode, not a utility page
+- Setup remains visible and clear before the session starts
+- Current session context remains visible while studying
+- Feedback should feel calm and informative, not punitive
 
 ---
 
 ## Forbidden
 
 - Random styles per screen
+- Harsh feedback colors without soft backgrounds
+- Dense layout blocks with no breathing room
 - Inline styles everywhere
 - Unstructured UI

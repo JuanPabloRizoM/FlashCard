@@ -44,12 +44,12 @@ export function StudySessionBanner({
 
 const styles = StyleSheet.create({
   panel: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.primarySoft,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.s,
-    padding: spacing.m
+    padding: spacing.l
   },
   headerRow: {
     alignItems: 'center',
@@ -58,13 +58,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.bodySmall,
     fontWeight: '700'
   },
   techniqueBadge: {
     backgroundColor: colors.surface,
-    borderColor: colors.border,
+    borderColor: colors.primarySoft,
     borderRadius: 999,
     borderWidth: 1,
     paddingHorizontal: spacing.s,
@@ -72,11 +72,11 @@ const styles = StyleSheet.create({
   },
   techniqueLabel: {
     color: colors.primary,
-    fontSize: typography.caption,
+    fontSize: typography.overline,
     fontWeight: '700'
   },
   deckName: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.title,
     fontWeight: '700'
   },
@@ -94,14 +94,15 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs
   },
   metaBadgeLabel: {
-    color: colors.muted,
-    fontSize: 11,
+    color: colors.textSecondary,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   supportText: {
-    color: colors.muted,
-    fontSize: typography.body,
+    color: colors.textSecondary,
+    fontSize: typography.bodySmall,
     lineHeight: 22
   }
 });

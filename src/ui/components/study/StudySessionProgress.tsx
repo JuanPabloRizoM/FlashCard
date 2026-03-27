@@ -138,12 +138,12 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   counterText: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   helperText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption
   },
   metaRow: {
@@ -151,9 +151,9 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   metaPill: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     flex: 1,
     gap: spacing.xs,
@@ -161,32 +161,34 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.s
   },
   metaLabel: {
-    color: colors.muted,
-    fontSize: 11,
+    color: colors.textMuted,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   metaValue: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '700'
   },
   stageBadge: {
-    backgroundColor: colors.background,
-    borderColor: colors.border,
+    backgroundColor: colors.primarySoft,
+    borderColor: colors.primarySoft,
     borderRadius: 999,
     borderWidth: 1,
     paddingHorizontal: spacing.s,
     paddingVertical: spacing.xs
   },
   stageLabel: {
-    color: colors.muted,
-    fontSize: typography.caption,
+    color: colors.primary,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   progressTrack: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.primarySoft,
     borderRadius: 999,
     height: 8,
     overflow: 'hidden'
@@ -202,20 +204,21 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.s
   },
   feedbackSuccess: {
-    backgroundColor: '#dcfce7'
+    backgroundColor: colors.successSoft
   },
   feedbackError: {
-    backgroundColor: '#fee2e2'
+    backgroundColor: colors.errorSoft
   },
   feedbackText: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '600'
   },
   feedbackLabel: {
-    color: colors.text,
-    fontSize: 11,
+    color: colors.textPrimary,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   }
 });

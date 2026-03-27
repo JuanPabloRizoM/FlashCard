@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.m,
     padding: spacing.m
@@ -92,12 +92,12 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   supportText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
@@ -106,30 +106,32 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   metricCard: {
-    backgroundColor: colors.background,
-    borderRadius: 12,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 16,
     flex: 1,
     gap: spacing.xs,
-    padding: spacing.s
+    padding: spacing.m
   },
   metricLabel: {
-    color: colors.muted,
-    fontSize: 11,
+    color: colors.textMuted,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   metricValue: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   section: {
     gap: spacing.s
   },
   subsectionTitle: {
-    color: colors.text,
-    fontSize: typography.caption,
+    color: colors.textPrimary,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
   coverageRow: {
@@ -142,17 +144,17 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   coverageLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     flex: 1,
     fontSize: typography.caption,
     fontWeight: '600'
   },
   coverageMeta: {
-    color: colors.muted,
-    fontSize: 12
+    color: colors.textMuted,
+    fontSize: typography.caption
   },
   coverageTrack: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.primarySoft,
     borderRadius: 999,
     height: 8,
     overflow: 'hidden'
@@ -165,31 +167,33 @@ const styles = StyleSheet.create({
     gap: spacing.s
   },
   techniqueCard: {
+    borderColor: colors.border,
+    borderWidth: 1,
     borderRadius: 12,
     gap: spacing.xs,
-    padding: spacing.s
+    padding: spacing.m
   },
   techniqueReady: {
-    backgroundColor: '#dcfce7'
+    backgroundColor: colors.successSoft
   },
   techniqueLimited: {
-    backgroundColor: '#fef3c7'
+    backgroundColor: colors.warningSoft
   },
   techniqueUnavailable: {
-    backgroundColor: '#fee2e2'
+    backgroundColor: colors.errorSoft
   },
   techniqueLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '700'
   },
   techniqueMeta: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '700'
   },
   techniqueMessage: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption
   }
 });

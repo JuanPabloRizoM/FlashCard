@@ -1,8 +1,9 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 
 import type { Card } from '../../../core/models/Card';
 import { buildCardStudyFeedback } from '../../../features/study/cardStudyPreview';
-import { colors, spacing, typography } from '../../theme';
+import { spacing } from '../../theme';
+import { CardWorkspaceFeedbackState } from './CardWorkspaceFeedbackState';
 import { DeckCardListItem } from './DeckCardListItem';
 
 type CardWorkspaceCardListProps = {
@@ -28,12 +29,7 @@ export function CardWorkspaceCardList({
   onEditCard
 }: CardWorkspaceCardListProps) {
   if (isLoading) {
-    return (
-      <View style={styles.feedbackState}>
-        <ActivityIndicator color={colors.primary} />
-        <Text style={styles.feedbackText}>Loading cards...</Text>
-      </View>
-    );
+    return <CardWorkspaceFeedbackState isLoading message="Loading cards..." />;
   }
 
   return (
@@ -53,12 +49,10 @@ export function CardWorkspaceCardList({
         />
       )}
       ListEmptyComponent={
-        <View style={styles.feedbackState}>
-          <Text style={styles.feedbackTitle}>No cards yet</Text>
-          <Text style={styles.feedbackText}>
-            Add the first card for this deck from the editor above or paste cards into the import panel.
-          </Text>
-        </View>
+        <CardWorkspaceFeedbackState
+          message="Add the first card for this deck from the editor above or paste cards into the import panel."
+          title="No cards yet"
+        />
       }
       scrollEnabled={false}
     />
@@ -71,27 +65,5 @@ const styles = StyleSheet.create({
   },
   emptyListContent: {
     flexGrow: 1
-  },
-  feedbackState: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.surfaceMuted,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: spacing.s,
-    justifyContent: 'center',
-    minHeight: 160,
-    padding: spacing.l
-  },
-  feedbackTitle: {
-    color: colors.text,
-    fontSize: typography.body,
-    fontWeight: '700'
-  },
-  feedbackText: {
-    color: colors.muted,
-    fontSize: typography.body,
-    lineHeight: 22,
-    textAlign: 'center'
   }
 });

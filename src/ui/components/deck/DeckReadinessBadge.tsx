@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { InsightReadiness } from '../../../features/study/studyInsights';
-import { spacing } from '../../theme';
+import { colors, spacing, typography } from '../../theme';
 
 type DeckReadinessBadgeProps = {
   readiness: InsightReadiness;
@@ -11,13 +11,13 @@ type DeckReadinessBadgeProps = {
 function getReadinessColors(readiness: InsightReadiness) {
   switch (readiness) {
     case 'good':
-      return { backgroundColor: '#dcfce7', textColor: '#166534' };
+      return { backgroundColor: colors.successSoft, borderColor: colors.success, textColor: colors.success };
     case 'needs_improvement':
-      return { backgroundColor: '#fef3c7', textColor: '#92400e' };
+      return { backgroundColor: colors.warningSoft, borderColor: colors.warning, textColor: colors.warning };
     case 'poor':
-      return { backgroundColor: '#fee2e2', textColor: '#b91c1c' };
+      return { backgroundColor: colors.errorSoft, borderColor: colors.error, textColor: colors.error };
     default:
-      return { backgroundColor: '#e2e8f0', textColor: '#475569' };
+      return { backgroundColor: colors.surfaceMuted, borderColor: colors.border, textColor: colors.textSecondary };
   }
 }
 
@@ -25,7 +25,7 @@ export function DeckReadinessBadge({ readiness, label }: DeckReadinessBadgeProps
   const tone = getReadinessColors(readiness);
 
   return (
-    <View style={[styles.badge, { backgroundColor: tone.backgroundColor }]}>
+    <View style={[styles.badge, { backgroundColor: tone.backgroundColor, borderColor: tone.borderColor }]}>
       <Text style={[styles.badgeLabel, { color: tone.textColor }]}>{label}</Text>
     </View>
   );
@@ -34,12 +34,14 @@ export function DeckReadinessBadge({ readiness, label }: DeckReadinessBadgeProps
 const styles = StyleSheet.create({
   badge: {
     borderRadius: 999,
+    borderWidth: 1,
     paddingHorizontal: spacing.s,
     paddingVertical: spacing.xs
   },
   badgeLabel: {
-    fontSize: 11,
+    fontSize: typography.overline,
     fontWeight: '700',
+    letterSpacing: 0.3,
     textTransform: 'uppercase'
   }
 });

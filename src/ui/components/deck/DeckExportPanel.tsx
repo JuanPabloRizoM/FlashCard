@@ -74,10 +74,10 @@ const styles = StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.m,
-    padding: spacing.m
+    padding: spacing.l
   },
   headerRow: {
     alignItems: 'flex-start',
@@ -90,37 +90,37 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   sectionTitle: {
-    color: colors.text,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   supportText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
   summaryCard: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.primarySoft,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     gap: spacing.xs,
     padding: spacing.m
   },
   summaryTitle: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: '700'
   },
   summaryText: {
-    color: colors.muted,
+    color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
   },
   exportScroller: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     maxHeight: 240
   },
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     padding: spacing.m
   },
   exportText: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontFamily: 'Courier',
     fontSize: typography.caption,
     lineHeight: 20
@@ -141,12 +141,12 @@ const styles = StyleSheet.create({
   primaryButton: {
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: spacing.m,
     paddingVertical: spacing.s
   },
   primaryButtonPressed: {
-    opacity: 0.9
+    backgroundColor: colors.primaryPressed
   },
   primaryButtonLabel: {
     color: colors.surface,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: 12,
     borderWidth: 1,
@@ -163,10 +163,10 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.s
   },
   secondaryButtonPressed: {
-    opacity: 0.9
+    borderColor: colors.borderStrong
   },
   secondaryButtonLabel: {
-    color: colors.text,
+    color: colors.textPrimary,
     fontSize: typography.caption,
     fontWeight: '700'
   }

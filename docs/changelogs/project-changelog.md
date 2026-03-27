@@ -217,3 +217,12 @@
 - Files: src/storage/appSettingsStorage.native.ts, src/storage/appSettingsStorage.web.ts, docs/architecture/project-structure.md, docs/changelogs/project-changelog.md
 - Risk: Low
 - Notes: Web settings now stay on the same browser-safe storage fallback path as the rest of the web app, while native/mobile keeps SQLite-backed settings persistence.
+
+---
+
+[2026-03-26]
+- Change: Applied a UI/UX polish pass across the shared theme, Decks, Deck detail, Cards, Study, and Settings screens to make the app calmer, cleaner, and more consistent.
+- Reason: The product flow was functional, but the visual system still felt too raw and uneven for longer study use.
+- Files: src/ui/theme/colors.ts, src/ui/theme/spacing.ts, src/ui/theme/typography.ts, src/ui/components/layout/ScreenContainer.tsx, src/ui/components/card/*, src/ui/components/deck/*, src/ui/components/study/*, src/ui/screens/DecksScreen.tsx, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/screens/StudyScreen.tsx, src/ui/screens/SettingsScreen.tsx, docs/ui/design-system.md
+- Risk: Low
+- Notes: This pass changed hierarchy, spacing, tone, helper copy, and feedback states only. No study logic, repository behavior, persistence architecture, or navigation flow changed.
