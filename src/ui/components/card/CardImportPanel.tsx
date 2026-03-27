@@ -1,7 +1,9 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import type { CardImportPreview } from '../../../features/cards/cardImport';
 import { colors, spacing, typography } from '../../theme';
+import { TextImportPreviewList } from './TextImportPreviewList';
+import { TextImportWorkspace } from './TextImportWorkspace';
 
 type CardImportPanelProps = {
   importText: string;
@@ -15,7 +17,8 @@ type CardImportPanelProps = {
   onClearImport: () => void;
 };
 
-const MAX_VISIBLE_PREVIEW_ROWS = 12;
+const CARD_IMPORT_EXAMPLE =
+  'hola | hello\nperro | dog | animal domestico\ncorrer | run | moverse rapido | usado en deportes';
 
 export function CardImportPanel({
   importText,
@@ -28,49 +31,41 @@ export function CardImportPanel({
   onImportCards,
   onClearImport
 }: CardImportPanelProps) {
-  const visibleRows = preview.rows.slice(0, MAX_VISIBLE_PREVIEW_ROWS);
-  const hiddenRowCount = Math.max(preview.rows.length - visibleRows.length, 0);
+  const buttonLabel = isSubmitting ? 'Importing...' : 'Import cards';
+
+  function getStatusText(): string | null {
+    if (!preview.hasContent) {
+      return null;
+    }
+
+    if (preview.validCount > 0) {
+      return `${preview.validCount} ready`;
+    }
+
+    if (preview.invalidCount > 0) {
+      return 'Fix invalid lines to import';
+    }
+
+    return null;
+  }
+
+  const statusText = getStatusText();
 
   return (
-    <View style={styles.panel}>
-      <View style={styles.headerRow}>
-        <View style={styles.headerCopy}>
-          <Text style={styles.sectionTitle}>Import cards</Text>
-          <Text style={styles.supportText}>
-            Paste one card per line: `title | translation | definition | application`.
-          </Text>
-          <Text style={styles.supportText}>
-            {selectedDeckName != null
-              ? `Adds cards to ${selectedDeckName}.`
-              : 'Choose a deck first.'}
-          </Text>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          disabled={importText.length === 0 || isSubmitting}
-          onPress={onClearImport}
-          style={[
-            styles.secondaryButton,
-            importText.length === 0 || isSubmitting ? styles.secondaryButtonDisabled : null
-          ]}
-        >
-          <Text style={styles.secondaryButtonLabel}>Clear</Text>
-        </Pressable>
-      </View>
-
-      <TextInput
-        autoCapitalize="none"
-        autoCorrect={false}
-        editable={!isSubmitting}
-        multiline
-        onChangeText={onImportTextChange}
-        placeholder={'to run | correr\nheart | corazon | Organ that pumps blood\narray | arreglo | Ordered list | Use in programming examples'}
-        placeholderTextColor={colors.muted}
-        style={styles.input}
-        textAlignVertical="top"
-        value={importText}
-      />
-
+    <TextImportWorkspace
+      actionLabel={buttonLabel}
+      exampleText={CARD_IMPORT_EXAMPLE}
+      importText={importText}
+      isActionDisabled={isDisabled || preview.validCount === 0 || isSubmitting}
+      isSubmitting={isSubmitting}
+      onAction={() => {
+        void onImportCards();
+      }}
+      onClearImport={onClearImport}
+      onImportTextChange={onImportTextChange}
+      subtitle={selectedDeckName != null ? `Paste lines for ${selectedDeckName}.` : 'Choose a deck first.'}
+      title="Import cards"
+    >
       {preview.hasContent ? (
         <View style={styles.summaryCard}>
           <Text style={styles.summaryText}>{`${preview.validCount} valid`}</Text>
@@ -78,98 +73,18 @@ export function CardImportPanel({
           <Text style={styles.summaryText}>{`${preview.totalCount} total`}</Text>
         </View>
       ) : null}
-
-      {importResultMessage != null ? (
-        <Text style={styles.resultText}>{importResultMessage}</Text>
-      ) : null}
-
-      {preview.hasContent ? (
-        <View style={styles.previewSection}>
-          <Text style={styles.previewTitle}>Preview</Text>
-          <View style={styles.previewList}>
-            {visibleRows.map((row) => (
-              <View
-                key={`${row.lineNumber}-${row.rawLine}`}
-                style={[styles.previewRow, row.isValid ? styles.previewRowValid : styles.previewRowInvalid]}
-              >
-                <Text style={styles.previewLineLabel}>{`Line ${row.lineNumber}`}</Text>
-                <Text style={styles.previewMainText}>
-                  {row.title.length > 0 ? row.title : row.rawLine.trim() || 'Empty line'}
-                </Text>
-                {row.isValid ? (
-                  <Text style={styles.previewDetailText}>
-                    {[row.translation, row.definition, row.application].filter(Boolean).join(' | ')}
-                  </Text>
-                ) : (
-                  <Text style={styles.previewErrorText}>{row.error}</Text>
-                )}
-              </View>
-            ))}
-          </View>
-          {hiddenRowCount > 0 ? (
-            <Text style={styles.supportText}>{`${hiddenRowCount} more line${hiddenRowCount === 1 ? '' : 's'}.`}</Text>
-          ) : null}
-        </View>
-      ) : null}
-
-      <Pressable
-        accessibilityRole="button"
-        disabled={isDisabled || preview.validCount === 0 || isSubmitting}
-        onPress={() => {
-          void onImportCards();
-        }}
-        style={[
-          styles.primaryButton,
-          isDisabled || preview.validCount === 0 || isSubmitting ? styles.primaryButtonDisabled : null
-        ]}
-      >
-        <Text style={styles.primaryButtonLabel}>
-          {isSubmitting ? 'Importing...' : `Import ${preview.validCount} card${preview.validCount === 1 ? '' : 's'}`}
-        </Text>
-      </Pressable>
-    </View>
+      {importResultMessage != null ? <Text style={styles.resultText}>{importResultMessage}</Text> : null}
+      {preview.hasContent ? <TextImportPreviewList rows={preview.rows} /> : null}
+      {statusText != null ? <Text style={styles.supportText}>{statusText}</Text> : null}
+    </TextImportWorkspace>
   );
 }
 
 const styles = StyleSheet.create({
-  panel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 20,
-    borderWidth: 1,
-    gap: spacing.m,
-    padding: spacing.l
-  },
-  headerRow: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: spacing.m,
-    justifyContent: 'space-between'
-  },
-  headerCopy: {
-    flex: 1,
-    gap: spacing.xs
-  },
-  sectionTitle: {
-    color: colors.textPrimary,
-    fontSize: typography.subtitle,
-    fontWeight: '700'
-  },
   supportText: {
     color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 18
-  },
-  input: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: 14,
-    borderWidth: 1,
-    color: colors.textPrimary,
-    fontSize: typography.body,
-    minHeight: 140,
-    paddingHorizontal: spacing.m,
-    paddingVertical: spacing.m
   },
   summaryCard: {
     backgroundColor: colors.surfaceMuted,
@@ -189,82 +104,5 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: typography.caption,
     lineHeight: 18
-  },
-  previewSection: {
-    gap: spacing.s
-  },
-  previewTitle: {
-    color: colors.textPrimary,
-    fontSize: typography.overline,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-    textTransform: 'uppercase'
-  },
-  previewList: {
-    gap: spacing.s
-  },
-  previewRow: {
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: 12,
-    gap: spacing.xs,
-    padding: spacing.m
-  },
-  previewRowValid: {
-    backgroundColor: colors.successSoft
-  },
-  previewRowInvalid: {
-    backgroundColor: colors.errorSoft
-  },
-  previewLineLabel: {
-    color: colors.textMuted,
-    fontSize: typography.caption,
-    fontWeight: '700'
-  },
-  previewMainText: {
-    color: colors.textPrimary,
-    fontSize: typography.body,
-    fontWeight: '600'
-  },
-  previewDetailText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption,
-    lineHeight: 18
-  },
-  previewErrorText: {
-    color: colors.error,
-    fontSize: typography.caption,
-    lineHeight: 18
-  },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: colors.primary,
-    borderRadius: 14,
-    paddingHorizontal: spacing.m,
-    paddingVertical: 14
-  },
-  primaryButtonDisabled: {
-    backgroundColor: colors.borderStrong
-  },
-  primaryButtonLabel: {
-    color: colors.surface,
-    fontSize: typography.body,
-    fontWeight: '700'
-  },
-  secondaryButton: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: 12,
-    borderWidth: 1,
-    paddingHorizontal: spacing.m,
-    paddingVertical: spacing.s
-  },
-  secondaryButtonDisabled: {
-    opacity: 0.5
-  },
-  secondaryButtonLabel: {
-    color: colors.textPrimary,
-    fontSize: typography.caption,
-    fontWeight: '700'
   }
 });

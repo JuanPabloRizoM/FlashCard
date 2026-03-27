@@ -8,44 +8,35 @@ import { useDeckCards } from '../../features/cards/useDeckCards';
 import { useDeckImport } from '../../features/decks/useDeckImport';
 import { listDecks } from '../../storage/repositories/deckRepository';
 import type { RootTabParamList } from '../../navigation/types';
-import { CardEditorPanel } from '../components/card/CardEditorPanel';
-import { CardImportPanel } from '../components/card/CardImportPanel';
-import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { CardWorkspaceCardList } from '../components/card/CardWorkspaceCardList';
 import { CardWorkspaceDeckSelector } from '../components/card/CardWorkspaceDeckSelector';
-import { DeckImportPanel } from '../components/deck/DeckImportPanel';
+import { CardWorkspaceNoDecks } from '../components/card/CardWorkspaceNoDecks';
+import {
+  CardWorkspaceModeSwitch,
+  type CardWorkspaceMode
+} from '../components/card/CardWorkspaceModeSwitch';
+import { CardWorkspacePanel } from '../components/card/CardWorkspacePanel';
+import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
+import { getWorkspaceTitle, resolveSelectedDeckId } from '../components/card/cardWorkspaceUtils';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { colors, spacing, typography } from '../theme';
 
 type CardsScreenProps = BottomTabScreenProps<RootTabParamList, 'Cards'>;
-
-function resolveSelectedDeckId(
-  decks: Deck[],
-  currentDeckId: number | null,
-  requestedDeckId: number | null
-): number | null {
-  const requestedDeck = requestedDeckId != null ? decks.find((deck) => deck.id === requestedDeckId) : null;
-
-  if (requestedDeck != null) {
-    return requestedDeck.id;
-  }
-
-  const currentDeck = currentDeckId != null ? decks.find((deck) => deck.id === currentDeckId) : null;
-
-  return currentDeck?.id ?? decks[0]?.id ?? null;
-}
 
 export function CardsScreen({ navigation, route }: CardsScreenProps) {
   const routeSelectedDeckId = route.params?.selectedDeckId ?? null;
   const [decks, setDecks] = useState<Deck[]>([]);
   const [handoffDeckId, setHandoffDeckId] = useState<number | null>(routeSelectedDeckId);
   const [selectedDeckId, setSelectedDeckId] = useState<number | null>(routeSelectedDeckId);
+  const [workspaceMode, setWorkspaceMode] = useState<CardWorkspaceMode>('create');
   const [deckScreenError, setDeckScreenError] = useState<string | null>(null);
   const [isLoadingDecks, setIsLoadingDecks] = useState(true);
+
   const selectedDeck = useMemo(
     () => decks.find((deck) => deck.id === selectedDeckId) ?? null,
     [decks, selectedDeckId]
   );
+
   const {
     cards,
     editingCardId,
@@ -76,6 +67,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     onEditCard,
     onCancelEditing
   } = useDeckCards(selectedDeckId);
+
   const {
     importText: deckImportText,
     importPreview: deckImportPreview,
@@ -90,9 +82,11 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
       setDecks((currentDecks) => [importedDeck, ...currentDecks]);
       setSelectedDeckId(importedDeck.id);
       setHandoffDeckId(null);
+      setWorkspaceMode('create');
       setDeckScreenError(null);
     }
   });
+
   const isEditorLocked = isSubmitting || isImportSubmitting || isDeckImportSubmitting;
   const isImportLocked =
     isSubmitting || isImportSubmitting || isDeckImportSubmitting || editingCardId != null;
@@ -105,6 +99,12 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     setHandoffDeckId(routeSelectedDeckId);
     navigation.setParams({ selectedDeckId: undefined });
   }, [navigation, routeSelectedDeckId]);
+
+  useEffect(() => {
+    if (editingCardId != null) {
+      setWorkspaceMode('create');
+    }
+  }, [editingCardId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -149,10 +149,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
 
   if (isLoadingDecks) {
     return (
-      <ScreenContainer
-        title="Cards"
-        subtitle="Add or edit cards."
-      >
+      <ScreenContainer title="Cards" subtitle="Build your study deck.">
         <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
       </ScreenContainer>
     );
@@ -160,35 +157,22 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
 
   if (decks.length === 0) {
     return (
-      <ScreenContainer
-        title="Cards"
-        subtitle="Import a deck or pick one to start."
-      >
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <CardWorkspaceFeedbackState
-            message="Import a deck here or create one in Decks."
-            title="No decks available"
-          />
-          <DeckImportPanel
-            importResultMessage={deckImportResultMessage}
-            importText={deckImportText}
-            isDisabled={isDeckImportSubmitting}
-            isSubmitting={isDeckImportSubmitting}
-            onClearImport={onClearDeckImport}
-            onImportDeck={onImportDeck}
-            onImportTextChange={onDeckImportTextChange}
-            preview={deckImportPreview}
-          />
-        </ScrollView>
+      <ScreenContainer title="Cards" subtitle="Import a deck to start.">
+        <CardWorkspaceNoDecks
+          importResultMessage={deckImportResultMessage}
+          importText={deckImportText}
+          isSubmitting={isDeckImportSubmitting}
+          onClearImport={onClearDeckImport}
+          onImportDeck={onImportDeck}
+          onImportTextChange={onDeckImportTextChange}
+          preview={deckImportPreview}
+        />
       </ScreenContainer>
     );
   }
 
   return (
-    <ScreenContainer
-      title="Cards"
-      subtitle="Choose a deck, then add or import cards."
-    >
+    <ScreenContainer title="Cards" subtitle="Build your study deck.">
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <CardWorkspaceDeckSelector
           decks={decks}
@@ -199,54 +183,57 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           selectedDeckName={selectedDeck?.name ?? null}
         />
 
-        {deckScreenError != null ? <Text style={styles.errorText}>{deckScreenError}</Text> : null}
-        {screenError != null ? <Text style={styles.errorText}>{screenError}</Text> : null}
-
-        <DeckImportPanel
-          importResultMessage={deckImportResultMessage}
-          importText={deckImportText}
-          isDisabled={isImportLocked}
-          isSubmitting={isDeckImportSubmitting}
-          onClearImport={onClearDeckImport}
-          onImportDeck={onImportDeck}
-          onImportTextChange={onDeckImportTextChange}
-          preview={deckImportPreview}
+        <CardWorkspaceModeSwitch
+          activeMode={workspaceMode}
+          isDisabled={isEditorLocked || editingCardId != null}
+          onChangeMode={setWorkspaceMode}
         />
 
-        <CardImportPanel
-          importResultMessage={importResultMessage}
-          importText={importText}
-          isDisabled={selectedDeckId == null || isImportLocked}
-          isSubmitting={isImportSubmitting}
-          onClearImport={onClearImport}
-          onImportCards={onImportCards}
-          onImportTextChange={onImportTextChange}
-          preview={importPreview}
-          selectedDeckName={selectedDeck?.name ?? null}
-        />
+        <View style={styles.workspaceHeader}>
+          <Text style={styles.sectionTitle}>{getWorkspaceTitle(workspaceMode, editingCardId != null)}</Text>
+          {deckScreenError != null ? <Text style={styles.errorText}>{deckScreenError}</Text> : null}
+          {screenError != null ? <Text style={styles.errorText}>{screenError}</Text> : null}
+        </View>
 
-        <CardEditorPanel
-          canSubmit={canSubmit && !isImportSubmitting}
+        <CardWorkspacePanel
+          canSubmit={canSubmit}
+          deckImportPreview={deckImportPreview}
+          deckImportResultMessage={deckImportResultMessage}
+          deckImportText={deckImportText}
           draftApplication={draftApplication}
           draftDefinition={draftDefinition}
           draftImageUri={draftImageUri}
+          draftStudyPreview={draftStudyPreview}
           draftTitle={draftTitle}
           draftTranslation={draftTranslation}
+          editingCardId={editingCardId}
           formError={formError}
-          isSubmitting={isEditorLocked}
-          mode={editingCardId == null ? 'create' : 'edit'}
-          onCancelEditing={editingCardId != null ? onCancelEditing : undefined}
+          importPreview={importPreview}
+          importResultMessage={importResultMessage}
+          importText={importText}
+          isDeckImportSubmitting={isDeckImportSubmitting}
+          isEditorLocked={isEditorLocked}
+          isImportLocked={isImportLocked}
+          isImportSubmitting={isImportSubmitting}
+          mode={workspaceMode}
+          onCancelEditing={onCancelEditing}
+          onClearDeckImport={onClearDeckImport}
+          onClearImport={onClearImport}
+          onDeckImportTextChange={onDeckImportTextChange}
           onDraftApplicationChange={onDraftApplicationChange}
           onDraftDefinitionChange={onDraftDefinitionChange}
           onDraftImageUriChange={onDraftImageUriChange}
           onDraftTitleChange={onDraftTitleChange}
           onDraftTranslationChange={onDraftTranslationChange}
-          onSubmit={onSaveCard}
-          preview={draftStudyPreview}
+          onImportCards={onImportCards}
+          onImportDeck={onImportDeck}
+          onImportTextChange={onImportTextChange}
+          onSaveCard={onSaveCard}
+          selectedDeckName={selectedDeck?.name ?? null}
         />
 
         <View style={styles.listHeader}>
-          <Text style={styles.sectionTitle}>Cards in this deck</Text>
+          <Text style={styles.sectionTitle}>Cards</Text>
           <Text style={styles.listCount}>{`${cards.length} total`}</Text>
         </View>
 
@@ -260,6 +247,9 @@ const styles = StyleSheet.create({
   content: {
     gap: spacing.m,
     paddingBottom: spacing.xl
+  },
+  workspaceHeader: {
+    gap: spacing.xs
   },
   sectionTitle: {
     color: colors.textPrimary,

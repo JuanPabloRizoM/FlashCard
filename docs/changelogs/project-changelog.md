@@ -22,6 +22,15 @@
 
 ---
 
+[2026-03-27]
+- Change: Simplified the Cards workspace with a compact deck context bar, segmented workspace switch, and reduced import/create copy so only one primary workspace panel is visible at a time.
+- Reason: The Cards tab had become too text-heavy and visually stacked, which made the main actions slower to scan.
+- Files: src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardWorkspaceModeSwitch.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/components/card/CardWorkspacePanel.tsx, src/ui/components/card/CardWorkspaceNoDecks.tsx, src/ui/components/card/TextImportWorkspace.tsx, src/ui/components/card/CardImportPanel.tsx, src/ui/components/deck/DeckImportPanel.tsx
+- Risk: Low
+- Notes: Create Card remains the default mode; card import, deck import, deck selection, and the lower card list keep their previous behavior.
+
+---
+
 [2026-03-18]
 - Change: Initialized Expo + React Native TypeScript app scaffold with layered `src/` structure, typed bottom-tab navigation shell, and placeholder MVP screens.
 - Reason: Establish a stable foundation before implementing decks, cards, study logic, and storage features.

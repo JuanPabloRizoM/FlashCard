@@ -22,7 +22,20 @@ export function CardWorkspaceDeckSelector({
 }: CardWorkspaceDeckSelectorProps) {
   return (
     <View style={styles.panel}>
-      <Text style={styles.sectionTitle}>Choose a deck</Text>
+      <View style={styles.headerRow}>
+        <View style={styles.contextWrap}>
+          <Text style={styles.contextLabel}>Deck</Text>
+          <Text style={styles.contextValue}>
+            {selectedDeckName ?? 'Choose a deck'}
+          </Text>
+        </View>
+        {isEditing ? (
+          <View style={styles.statusBadge}>
+            <Text style={styles.statusLabel}>Editing</Text>
+          </View>
+        ) : null}
+      </View>
+
       <View style={styles.choiceRow}>
         {decks.map((deck) => (
           <Pressable
@@ -48,13 +61,6 @@ export function CardWorkspaceDeckSelector({
           </Pressable>
         ))}
       </View>
-      <Text style={styles.supportText}>
-        {selectedDeckName == null
-          ? 'Choose a deck.'
-          : isEditing
-            ? `Editing in ${selectedDeckName}.`
-            : `Working in ${selectedDeckName}.`}
-      </Text>
     </View>
   );
 }
@@ -63,15 +69,45 @@ const styles = StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
-    gap: spacing.m,
-    padding: spacing.l
+    gap: spacing.s,
+    padding: spacing.m
   },
-  sectionTitle: {
+  headerRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: spacing.s
+  },
+  contextWrap: {
+    flex: 1,
+    gap: spacing.xxs
+  },
+  contextLabel: {
+    color: colors.textMuted,
+    fontSize: typography.overline,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase'
+  },
+  contextValue: {
     color: colors.textPrimary,
-    fontSize: typography.subtitle,
+    fontSize: typography.body,
     fontWeight: '700'
+  },
+  statusBadge: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: 999,
+    paddingHorizontal: spacing.s,
+    paddingVertical: spacing.xs
+  },
+  statusLabel: {
+    color: colors.primary,
+    fontSize: typography.overline,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase'
   },
   choiceRow: {
     flexDirection: 'row',
@@ -100,10 +136,5 @@ const styles = StyleSheet.create({
   },
   choiceLabelActive: {
     color: colors.primary
-  },
-  supportText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption,
-    lineHeight: 18
   }
 });
