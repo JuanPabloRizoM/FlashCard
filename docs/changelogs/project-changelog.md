@@ -23,6 +23,15 @@
 ---
 
 [2026-03-27]
+- Change: Polished the Cards workspace for repeated use with a faster Quick Add loop, lightweight save feedback, and low-noise list filters for maintenance work.
+- Reason: The card-building flow was structurally sound, but repeated entry and day-to-day list maintenance still had avoidable friction.
+- Files: src/features/cards/useDeckCards.ts, src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardQuickAddPanel.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardEditorBasicSection.tsx, src/ui/components/card/CardWorkspacePanel.tsx, src/ui/components/card/CardWorkspaceCardList.tsx, src/ui/components/card/CardListFilterBar.tsx, src/ui/components/card/cardListFilters.ts, src/ui/components/card/CardListStatus.tsx
+- Risk: Low
+- Notes: Quick Add stays active after save, edit flow stays intact, and filters are UI-only views over existing card readiness signals.
+
+---
+
+[2026-03-27]
 - Change: Added a Quick Add path to the Cards workspace, kept the full editor available for richer cards, and tightened card-row status into a more compact workspace summary.
 - Reason: Repeated card creation still had too much friction for simple cards, and the existing card list felt more like raw data than product content.
 - Files: src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardQuickAddPanel.tsx, src/ui/components/card/CardEditorDetailsSection.tsx, src/ui/components/card/DeckCardListItem.tsx, src/ui/components/card/CardListStatus.tsx
