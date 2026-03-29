@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Deck } from '../../../core/models/Deck';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type CardWorkspaceDeckSelectorProps = {
   decks: Deck[];
@@ -20,6 +20,8 @@ export function CardWorkspaceDeckSelector({
   isEditing,
   onSelectDeck
 }: CardWorkspaceDeckSelectorProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
@@ -63,7 +65,8 @@ export function CardWorkspaceDeckSelector({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

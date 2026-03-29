@@ -1,23 +1,50 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { useMemo } from 'react';
+import { NavigationContainer, type Theme as NavigationTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { useAppSettings } from '../features/settings/AppSettingsProvider';
 import { TabBarIcon } from '../ui/components/navigation/TabBarIcon';
 import { CardsScreen } from '../ui/screens/CardsScreen';
 import { DecksScreen } from '../ui/screens/DecksScreen';
 import { SettingsScreen } from '../ui/screens/SettingsScreen';
 import { StudyScreen } from '../ui/screens/StudyScreen';
-import { colors, spacing, typography } from '../ui/theme';
+import { spacing, typography, useThemeColors } from '../ui/theme';
 import type { RootTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export function AppNavigator() {
+  const { resolvedTheme } = useAppSettings();
+  const colors = useThemeColors();
+
+  const navigationTheme = useMemo<NavigationTheme>(
+    () => ({
+      dark: resolvedTheme === 'dark',
+      colors: {
+        primary: colors.primary,
+        background: colors.background,
+        card: colors.surface,
+        text: colors.textPrimary,
+        border: colors.border,
+        notification: colors.error
+      },
+      fonts: {
+        regular: { fontFamily: 'System', fontWeight: '400' },
+        medium: { fontFamily: 'System', fontWeight: '500' },
+        bold: { fontFamily: 'System', fontWeight: '700' },
+        heavy: { fontFamily: 'System', fontWeight: '800' }
+      }
+    }),
+    [colors, resolvedTheme]
+  );
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Tab.Navigator
         screenOptions={{
           headerStyle: { backgroundColor: colors.surface },
           headerTintColor: colors.textPrimary,
+          headerShadowVisible: false,
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.textMuted,
           tabBarLabelStyle: {

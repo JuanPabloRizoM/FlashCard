@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type CardEditorPanelProps = {
   mode: 'create' | 'edit';
@@ -40,6 +40,8 @@ export function CardEditorPanel({
   onSubmit,
   onCancelEditing
 }: CardEditorPanelProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const isEditing = mode === 'edit';
 
   return (
@@ -152,7 +154,8 @@ export function CardEditorPanel({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   formCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

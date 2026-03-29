@@ -1,9 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
-import { AppSettingsProvider } from '../features/settings/AppSettingsProvider';
+import { AppSettingsProvider, useAppSettings } from '../features/settings/AppSettingsProvider';
 import { AppNavigator } from '../navigation/AppNavigator';
 import { initializeDatabase } from '../storage/database';
+
+function AppShell() {
+  const { resolvedTheme } = useAppSettings();
+
+  return (
+    <>
+      <StatusBar style={resolvedTheme === 'dark' ? 'light' : 'dark'} />
+      <AppNavigator />
+    </>
+  );
+}
 
 export function AppRoot() {
   useEffect(() => {
@@ -14,8 +25,7 @@ export function AppRoot() {
 
   return (
     <AppSettingsProvider>
-      <StatusBar style="auto" />
-      <AppNavigator />
+      <AppShell />
     </AppSettingsProvider>
   );
 }

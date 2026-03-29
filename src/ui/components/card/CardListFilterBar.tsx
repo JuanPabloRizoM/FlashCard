@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 import { CARD_LIST_FILTER_LABELS, type CardListFilter } from './cardListFilters';
 
 type CardListFilterBarProps = {
@@ -11,6 +11,8 @@ type CardListFilterBarProps = {
 const FILTERS: CardListFilter[] = ['all', 'needs_details', 'ready'];
 
 export function CardListFilterBar({ activeFilter, onChangeFilter }: CardListFilterBarProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.row}>
       {FILTERS.map((filter) => (
@@ -35,7 +37,8 @@ export function CardListFilterBar({ activeFilter, onChangeFilter }: CardListFilt
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',

@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type ScreenContainerProps = {
   title: string;
@@ -11,6 +11,8 @@ type ScreenContainerProps = {
 };
 
 export function ScreenContainer({ title, subtitle, children }: ScreenContainerProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.content}>
@@ -24,7 +26,8 @@ export function ScreenContainer({ title, subtitle, children }: ScreenContainerPr
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background

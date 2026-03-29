@@ -5,14 +5,20 @@ import {
   type StudySessionSize
 } from './study';
 
+export const APP_THEME_PREFERENCES = ['system', 'light', 'dark'] as const;
+
+export type AppThemePreference = (typeof APP_THEME_PREFERENCES)[number];
+
 export type AppSettings = {
   defaultStudyMode: StudySessionMode;
   defaultSessionSize: StudySessionSize;
+  themePreference: AppThemePreference;
 };
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   defaultStudyMode: 'mixed',
-  defaultSessionSize: 10
+  defaultSessionSize: 10,
+  themePreference: 'system'
 };
 
 export const APP_NAME = 'Flashcards App';
@@ -25,6 +31,10 @@ function isStudySessionMode(value: unknown): value is StudySessionMode {
 
 function isStudySessionSize(value: unknown): value is StudySessionSize {
   return STUDY_SESSION_SIZES.includes(value as StudySessionSize);
+}
+
+function isThemePreference(value: unknown): value is AppThemePreference {
+  return typeof value === 'string' && APP_THEME_PREFERENCES.includes(value as AppThemePreference);
 }
 
 export function normalizeAppSettings(value: unknown): AppSettings {
@@ -40,6 +50,9 @@ export function normalizeAppSettings(value: unknown): AppSettings {
       : DEFAULT_APP_SETTINGS.defaultStudyMode,
     defaultSessionSize: isStudySessionSize(candidateSettings.defaultSessionSize)
       ? candidateSettings.defaultSessionSize
-      : DEFAULT_APP_SETTINGS.defaultSessionSize
+      : DEFAULT_APP_SETTINGS.defaultSessionSize,
+    themePreference: isThemePreference(candidateSettings.themePreference)
+      ? candidateSettings.themePreference
+      : DEFAULT_APP_SETTINGS.themePreference
   };
 }

@@ -36,8 +36,8 @@ UI screens do not decide prompt modes or study behavior directly.
 The Study feature also includes:
 - `studyProgressRepository.ts` for persistence
 - `useStudySession.ts` for flow orchestration
-- `AppSettingsProvider.tsx` for app-level Study defaults
-- `appSettingsStorage.ts` for lightweight persisted settings storage
+- `AppSettingsProvider.tsx` for app-level settings hydration and appearance
+- `appSettingsStorage.native.ts` and `appSettingsStorage.web.ts` for lightweight persisted settings storage
 - `studyInsights.ts` for lightweight readiness and coverage aggregation
 - `sessionConfiguration.ts` for pre-session mode and size configuration
 - `sessionSummary.ts` for session summary helpers
@@ -46,7 +46,7 @@ The Study feature also includes:
 
 Current boundary:
 - the feature layer owns session setup, focused-mode filtering, session-size choice, persistence writes, and retry/restart orchestration
-- the app settings layer owns default Study mode and default session size plus their safe hydration/persistence
+- the app settings layer safely hydrates persisted app preferences and provides the resolved appearance theme
 - the engine owns prompt-item ranking, same-card repetition protection, bucket shaping, and session advancement
 - the engine interface only accepts an optional prebuilt queue plus a session-size cap; focused-mode logic does not live inside `StudyEngine`
 

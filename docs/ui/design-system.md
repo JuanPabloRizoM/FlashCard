@@ -15,6 +15,7 @@
 2. Consistency over one-off styling
 3. Comfortable spacing for longer study sessions
 4. Soft feedback instead of harsh UI contrast
+5. Appearance should respect user preference without changing product structure
 
 ---
 
@@ -26,7 +27,20 @@
 
 ---
 
+## Themes
+
+Supported appearance modes:
+- `System`
+- `Light`
+- `Dark`
+
+The active theme must flow through the shared theme layer, navigation container, tab bar, and screen/component surfaces. Theme state must not be implemented as isolated one-off screen styles.
+
+---
+
 ## Palette
+
+### Light
 
 - Background: `#F7F8FC`
 - Surface: `#FFFFFF`
@@ -45,6 +59,26 @@
 - Error soft: `#FDECEF`
 - Border: `#D8DFEA`
 - Border strong: `#C4CEDD`
+
+### Dark
+
+- Background: `#0F1521`
+- Surface: `#161E2C`
+- Surface muted: `#1D2738`
+- Text primary: `#F3F6FF`
+- Text secondary: `#B7C1D4`
+- Text muted: `#8B96AA`
+- Primary: `#7D9EFF`
+- Primary pressed: `#6B8EF5`
+- Primary soft: `#223152`
+- Success: `#4FD093`
+- Success soft: `#1C3A2B`
+- Warning: `#F3B868`
+- Warning soft: `#3A2D1D`
+- Error: `#F07A86`
+- Error soft: `#3B2027`
+- Border: `#2A364A`
+- Border strong: `#394963`
 
 ---
 

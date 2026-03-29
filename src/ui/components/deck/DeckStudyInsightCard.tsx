@@ -2,13 +2,16 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import type { DeckStudyInsights } from '../../../features/study/studyInsights';
 import { DeckReadinessBadge } from './DeckReadinessBadge';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 
 type DeckStudyInsightCardProps = {
   insights: DeckStudyInsights;
 };
 
-function getTechniqueTone(status: DeckStudyInsights['techniqueInsights'][number]['status']) {
+function getTechniqueTone(
+  styles: ReturnType<typeof createStyles>,
+  status: DeckStudyInsights['techniqueInsights'][number]['status']
+) {
   switch (status) {
     case 'ready':
       return styles.techniqueReady;
@@ -20,6 +23,8 @@ function getTechniqueTone(status: DeckStudyInsights['techniqueInsights'][number]
 }
 
 export function DeckStudyInsightCard({ insights }: DeckStudyInsightCardProps) {
+  const styles = useThemedStyles(createStyles);
+
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
@@ -64,7 +69,10 @@ export function DeckStudyInsightCard({ insights }: DeckStudyInsightCardProps) {
         <Text style={styles.subsectionTitle}>Technique outlook</Text>
         <View style={styles.techniqueWrap}>
           {insights.techniqueInsights.map((technique) => (
-            <View key={technique.techniqueId} style={[styles.techniqueCard, getTechniqueTone(technique.status)]}>
+            <View
+              key={technique.techniqueId}
+              style={[styles.techniqueCard, getTechniqueTone(styles, technique.status)]}
+            >
               <Text style={styles.techniqueLabel}>{technique.label}</Text>
               <Text style={styles.techniqueMeta}>{`${technique.validItemCount} prompts`}</Text>
               <Text style={styles.techniqueMessage}>{technique.message}</Text>
@@ -76,124 +84,125 @@ export function DeckStudyInsightCard({ insights }: DeckStudyInsightCardProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  panel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 20,
-    borderWidth: 1,
-    gap: spacing.m,
-    padding: spacing.m
-  },
-  headerRow: {
-    gap: spacing.s
-  },
-  headerTextWrap: {
-    gap: spacing.xs
-  },
-  sectionTitle: {
-    color: colors.textPrimary,
-    fontSize: typography.subtitle,
-    fontWeight: '700'
-  },
-  supportText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption,
-    lineHeight: 18
-  },
-  metricRow: {
-    flexDirection: 'row',
-    gap: spacing.s
-  },
-  metricCard: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 16,
-    flex: 1,
-    gap: spacing.xs,
-    padding: spacing.m
-  },
-  metricLabel: {
-    color: colors.textMuted,
-    fontSize: typography.overline,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-    textTransform: 'uppercase'
-  },
-  metricValue: {
-    color: colors.textPrimary,
-    fontSize: typography.subtitle,
-    fontWeight: '700'
-  },
-  section: {
-    gap: spacing.s
-  },
-  subsectionTitle: {
-    color: colors.textPrimary,
-    fontSize: typography.overline,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-    textTransform: 'uppercase'
-  },
-  coverageRow: {
-    gap: spacing.xs
-  },
-  coverageHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.s
-  },
-  coverageLabel: {
-    color: colors.textPrimary,
-    flex: 1,
-    fontSize: typography.caption,
-    fontWeight: '600'
-  },
-  coverageMeta: {
-    color: colors.textMuted,
-    fontSize: typography.caption
-  },
-  coverageTrack: {
-    backgroundColor: colors.primarySoft,
-    borderRadius: 999,
-    height: 8,
-    overflow: 'hidden'
-  },
-  coverageFill: {
-    backgroundColor: colors.primary,
-    height: '100%'
-  },
-  techniqueWrap: {
-    gap: spacing.s
-  },
-  techniqueCard: {
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: 12,
-    gap: spacing.xs,
-    padding: spacing.m
-  },
-  techniqueReady: {
-    backgroundColor: colors.successSoft
-  },
-  techniqueLimited: {
-    backgroundColor: colors.warningSoft
-  },
-  techniqueUnavailable: {
-    backgroundColor: colors.errorSoft
-  },
-  techniqueLabel: {
-    color: colors.textPrimary,
-    fontSize: typography.caption,
-    fontWeight: '700'
-  },
-  techniqueMeta: {
-    color: colors.textPrimary,
-    fontSize: typography.body,
-    fontWeight: '700'
-  },
-  techniqueMessage: {
-    color: colors.textSecondary,
-    fontSize: typography.caption
-  }
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    panel: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderRadius: 20,
+      borderWidth: 1,
+      gap: spacing.m,
+      padding: spacing.m
+    },
+    headerRow: {
+      gap: spacing.s
+    },
+    headerTextWrap: {
+      gap: spacing.xs
+    },
+    sectionTitle: {
+      color: colors.textPrimary,
+      fontSize: typography.subtitle,
+      fontWeight: '700'
+    },
+    supportText: {
+      color: colors.textSecondary,
+      fontSize: typography.caption,
+      lineHeight: 18
+    },
+    metricRow: {
+      flexDirection: 'row',
+      gap: spacing.s
+    },
+    metricCard: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: 16,
+      flex: 1,
+      gap: spacing.xs,
+      padding: spacing.m
+    },
+    metricLabel: {
+      color: colors.textMuted,
+      fontSize: typography.overline,
+      fontWeight: '700',
+      letterSpacing: 0.3,
+      textTransform: 'uppercase'
+    },
+    metricValue: {
+      color: colors.textPrimary,
+      fontSize: typography.subtitle,
+      fontWeight: '700'
+    },
+    section: {
+      gap: spacing.s
+    },
+    subsectionTitle: {
+      color: colors.textPrimary,
+      fontSize: typography.overline,
+      fontWeight: '700',
+      letterSpacing: 0.3,
+      textTransform: 'uppercase'
+    },
+    coverageRow: {
+      gap: spacing.xs
+    },
+    coverageHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: spacing.s
+    },
+    coverageLabel: {
+      color: colors.textPrimary,
+      flex: 1,
+      fontSize: typography.caption,
+      fontWeight: '600'
+    },
+    coverageMeta: {
+      color: colors.textMuted,
+      fontSize: typography.caption
+    },
+    coverageTrack: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: 999,
+      height: 8,
+      overflow: 'hidden'
+    },
+    coverageFill: {
+      backgroundColor: colors.primary,
+      height: '100%'
+    },
+    techniqueWrap: {
+      gap: spacing.s
+    },
+    techniqueCard: {
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderRadius: 12,
+      gap: spacing.xs,
+      padding: spacing.m
+    },
+    techniqueReady: {
+      backgroundColor: colors.successSoft
+    },
+    techniqueLimited: {
+      backgroundColor: colors.warningSoft
+    },
+    techniqueUnavailable: {
+      backgroundColor: colors.errorSoft
+    },
+    techniqueLabel: {
+      color: colors.textPrimary,
+      fontSize: typography.caption,
+      fontWeight: '700'
+    },
+    techniqueMeta: {
+      color: colors.textPrimary,
+      fontSize: typography.body,
+      fontWeight: '700'
+    },
+    techniqueMessage: {
+      color: colors.textSecondary,
+      fontSize: typography.caption
+    }
+  });

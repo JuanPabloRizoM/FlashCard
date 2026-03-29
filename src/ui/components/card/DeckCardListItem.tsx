@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Card } from '../../../core/models/Card';
 import type { CardStudyFeedback as CardStudyFeedbackType } from '../../../features/study/cardStudyPreview';
 import { CardListStatus } from './CardListStatus';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type DeckCardListItemProps = {
   card: Card;
@@ -20,6 +20,8 @@ export function DeckCardListItem({
   actionLabel,
   onActionPress
 }: DeckCardListItemProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.cardItem}>
       <View style={styles.cardHeaderRow}>
@@ -52,7 +54,8 @@ export function DeckCardListItem({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   cardItem: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

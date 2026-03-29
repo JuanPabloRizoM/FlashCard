@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 export type CardWorkspaceMode = 'create' | 'import_cards' | 'import_deck';
 
@@ -21,6 +21,8 @@ export function CardWorkspaceModeSwitch({
   onChangeMode,
   isDisabled
 }: CardWorkspaceModeSwitchProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.wrap}>
       <Text style={styles.label}>Workspace</Text>
@@ -48,7 +50,8 @@ export function CardWorkspaceModeSwitch({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   wrap: {
     gap: spacing.s
   },

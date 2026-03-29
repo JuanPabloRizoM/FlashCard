@@ -22,7 +22,7 @@ import { DeckCardListItem } from '../components/card/DeckCardListItem';
 import { DeckExportPanel } from '../components/deck/DeckExportPanel';
 import { DeckStudyInsightCard } from '../components/deck/DeckStudyInsightCard';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
-import { colors, spacing, typography } from '../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 type DeckDetailScreenProps = {
   deck: Deck;
@@ -40,6 +40,8 @@ function formatCardTimestampLabel(createdAt: string): string {
 }
 
 export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const { cards, screenError, isLoading } = useDeckCards(deck.id);
   const [isExportVisible, setIsExportVisible] = useState(false);
@@ -157,7 +159,8 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   layout: {
     flex: 1,
     gap: spacing.m

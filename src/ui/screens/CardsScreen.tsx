@@ -21,11 +21,13 @@ import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeed
 import { getCardListEmptyState, matchesCardListFilter, type CardListFilter } from '../components/card/cardListFilters';
 import { resolveSelectedDeckId } from '../components/card/cardWorkspaceUtils';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
-import { colors, spacing, typography } from '../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 type CardsScreenProps = BottomTabScreenProps<RootTabParamList, 'Cards'>;
 
 export function CardsScreen({ navigation, route }: CardsScreenProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const routeSelectedDeckId = route.params?.selectedDeckId ?? null;
   const [decks, setDecks] = useState<Deck[]>([]);
   const [handoffDeckId, setHandoffDeckId] = useState<number | null>(routeSelectedDeckId);
@@ -266,7 +268,8 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   content: {
     gap: spacing.m,
     paddingBottom: spacing.xl

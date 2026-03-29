@@ -7,7 +7,7 @@ import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeed
 import { DeckListItem } from '../components/deck/DeckListItem';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { DeckDetailScreen } from './DeckDetailScreen';
-import { colors, spacing, typography } from '../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 function formatDeckTimestampLabel(deck: Deck): string {
   const sourceDate = deck.updatedAt !== deck.createdAt ? deck.updatedAt : deck.createdAt;
@@ -23,6 +23,8 @@ function formatDeckTimestampLabel(deck: Deck): string {
 }
 
 export function DecksScreen() {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
   const {
     decks,
@@ -140,7 +142,8 @@ export function DecksScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   layout: {
     flex: 1,
     gap: spacing.m

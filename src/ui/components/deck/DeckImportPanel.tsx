@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 import { TextImportPreviewList } from '../card/TextImportPreviewList';
 import { TextImportWorkspace } from '../card/TextImportWorkspace';
 
@@ -29,6 +29,8 @@ export function DeckImportPanel({
   onImportDeck,
   onClearImport
 }: DeckImportPanelProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const buttonLabel = isSubmitting ? 'Importing...' : 'Import deck';
 
   function getStatusText(): string | null {
@@ -89,7 +91,8 @@ export function DeckImportPanel({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   supportText: {
     color: colors.textSecondary,
     fontSize: typography.caption,

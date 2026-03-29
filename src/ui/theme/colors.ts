@@ -1,4 +1,27 @@
-export const colors = {
+export type ThemeColors = {
+  background: string;
+  surface: string;
+  surfaceMuted: string;
+  textPrimary: string;
+  textSecondary: string;
+  textMuted: string;
+  text: string;
+  muted: string;
+  primary: string;
+  primaryPressed: string;
+  primarySoft: string;
+  success: string;
+  successSoft: string;
+  warning: string;
+  warningSoft: string;
+  error: string;
+  errorSoft: string;
+  border: string;
+  borderStrong: string;
+  shadow: string;
+};
+
+export const lightColors: ThemeColors = {
   background: '#F7F8FC',
   surface: '#FFFFFF',
   surfaceMuted: '#EEF1F7',
@@ -19,4 +42,35 @@ export const colors = {
   border: '#D8DFEA',
   borderStrong: '#C4CEDD',
   shadow: 'rgba(22, 32, 51, 0.08)'
-} as const;
+};
+
+export const darkColors: ThemeColors = {
+  background: '#0F1521',
+  surface: '#161E2C',
+  surfaceMuted: '#1D2738',
+  textPrimary: '#F3F6FF',
+  textSecondary: '#B7C1D4',
+  textMuted: '#8B96AA',
+  text: '#F3F6FF',
+  muted: '#B7C1D4',
+  primary: '#7D9EFF',
+  primaryPressed: '#6B8EF5',
+  primarySoft: '#223152',
+  success: '#4FD093',
+  successSoft: '#1C3A2B',
+  warning: '#F3B868',
+  warningSoft: '#3A2D1D',
+  error: '#F07A86',
+  errorSoft: '#3B2027',
+  border: '#2A364A',
+  borderStrong: '#394963',
+  shadow: 'rgba(0, 0, 0, 0.28)'
+};
+
+export type ResolvedTheme = 'light' | 'dark';
+
+export const colors = lightColors;
+
+export function getThemeColors(theme: ResolvedTheme): ThemeColors {
+  return theme === 'dark' ? darkColors : lightColors;
+}

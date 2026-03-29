@@ -11,7 +11,7 @@ import {
   type StudySessionSize,
   type StudyTechniqueId
 } from '../../../core/types/study';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionSetupPanelProps = {
   selectedTechniqueId: StudyTechniqueId;
@@ -40,6 +40,8 @@ export function StudySessionSetupPanel({
   onSelectSessionSize,
   onStartSession
 }: StudySessionSetupPanelProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.panel}>
       <View style={styles.section}>
@@ -155,7 +157,8 @@ export function StudySessionSetupPanel({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

@@ -121,6 +121,7 @@
 - `theme/colors.ts`
 - `theme/spacing.ts`
 - `theme/typography.ts`
+- `theme/useTheme.ts`
 - `screens/DecksScreen.tsx` owns rendering only; deck persistence flows through feature + repository layers
 - `screens/DeckDetailScreen.tsx` is a deck overview and routing entry point into the Cards workspace
 - `screens/DeckDetailScreen.tsx` may expose reviewed deck-export UI, but export formatting must stay in the deck feature layer
@@ -128,7 +129,7 @@
 - `screens/CardsScreen.tsx` may host reviewed bulk-import workflows, but parsing and validation must stay in the card feature layer
 - `screens/CardsScreen.tsx` may host deck-import UI, but deck parsing and transactional write orchestration must stay in the deck feature + repository layers
 - `screens/StudyScreen.tsx` renders engine output and delegates all study logic to the feature + engine layers
-- `screens/SettingsScreen.tsx` owns app-level Study defaults and honest product information only; it must not expose fake toggles
+- `screens/SettingsScreen.tsx` owns app-level appearance controls and honest product information only; it must not expose fake toggles
 
 ---
 

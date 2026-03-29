@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type DeckExportPanelProps = {
   exportText: string;
@@ -19,6 +19,8 @@ export function DeckExportPanel({
   onCopy,
   onToggleVisibility
 }: DeckExportPanelProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
@@ -70,7 +72,8 @@ export function DeckExportPanel({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

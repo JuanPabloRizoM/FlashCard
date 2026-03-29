@@ -4,7 +4,7 @@ import type { Deck } from '../../../core/models/Deck';
 import type { DeckStudyInsights } from '../../../features/study/studyInsights';
 import { DECK_TYPE_LABELS } from '../../../core/types/deck';
 import { DeckReadinessBadge } from './DeckReadinessBadge';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type DeckListItemProps = {
   deck: Deck;
@@ -14,6 +14,8 @@ type DeckListItemProps = {
 };
 
 export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckListItemProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <Pressable
       accessibilityRole="button"
@@ -41,7 +43,8 @@ export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckLi
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   deckCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

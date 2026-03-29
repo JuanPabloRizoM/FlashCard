@@ -1,6 +1,6 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type CardWorkspaceFeedbackStateProps = {
   message: string;
@@ -15,6 +15,8 @@ export function CardWorkspaceFeedbackState({
   isLoading = false,
   tone = 'neutral'
 }: CardWorkspaceFeedbackStateProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const toneStyles =
     tone === 'info'
       ? styles.infoTone
@@ -31,7 +33,8 @@ export function CardWorkspaceFeedbackState({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   feedbackState: {
     alignItems: 'center',
     backgroundColor: colors.surface,

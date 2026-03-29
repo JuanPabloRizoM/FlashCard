@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import type { StudySessionMode, StudySessionSize } from '../../../core/types/study';
 import { STUDY_SESSION_MODE_LABELS, STUDY_SESSION_SIZE_LABELS } from '../../../core/types/study';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionBannerProps = {
   deckName: string;
@@ -18,6 +18,8 @@ export function StudySessionBanner({
   sessionMode,
   sessionSize
 }: StudySessionBannerProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
@@ -42,7 +44,8 @@ export function StudySessionBanner({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   panel: {
     backgroundColor: colors.primarySoft,
     borderColor: colors.border,

@@ -3,7 +3,7 @@ import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native
 
 import type { StudyAnswer } from '../../../core/types/study';
 import type { StudyQueueItem } from '../../../core/models/StudySession';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 import { StudySessionAnswerActions } from './StudySessionAnswerActions';
 import { StudySessionProgress } from './StudySessionProgress';
 
@@ -32,6 +32,8 @@ export function StudySessionCard({
   onRevealAnswer,
   onSubmitAnswer
 }: StudySessionCardProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const itemKey = useMemo(
     () => `${currentItem.card.id}:${currentItem.promptMode}`,
     [currentItem.card.id, currentItem.promptMode]
@@ -145,7 +147,8 @@ export function StudySessionCard({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

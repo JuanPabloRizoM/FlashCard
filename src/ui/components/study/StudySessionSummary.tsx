@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionSummaryProps = {
   deckName: string;
@@ -28,6 +28,8 @@ export function StudySessionSummary({
   onRestartSession,
   onRetryIncorrectAnswers
 }: StudySessionSummaryProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const entryAnimation = useRef(new Animated.Value(0)).current;
   const accuracyTone = useMemo(() => {
     if (accuracyPercentage >= 80) {
@@ -134,7 +136,8 @@ export function StudySessionSummary({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

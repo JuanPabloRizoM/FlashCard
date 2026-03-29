@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type PreviewRow = {
   lineNumber: number;
@@ -24,6 +24,8 @@ export function TextImportPreviewList({
   rows,
   emptyValidDetailLabel
 }: TextImportPreviewListProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const visibleRows = rows.slice(0, MAX_VISIBLE_PREVIEW_ROWS);
   const hiddenRowCount = Math.max(rows.length - visibleRows.length, 0);
 
@@ -57,7 +59,8 @@ export function TextImportPreviewList({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   previewSection: {
     gap: spacing.s
   },

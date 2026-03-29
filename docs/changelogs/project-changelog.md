@@ -298,3 +298,12 @@
 - Files: src/ui/screens/DecksScreen.tsx, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/screens/StudyScreen.tsx, src/ui/screens/SettingsScreen.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardImportPanel.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/components/card/CardWorkspaceCardList.tsx, src/ui/components/deck/DeckImportPanel.tsx, src/ui/components/deck/DeckExportPanel.tsx, src/ui/components/study/StudySessionSetupPanel.tsx, src/ui/components/study/StudySessionBanner.tsx, src/ui/components/study/StudySessionSummary.tsx
 - Risk: Low
 - Notes: Microcopy only. No app logic, persistence, navigation, or study behavior changed.
+
+---
+
+[2026-03-29]
+- Change: Reworked Settings into a smaller Settings v2 screen and added persisted `System` / `Light` / `Dark` appearance support across navigation and shared UI surfaces.
+- Reason: Settings still felt like a feature dump and lacked one of the few settings users expect to have a real app-wide effect.
+- Files: src/core/types/settings.ts, src/features/settings/AppSettingsProvider.tsx, src/bootstrap/AppRoot.tsx, src/navigation/AppNavigator.tsx, src/ui/theme/colors.ts, src/ui/theme/useTheme.ts, src/ui/theme/index.ts, src/ui/screens/SettingsScreen.tsx, src/ui/screens/DecksScreen.tsx, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/screens/StudyScreen.tsx, src/ui/components/layout/ScreenContainer.tsx, src/ui/components/navigation/TabBarIcon.tsx, src/ui/components/deck/*, src/ui/components/card/*, src/ui/components/study/*, docs/architecture/project-structure.md, docs/flows/main-user-flows.md, docs/features/study.md, docs/ui/design-system.md
+- Risk: Medium
+- Notes: Settings now keeps only appearance and app information. Study defaults remain in the app settings layer for compatibility, but they are no longer exposed from the Settings screen.

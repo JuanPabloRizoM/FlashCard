@@ -1,16 +1,29 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode
+} from 'react';
+import { useColorScheme } from 'react-native';
 
 import {
   DEFAULT_APP_SETTINGS,
   normalizeAppSettings,
-  type AppSettings
+  type AppSettings,
+  type AppThemePreference
 } from '../../core/types/settings';
 import type { StudySessionMode, StudySessionSize } from '../../core/types/study';
+import type { ResolvedTheme } from '../../ui/theme';
 import { loadAppSettings, saveAppSettings } from '../../storage/appSettingsStorage';
 
 type AppSettingsContextValue = {
   settings: AppSettings;
+  resolvedTheme: ResolvedTheme;
   saveError: string | null;
+  setThemePreference: (themePreference: AppThemePreference) => void;
   setDefaultStudyMode: (mode: StudySessionMode) => void;
   setDefaultSessionSize: (size: StudySessionSize) => void;
   resetStudyDefaults: () => void;
@@ -23,6 +36,7 @@ type AppSettingsProviderProps = {
 };
 
 export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
+  const systemColorScheme = useColorScheme();
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_APP_SETTINGS);
   const [isHydrated, setIsHydrated] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -53,7 +67,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       await saveAppSettings(nextSettings);
       setSaveError(null);
     } catch {
-      setSaveError('Defaults changed for now, but could not be saved to this device.');
+      setSaveError('Changes apply now, but could not be saved to this device.');
     }
   }, []);
 
@@ -71,10 +85,24 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     [persistSettings]
   );
 
+  const resolvedTheme: ResolvedTheme =
+    settings.themePreference === 'system'
+      ? systemColorScheme === 'dark'
+        ? 'dark'
+        : 'light'
+      : settings.themePreference;
+
   const value = useMemo<AppSettingsContextValue>(
     () => ({
       settings,
+      resolvedTheme,
       saveError,
+      setThemePreference: (themePreference) => {
+        applySettings((currentSettings) => ({
+          ...currentSettings,
+          themePreference
+        }));
+      },
       setDefaultStudyMode: (mode) => {
         applySettings((currentSettings) => ({
           ...currentSettings,
@@ -88,10 +116,14 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
         }));
       },
       resetStudyDefaults: () => {
-        applySettings(DEFAULT_APP_SETTINGS);
+        applySettings((currentSettings) => ({
+          ...currentSettings,
+          defaultStudyMode: DEFAULT_APP_SETTINGS.defaultStudyMode,
+          defaultSessionSize: DEFAULT_APP_SETTINGS.defaultSessionSize
+        }));
       }
     }),
-    [applySettings, saveError, settings]
+    [applySettings, resolvedTheme, saveError, settings]
   );
 
   if (!isHydrated) {

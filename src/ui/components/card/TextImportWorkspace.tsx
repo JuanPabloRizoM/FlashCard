@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type TextImportWorkspaceProps = {
   title: string;
@@ -32,6 +32,8 @@ export function TextImportWorkspace({
   minInputHeight = 140,
   children
 }: TextImportWorkspaceProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [isExampleVisible, setIsExampleVisible] = useState(false);
 
   return (
@@ -98,7 +100,8 @@ export function TextImportWorkspace({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

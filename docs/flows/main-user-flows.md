@@ -74,30 +74,29 @@
 ## Start A Study Session
 
 1. The user opens the `Study` tab.
-2. If the user changed Study defaults in `Settings`, the Study screen adopts those defaults when it is idle.
-3. Before studying, the user can review deck readiness and prompt coverage from the deck screens to spot missing fields or weak prompt support.
-4. The app loads available decks from the repository.
-5. The user selects a deck, one of the supported techniques, a study mode, and a session size.
-6. The feature layer loads cards and persisted study progress for the selected deck.
-7. The selected technique uses the `PromptModeResolver` to build only valid study items for each card.
-8. If the user chose `Weak Focus` or `Fresh Focus`, the feature layer narrows that valid queue before session start with safe fallback behavior that can still fill larger sessions when the preferred pool is small.
-9. The `StudyEngine` reorders the configured prompt items so recent failures and weaker prompt items appear before stronger ones, while fresh prompt items still remain represented.
-10. The engine shapes the ranked items into the requested session size, reduces same-card clustering when alternatives exist, and balances weak/fresh/strong composition.
-11. Once session assembly starts, setup selectors stay locked until the session is idle again so the visible UI matches the active Study state.
-12. The screen renders the current prompt together with an active session banner, animated progress indicators, remaining count, and stage feedback without hardcoded study logic.
-13. The user reveals the answer and marks it correct or needs review.
-14. The feature layer persists the answer result by `(cardId, promptMode)` before the session advances.
-15. The next prompt appears with updated progress state, fresh reveal state, and UI-only transition feedback derived from session state.
-16. The engine advances the session and tracks session counts until completion.
-17. When the session is complete, the user sees a summary and can restart the full session or retry only the incorrect prompts.
+2. Before studying, the user can review deck readiness and prompt coverage from the deck screens to spot missing fields or weak prompt support.
+3. The app loads available decks from the repository.
+4. The user selects a deck, one of the supported techniques, a study mode, and a session size.
+5. The feature layer loads cards and persisted study progress for the selected deck.
+6. The selected technique uses the `PromptModeResolver` to build only valid study items for each card.
+7. If the user chose `Weak Focus` or `Fresh Focus`, the feature layer narrows that valid queue before session start with safe fallback behavior that can still fill larger sessions when the preferred pool is small.
+8. The `StudyEngine` reorders the configured prompt items so recent failures and weaker prompt items appear before stronger ones, while fresh prompt items still remain represented.
+9. The engine shapes the ranked items into the requested session size, reduces same-card clustering when alternatives exist, and balances weak/fresh/strong composition.
+10. Once session assembly starts, setup selectors stay locked until the session is idle again so the visible UI matches the active Study state.
+11. The screen renders the current prompt together with an active session banner, animated progress indicators, remaining count, and stage feedback without hardcoded study logic.
+12. The user reveals the answer and marks it correct or needs review.
+13. The feature layer persists the answer result by `(cardId, promptMode)` before the session advances.
+14. The next prompt appears with updated progress state, fresh reveal state, and UI-only transition feedback derived from session state.
+15. The engine advances the session and tracks session counts until completion.
+16. When the session is complete, the user sees a summary and can restart the full session or retry only the incorrect prompts.
+
 
 ---
 
-## Adjust Study Defaults
+## Choose App Appearance
 
 1. The user opens the `Settings` tab.
-2. The user changes the default Study mode and default session size.
-3. The app stores those defaults in lightweight local device storage.
+2. The user chooses `System`, `Light`, or `Dark` in the `Appearance` section.
+3. The app stores that preference in lightweight local device storage.
 4. On a later app launch, settings hydrate safely before the main app shell renders.
-5. When the Study screen is idle, it reflects those defaults automatically.
-6. The user can reset defaults back to the recommended values from the same Settings section.
+5. The app resolves the active theme from the saved preference and applies it across navigation and shared UI surfaces.

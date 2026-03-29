@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 
 import type { StudyAnswer } from '../../../core/types/study';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionProgressProps = {
   answeredCount: number;
@@ -47,6 +47,8 @@ export function StudySessionProgress({
   isSubmittingAnswer,
   lastAnswer
 }: StudySessionProgressProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const progressPercentage = totalCount === 0 ? 0 : (answeredCount / totalCount) * 100;
   const activePromptNumber = totalCount === 0 ? 0 : Math.min(answeredCount + 1, totalCount);
   const animatedProgress = useRef(new Animated.Value(progressPercentage)).current;
@@ -124,7 +126,8 @@ export function StudySessionProgress({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   wrap: {
     gap: spacing.s
   },

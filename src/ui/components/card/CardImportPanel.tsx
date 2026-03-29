@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { CardImportPreview } from '../../../features/cards/cardImport';
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 import { TextImportPreviewList } from './TextImportPreviewList';
 import { TextImportWorkspace } from './TextImportWorkspace';
 
@@ -31,6 +31,8 @@ export function CardImportPanel({
   onImportCards,
   onClearImport
 }: CardImportPanelProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const buttonLabel = isSubmitting ? 'Importing...' : 'Import cards';
 
   function getStatusText(): string | null {
@@ -80,7 +82,8 @@ export function CardImportPanel({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   supportText: {
     color: colors.textSecondary,
     fontSize: typography.caption,

@@ -8,9 +8,11 @@ import { StudySessionBanner } from '../components/study/StudySessionBanner';
 import { StudySessionCard } from '../components/study/StudySessionCard';
 import { StudySessionSetupPanel } from '../components/study/StudySessionSetupPanel';
 import { StudySessionSummary } from '../components/study/StudySessionSummary';
-import { colors, spacing, typography } from '../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 export function StudyScreen() {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const {
     decks,
     selectedDeck,
@@ -160,7 +162,8 @@ export function StudyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   content: {
     gap: spacing.m,
     paddingBottom: spacing.xl

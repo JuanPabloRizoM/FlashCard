@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../../theme';
+import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionAnswerActionsProps = {
   isSubmittingAnswer: boolean;
@@ -11,6 +11,8 @@ export function StudySessionAnswerActions({
   isSubmittingAnswer,
   onSubmitAnswer
 }: StudySessionAnswerActionsProps) {
+  const colors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.actionRow}>
       <Pressable
@@ -47,7 +49,8 @@ export function StudySessionAnswerActions({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     gap: spacing.s
