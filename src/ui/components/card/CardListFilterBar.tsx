@@ -1,7 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
-import { CARD_LIST_FILTER_LABELS, type CardListFilter } from './cardListFilters';
+import { type CardListFilter } from './cardListFilters';
 
 type CardListFilterBarProps = {
   activeFilter: CardListFilter;
@@ -12,7 +13,19 @@ const FILTERS: CardListFilter[] = ['all', 'needs_details', 'ready'];
 
 export function CardListFilterBar({ activeFilter, onChangeFilter }: CardListFilterBarProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
+  const filterLabels: Record<CardListFilter, string> = strings.locale.startsWith('es')
+    ? {
+        all: 'Todas',
+        needs_details: 'Necesitan detalles',
+        ready: 'Listas'
+      }
+    : {
+        all: 'All',
+        needs_details: 'Needs details',
+        ready: 'Ready'
+      };
   return (
     <View style={styles.row}>
       {FILTERS.map((filter) => (
@@ -29,7 +42,7 @@ export function CardListFilterBar({ activeFilter, onChangeFilter }: CardListFilt
           ]}
         >
           <Text style={[styles.chipLabel, activeFilter === filter ? styles.chipLabelActive : null]}>
-            {CARD_LIST_FILTER_LABELS[filter]}
+            {filterLabels[filter]}
           </Text>
         </Pressable>
       ))}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionSummaryProps = {
@@ -29,6 +30,7 @@ export function StudySessionSummary({
   onRetryIncorrectAnswers
 }: StudySessionSummaryProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const entryAnimation = useRef(new Animated.Value(0)).current;
   const accuracyTone = useMemo(() => {
@@ -70,17 +72,17 @@ export function StudySessionSummary({
       ]}
     >
       <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle}>Session complete</Text>
+        <Text style={styles.sectionTitle}>{strings.studySummary.title}</Text>
         <View style={styles.completionBadge}>
-          <Text style={styles.completionBadgeLabel}>Ready for review</Text>
+          <Text style={styles.completionBadgeLabel}>{strings.studySummary.badge}</Text>
         </View>
       </View>
       <Text style={styles.supportText}>{deckName}</Text>
       <Text style={styles.supportText}>{techniqueLabel}</Text>
       <Text style={styles.summaryNote}>
         {incorrectCount === 0
-          ? 'No missed prompts this round.'
-          : 'Restart or retry missed prompts.'}
+          ? strings.studySummary.noMisses
+          : strings.studySummary.restartOrRetry}
       </Text>
 
       <View style={styles.summaryTrack}>
@@ -89,19 +91,19 @@ export function StudySessionSummary({
 
       <View style={styles.metricGrid}>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Answered</Text>
+          <Text style={styles.metricLabel}>{strings.studySummary.answered}</Text>
           <Text style={styles.metricValue}>{answeredCount}</Text>
         </View>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Correct</Text>
+          <Text style={styles.metricLabel}>{strings.studySummary.correct}</Text>
           <Text style={styles.metricValue}>{correctCount}</Text>
         </View>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Incorrect</Text>
+          <Text style={styles.metricLabel}>{strings.studySummary.incorrect}</Text>
           <Text style={styles.metricValue}>{incorrectCount}</Text>
         </View>
         <View style={[styles.metricCard, accuracyTone]}>
-          <Text style={styles.metricLabel}>Accuracy</Text>
+          <Text style={styles.metricLabel}>{strings.studySummary.accuracy}</Text>
           <Text style={styles.metricValue}>{`${accuracyPercentage}%`}</Text>
         </View>
       </View>
@@ -112,7 +114,7 @@ export function StudySessionSummary({
         style={[styles.primaryButton, isRestarting ? styles.buttonDisabled : null]}
       >
         <Text style={styles.primaryButtonLabel}>
-          {isRestarting ? 'Restarting...' : 'Restart'}
+          {isRestarting ? strings.studySummary.restarting : strings.studySummary.restart}
         </Text>
       </Pressable>
 
@@ -124,13 +126,11 @@ export function StudySessionSummary({
           !canRetryIncorrectAnswers || isRestarting ? styles.buttonDisabled : null
         ]}
       >
-        <Text style={styles.secondaryButtonLabel}>Retry misses</Text>
+        <Text style={styles.secondaryButtonLabel}>{strings.studySummary.retryMisses}</Text>
       </Pressable>
 
       {!canRetryIncorrectAnswers ? (
-        <Text style={styles.actionHint}>
-          No missed prompts.
-        </Text>
+        <Text style={styles.actionHint}>{strings.studySummary.noMissedPrompts}</Text>
       ) : null}
     </Animated.View>
   );

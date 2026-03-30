@@ -6,19 +6,23 @@ import {
 } from './study';
 
 export const APP_THEME_PREFERENCES = ['system', 'light', 'dark'] as const;
+export const APP_LANGUAGES = ['es', 'en'] as const;
 
 export type AppThemePreference = (typeof APP_THEME_PREFERENCES)[number];
+export type AppLanguage = (typeof APP_LANGUAGES)[number];
 
 export type AppSettings = {
   defaultStudyMode: StudySessionMode;
   defaultSessionSize: StudySessionSize;
   themePreference: AppThemePreference;
+  language: AppLanguage;
 };
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   defaultStudyMode: 'mixed',
   defaultSessionSize: 10,
-  themePreference: 'system'
+  themePreference: 'system',
+  language: 'es'
 };
 
 export const APP_NAME = 'Flashcards App';
@@ -37,6 +41,10 @@ function isThemePreference(value: unknown): value is AppThemePreference {
   return typeof value === 'string' && APP_THEME_PREFERENCES.includes(value as AppThemePreference);
 }
 
+function isAppLanguage(value: unknown): value is AppLanguage {
+  return typeof value === 'string' && APP_LANGUAGES.includes(value as AppLanguage);
+}
+
 export function normalizeAppSettings(value: unknown): AppSettings {
   if (value == null || typeof value !== 'object') {
     return DEFAULT_APP_SETTINGS;
@@ -53,6 +61,9 @@ export function normalizeAppSettings(value: unknown): AppSettings {
       : DEFAULT_APP_SETTINGS.defaultSessionSize,
     themePreference: isThemePreference(candidateSettings.themePreference)
       ? candidateSettings.themePreference
-      : DEFAULT_APP_SETTINGS.themePreference
+      : DEFAULT_APP_SETTINGS.themePreference,
+    language: isAppLanguage(candidateSettings.language)
+      ? candidateSettings.language
+      : DEFAULT_APP_SETTINGS.language
   };
 }

@@ -2,7 +2,7 @@ import type { Deck } from '../../core/models/Deck';
 import type { CreateCardInput } from '../../core/types/card';
 import type { CreateDeckInput } from '../../core/types/deck';
 import {
-  DECK_DUPLICATE_NAME_MESSAGE,
+  getDeckDuplicateNameMessage,
   getFirstDeckValidationError,
   normalizeCreateDeckInput,
   normalizeDeckName,
@@ -51,7 +51,7 @@ export async function createDeck(input: CreateDeckInput): Promise<Deck> {
 
   await writeWebAppState((currentState) => {
     if (hasDuplicateDeckName(currentState.decks, normalizedInput.name)) {
-      throw new Error(DECK_DUPLICATE_NAME_MESSAGE);
+      throw new Error(getDeckDuplicateNameMessage());
     }
 
     createdDeck = {
@@ -109,7 +109,7 @@ export async function createDeckWithImportedCards(
 
   await writeWebAppState((currentState) => {
     if (hasDuplicateDeckName(currentState.decks, normalizedDeckInput.name)) {
-      throw new Error(DECK_DUPLICATE_NAME_MESSAGE);
+      throw new Error(getDeckDuplicateNameMessage());
     }
 
     const nextDeck: Deck = {

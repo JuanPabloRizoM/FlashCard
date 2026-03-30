@@ -1,32 +1,33 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import {
+  APP_LANGUAGES,
   APP_NAME,
   APP_THEME_PREFERENCES,
   APP_VERSION_LABEL,
+  type AppLanguage,
   type AppThemePreference
 } from '../../core/types/settings';
 import { useAppSettings } from '../../features/settings/AppSettingsProvider';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
+import { useAppStrings } from '../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../theme';
 
-const THEME_LABELS: Record<AppThemePreference, string> = {
-  system: 'System',
-  light: 'Light',
-  dark: 'Dark'
-};
-
 export function SettingsScreen() {
-  const { settings, saveError, setThemePreference } = useAppSettings();
+  const { settings, saveError, setLanguage, setThemePreference } = useAppSettings();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
 
+  const themeLabels: Record<AppThemePreference, string> = strings.screens.settings.themeLabels;
+  const languageLabels: Record<AppLanguage, string> = strings.screens.settings.languageLabels;
+
   return (
-    <ScreenContainer title="Settings" subtitle="Choose how the app looks.">
+    <ScreenContainer title={strings.screens.settings.title} subtitle={strings.screens.settings.subtitle}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.sectionCard}>
-          <Text style={styles.eyebrow}>Appearance</Text>
-          <Text style={styles.sectionTitle}>Theme</Text>
-          <Text style={styles.supportText}>Saved on this device.</Text>
+          <Text style={styles.eyebrow}>{strings.screens.settings.appearanceEyebrow}</Text>
+          <Text style={styles.sectionTitle}>{strings.screens.settings.appearanceTitle}</Text>
+          <Text style={styles.supportText}>{strings.screens.settings.appearanceSupport}</Text>
           {saveError != null ? <Text style={styles.errorText}>{saveError}</Text> : null}
 
           <View style={styles.choiceRow}>
@@ -47,7 +48,7 @@ export function SettingsScreen() {
                     settings.themePreference === themePreference ? styles.choiceLabelActive : null
                   ]}
                 >
-                  {THEME_LABELS[themePreference]}
+                  {themeLabels[themePreference]}
                 </Text>
               </Pressable>
             ))}
@@ -55,17 +56,59 @@ export function SettingsScreen() {
         </View>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.eyebrow}>About</Text>
-          <Text style={styles.sectionTitle}>App information</Text>
+          <Text style={styles.eyebrow}>{strings.screens.settings.languageEyebrow}</Text>
+          <Text style={styles.sectionTitle}>{strings.screens.settings.languageTitle}</Text>
+          <Text style={styles.supportText}>{strings.screens.settings.languageSupport}</Text>
+
+          <View style={styles.choiceRow}>
+            {APP_LANGUAGES.map((language) => (
+              <Pressable
+                key={language}
+                onPress={() => {
+                  setLanguage(language);
+                }}
+                style={[
+                  styles.choiceChip,
+                  settings.language === language ? styles.choiceChipActive : null
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.choiceLabel,
+                    settings.language === language ? styles.choiceLabelActive : null
+                  ]}
+                >
+                  {languageLabels[language]}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.sectionCard}>
+          <Text style={styles.eyebrow}>{strings.screens.settings.accountEyebrow}</Text>
+          <Text style={styles.sectionTitle}>{strings.screens.settings.accountTitle}</Text>
+          <Text style={styles.supportText}>{strings.screens.settings.accountSupport}</Text>
+        </View>
+
+        <View style={styles.sectionCard}>
+          <Text style={styles.eyebrow}>{strings.screens.settings.billingEyebrow}</Text>
+          <Text style={styles.sectionTitle}>{strings.screens.settings.billingTitle}</Text>
+          <Text style={styles.supportText}>{strings.screens.settings.billingSupport}</Text>
+        </View>
+
+        <View style={styles.sectionCard}>
+          <Text style={styles.eyebrow}>{strings.screens.settings.aboutEyebrow}</Text>
+          <Text style={styles.sectionTitle}>{strings.screens.settings.aboutTitle}</Text>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>App</Text>
+            <Text style={styles.infoLabel}>{strings.screens.settings.appLabel}</Text>
             <Text style={styles.infoValue}>{APP_NAME}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Version</Text>
+            <Text style={styles.infoLabel}>{strings.screens.settings.versionLabel}</Text>
             <Text style={styles.infoValue}>{APP_VERSION_LABEL}</Text>
           </View>
-          <Text style={styles.supportText}>Local-first decks, cards, and study sessions.</Text>
+          <Text style={styles.supportText}>{strings.common.appInfoScope}</Text>
         </View>
       </ScrollView>
     </ScreenContainer>

@@ -1,13 +1,8 @@
 import type { Card } from '../../../core/models/Card';
 import { buildCardStudyFeedback } from '../../../features/study/cardStudyPreview';
+import { getRuntimeStrings } from '../../strings';
 
 export type CardListFilter = 'all' | 'needs_details' | 'ready';
-
-export const CARD_LIST_FILTER_LABELS: Record<CardListFilter, string> = {
-  all: 'All',
-  needs_details: 'Needs details',
-  ready: 'Ready'
-};
 
 export function getCardCompletenessLevel(card: Card): 'basic' | 'expanded' | 'detailed' {
   const detailCount = [card.description, card.application, card.imageUri].filter(
@@ -40,21 +35,29 @@ export function matchesCardListFilter(card: Card, filter: CardListFilter): boole
 }
 
 export function getCardListEmptyState(filter: CardListFilter): { title: string; message: string } {
+  const strings = getRuntimeStrings();
+
   switch (filter) {
     case 'needs_details':
       return {
-        title: 'Nothing to refine',
-        message: 'Cards needing more detail will show here.'
+        title: strings.locale.startsWith('es') ? 'Nada por refinar' : 'Nothing to refine',
+        message:
+          strings.locale.startsWith('es')
+            ? 'Aquí aparecerán las tarjetas que necesitan más detalle.'
+            : 'Cards needing more detail will show here.'
       };
     case 'ready':
       return {
-        title: 'No ready cards',
-        message: 'Cards that are ready for study will show here.'
+        title: strings.locale.startsWith('es') ? 'No hay tarjetas listas' : 'No ready cards',
+        message:
+          strings.locale.startsWith('es')
+            ? 'Aquí aparecerán las tarjetas listas para estudiar.'
+            : 'Cards that are ready for study will show here.'
       };
     default:
       return {
-        title: 'No cards yet',
-        message: 'Add a card or import a few.'
+        title: strings.cardsWorkspace.listEmptyTitle,
+        message: strings.cardsWorkspace.listEmptyMessage
       };
   }
 }

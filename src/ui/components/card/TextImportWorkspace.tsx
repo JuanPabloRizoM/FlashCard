@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type TextImportWorkspaceProps = {
@@ -33,6 +34,7 @@ export function TextImportWorkspace({
   children
 }: TextImportWorkspaceProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const [isExampleVisible, setIsExampleVisible] = useState(false);
 
@@ -51,7 +53,9 @@ export function TextImportWorkspace({
             }}
             style={styles.linkButton}
           >
-            <Text style={styles.linkButtonLabel}>{isExampleVisible ? 'Hide example' : 'Example'}</Text>
+            <Text style={styles.linkButtonLabel}>
+              {isExampleVisible ? strings.common.hideExample : strings.common.example}
+            </Text>
           </Pressable>
           <Pressable
             accessibilityRole="button"
@@ -62,7 +66,7 @@ export function TextImportWorkspace({
               importText.length === 0 || isSubmitting ? styles.secondaryButtonDisabled : null
             ]}
           >
-            <Text style={styles.secondaryButtonLabel}>Clear</Text>
+            <Text style={styles.secondaryButtonLabel}>{strings.common.clear}</Text>
           </Pressable>
         </View>
       </View>

@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionAnswerActionsProps = {
@@ -12,6 +13,7 @@ export function StudySessionAnswerActions({
   onSubmitAnswer
 }: StudySessionAnswerActionsProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.actionRow}>
@@ -27,7 +29,9 @@ export function StudySessionAnswerActions({
         ]}
       >
         <Text style={styles.answerButtonLabel}>
-          {isSubmittingAnswer ? 'Saving...' : 'Needs review'}
+          {isSubmittingAnswer
+            ? strings.locale.startsWith('es') ? 'Guardando...' : 'Saving...'
+            : strings.studyAnswers.needsReview}
         </Text>
       </Pressable>
       <Pressable
@@ -42,7 +46,9 @@ export function StudySessionAnswerActions({
         ]}
       >
         <Text style={styles.answerButtonLabel}>
-          {isSubmittingAnswer ? 'Saving...' : 'I got it'}
+          {isSubmittingAnswer
+            ? strings.locale.startsWith('es') ? 'Guardando...' : 'Saving...'
+            : strings.locale.startsWith('es') ? 'La recordé' : 'I got it'}
         </Text>
       </Pressable>
     </View>

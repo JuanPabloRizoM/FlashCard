@@ -21,12 +21,14 @@ import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeed
 import { getCardListEmptyState, matchesCardListFilter, type CardListFilter } from '../components/card/cardListFilters';
 import { resolveSelectedDeckId } from '../components/card/cardWorkspaceUtils';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
+import { useAppStrings } from '../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 type CardsScreenProps = BottomTabScreenProps<RootTabParamList, 'Cards'>;
 
 export function CardsScreen({ navigation, route }: CardsScreenProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const routeSelectedDeckId = route.params?.selectedDeckId ?? null;
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -144,7 +146,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           setDeckScreenError(null);
         } catch {
           if (isActive) {
-            setDeckScreenError('Could not load decks right now.');
+            setDeckScreenError(strings.featureMessages.couldNotLoadDecks);
           }
         } finally {
           if (isActive) {
@@ -163,15 +165,15 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
 
   if (isLoadingDecks) {
     return (
-      <ScreenContainer title="Cards" subtitle="Build your study deck.">
-        <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
+      <ScreenContainer title={strings.screens.cards.title} subtitle={strings.screens.cards.subtitle}>
+        <CardWorkspaceFeedbackState isLoading message={strings.screens.cards.loadingDecks} />
       </ScreenContainer>
     );
   }
 
   if (decks.length === 0) {
     return (
-      <ScreenContainer title="Cards" subtitle="Import a deck to start.">
+      <ScreenContainer title={strings.screens.cards.title} subtitle={strings.screens.cards.noDecksSubtitle}>
         <CardWorkspaceNoDecks
           importResultMessage={deckImportResultMessage}
           importText={deckImportText}
@@ -186,7 +188,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
   }
 
   return (
-    <ScreenContainer title="Cards" subtitle="Build your study deck.">
+    <ScreenContainer title={strings.screens.cards.title} subtitle={strings.screens.cards.subtitle}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <CardWorkspaceDeckSelector
           decks={decks}
@@ -248,9 +250,11 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
         />
 
         <View style={styles.listHeader}>
-          <Text style={styles.sectionTitle}>Cards</Text>
+          <Text style={styles.sectionTitle}>{strings.screens.cards.cardsSectionTitle}</Text>
           <Text style={styles.listCount}>
-            {cardListFilter === 'all' ? `${cards.length} total` : `${filteredCards.length} of ${cards.length}`}
+            {cardListFilter === 'all'
+              ? strings.common.total(cards.length)
+              : strings.screens.cards.filteredCount(filteredCards.length, cards.length)}
           </Text>
         </View>
 

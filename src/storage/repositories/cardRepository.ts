@@ -3,7 +3,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import type { Card } from '../../core/models/Card';
 import type { CreateCardInput, UpdateCardInput } from '../../core/types/card';
 import {
-  INVALID_CARD_DECK_MESSAGE,
+  getInvalidCardDeckMessage,
   validateCardId,
   getFirstCardValidationError,
   normalizeCreateCardInput,
@@ -49,7 +49,7 @@ async function ensureDeckExists(deckId: number): Promise<void> {
   const deck = await db.getFirstAsync<{ id: number }>('SELECT id FROM decks WHERE id = ?', deckId);
 
   if (deck == null) {
-    throw new Error(INVALID_CARD_DECK_MESSAGE);
+    throw new Error(getInvalidCardDeckMessage());
   }
 }
 
@@ -59,7 +59,7 @@ export async function listCardsByDeck(deckId: number): Promise<Card[]> {
   }
 
   if (!Number.isInteger(deckId) || deckId <= 0) {
-    throw new Error(INVALID_CARD_DECK_MESSAGE);
+    throw new Error(getInvalidCardDeckMessage());
   }
 
   await ensureDeckExists(deckId);
@@ -266,7 +266,7 @@ export async function updateCard(input: UpdateCardInput): Promise<Card> {
   );
 
   if (result.changes === 0) {
-    throw new Error(INVALID_CARD_DECK_MESSAGE);
+    throw new Error(getInvalidCardDeckMessage());
   }
 
   const updatedCard = await db.getFirstAsync<CardRow>(

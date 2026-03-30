@@ -5,15 +5,27 @@ import {
   type StudyProgressResult,
   type UpsertStudyProgressResultInput
 } from '../../core/types/studyProgress';
+import { getRuntimeStrings } from '../../ui/strings';
 
-export const INVALID_STUDY_PROGRESS_CARD_MESSAGE = 'Study progress requires a valid card.';
-export const INVALID_STUDY_PROGRESS_DECK_MESSAGE = 'Study progress requires a valid deck.';
-export const INVALID_STUDY_PROGRESS_PROMPT_MODE_MESSAGE =
-  'Study progress requires a supported prompt mode.';
-export const INVALID_STUDY_PROGRESS_RESULT_MESSAGE =
-  'Study progress requires a supported study result.';
-export const INVALID_STUDY_PROGRESS_STUDIED_AT_MESSAGE =
-  'Study progress requires a valid study timestamp.';
+export function getInvalidStudyProgressCardMessage(): string {
+  return getRuntimeStrings().validation.invalidStudyProgressCard;
+}
+
+export function getInvalidStudyProgressDeckMessage(): string {
+  return getRuntimeStrings().validation.invalidStudyProgressDeck;
+}
+
+function getInvalidStudyProgressPromptModeMessage(): string {
+  return getRuntimeStrings().validation.invalidStudyProgressPromptMode;
+}
+
+function getInvalidStudyProgressResultMessage(): string {
+  return getRuntimeStrings().validation.invalidStudyProgressResult;
+}
+
+function getInvalidStudyProgressStudiedAtMessage(): string {
+  return getRuntimeStrings().validation.invalidStudyProgressTimestamp;
+}
 
 export type StudyProgressKeyValidationErrors = {
   cardId: string | null;
@@ -42,7 +54,7 @@ function isValidTimestamp(value: string): boolean {
 }
 
 export function validateStudyProgressCardId(cardId: number): string | null {
-  return isValidPositiveInteger(cardId) ? null : INVALID_STUDY_PROGRESS_CARD_MESSAGE;
+  return isValidPositiveInteger(cardId) ? null : getInvalidStudyProgressCardMessage();
 }
 
 export function validateStudyProgressKey(input: StudyProgressKey): StudyProgressKeyValidationErrors {
@@ -50,12 +62,12 @@ export function validateStudyProgressKey(input: StudyProgressKey): StudyProgress
     cardId: validateStudyProgressCardId(input.cardId),
     promptMode: isValidPromptMode(input.promptMode)
       ? null
-      : INVALID_STUDY_PROGRESS_PROMPT_MODE_MESSAGE
+      : getInvalidStudyProgressPromptModeMessage()
   };
 }
 
 export function validateStudyProgressDeckId(deckId: number): string | null {
-  return isValidPositiveInteger(deckId) ? null : INVALID_STUDY_PROGRESS_DECK_MESSAGE;
+  return isValidPositiveInteger(deckId) ? null : getInvalidStudyProgressDeckMessage();
 }
 
 export function validateUpsertStudyProgressResultInput(
@@ -65,8 +77,8 @@ export function validateUpsertStudyProgressResultInput(
 
   return {
     ...keyErrors,
-    result: isValidStudyProgressResult(input.result) ? null : INVALID_STUDY_PROGRESS_RESULT_MESSAGE,
-    studiedAt: isValidTimestamp(input.studiedAt) ? null : INVALID_STUDY_PROGRESS_STUDIED_AT_MESSAGE
+    result: isValidStudyProgressResult(input.result) ? null : getInvalidStudyProgressResultMessage(),
+    studiedAt: isValidTimestamp(input.studiedAt) ? null : getInvalidStudyProgressStudiedAtMessage()
   };
 }
 

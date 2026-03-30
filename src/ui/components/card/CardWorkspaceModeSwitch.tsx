@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 export type CardWorkspaceMode = 'create' | 'import_cards' | 'import_deck';
@@ -10,24 +11,24 @@ type CardWorkspaceModeSwitchProps = {
   isDisabled: boolean;
 };
 
-const WORKSPACE_MODES: Array<{ mode: CardWorkspaceMode; label: string }> = [
-  { mode: 'create', label: 'Create card' },
-  { mode: 'import_cards', label: 'Import cards' },
-  { mode: 'import_deck', label: 'Import deck' }
-];
-
 export function CardWorkspaceModeSwitch({
   activeMode,
   onChangeMode,
   isDisabled
 }: CardWorkspaceModeSwitchProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
+  const workspaceModes: Array<{ mode: CardWorkspaceMode; label: string }> = [
+    { mode: 'create', label: strings.cardsWorkspace.modeLabels.create },
+    { mode: 'import_cards', label: strings.cardsWorkspace.modeLabels.importCards },
+    { mode: 'import_deck', label: strings.cardsWorkspace.modeLabels.importDeck }
+  ];
   return (
     <View style={styles.wrap}>
-      <Text style={styles.label}>Workspace</Text>
+      <Text style={styles.label}>{strings.cardsWorkspace.workspaceLabel}</Text>
       <View style={styles.track}>
-        {WORKSPACE_MODES.map((item) => (
+        {workspaceModes.map((item) => (
           <Pressable
             disabled={isDisabled}
             key={item.mode}

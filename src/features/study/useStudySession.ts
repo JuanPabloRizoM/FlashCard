@@ -23,6 +23,7 @@ import {
   type SessionSummary
 } from './sessionSummary';
 import { useAppSettings } from '../settings/AppSettingsProvider';
+import { getRuntimeStrings } from '../../ui/strings';
 
 type UseStudySessionResult = {
   decks: Deck[];
@@ -57,6 +58,7 @@ const studyEngine = new StudyEngine();
 
 export function useStudySession(): UseStudySessionResult {
   const { settings } = useAppSettings();
+  const strings = getRuntimeStrings();
   const [decks, setDecks] = useState<Deck[]>([]);
   const [selectedDeckId, setSelectedDeckId] = useState<number | null>(null);
   const [selectedTechniqueId, setSelectedTechniqueId] = useState<StudyTechniqueId>(STUDY_TECHNIQUE_IDS[0]);
@@ -92,7 +94,7 @@ export function useStudySession(): UseStudySessionResult {
         setScreenError(null);
       } catch {
         if (isMounted) {
-          setScreenError('Could not load decks for study right now.');
+          setScreenError(strings.featureMessages.couldNotLoadStudyDecks);
         }
       } finally {
         if (isMounted) {
@@ -121,7 +123,7 @@ export function useStudySession(): UseStudySessionResult {
       return;
     }
     if (selectedDeckId == null) {
-      setScreenError('Create a deck before starting a study session.');
+      setScreenError(strings.featureMessages.createDeckBeforeStudy);
       setSession(null);
       setSessionStartResult(null);
       setSessionCards([]);
@@ -205,7 +207,7 @@ export function useStudySession(): UseStudySessionResult {
       setScreenError(
         error instanceof Error
           ? error.message
-          : 'Could not save study progress right now. Try that answer again.'
+          : strings.featureMessages.couldNotSaveStudyProgress
       );
     } finally {
       isSubmittingAnswerRef.current = false;
@@ -217,7 +219,7 @@ export function useStudySession(): UseStudySessionResult {
     const retrySession = studyEngine.startSessionFromItems(
       incorrectItems,
       selectedTechniqueId,
-      'There are no incorrect answers to retry in this session.'
+      strings.featureMessages.noIncorrectAnswersToRetry
     );
     applySessionStart(retrySession, sessionCards);
     setScreenError(null);

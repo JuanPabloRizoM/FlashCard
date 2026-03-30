@@ -12,6 +12,7 @@ import {
 } from '../../services/validation/deckValidation';
 import { createDeck, listDecks } from '../../storage/repositories/deckRepository';
 import { listAllCards } from '../../storage/repositories/cardRepository';
+import { getRuntimeStrings } from '../../ui/strings';
 
 type UseDecksResult = {
   decks: Deck[];
@@ -28,11 +29,13 @@ type UseDecksResult = {
 };
 
 function getDeckSaveErrorMessage(error: unknown): string {
+  const strings = getRuntimeStrings();
+
   if (error instanceof Error) {
     return error.message;
   }
 
-  return 'Could not save the deck. Please try again.';
+  return strings.featureMessages.couldNotSaveDeck;
 }
 
 function buildDeckInsightMap(decks: Deck[], cards: Card[]): Record<number, DeckStudyInsights> {
@@ -50,6 +53,7 @@ function buildDeckInsightMap(decks: Deck[], cards: Card[]): Record<number, DeckS
 }
 
 export function useDecks(): UseDecksResult {
+  const strings = getRuntimeStrings();
   const [decks, setDecks] = useState<Deck[]>([]);
   const [deckInsightsByDeckId, setDeckInsightsByDeckId] = useState<Record<number, DeckStudyInsights>>(
     {}
@@ -65,7 +69,7 @@ export function useDecks(): UseDecksResult {
       const [deckResult, cardResult] = await Promise.allSettled([listDecks(), listAllCards()]);
 
       if (deckResult.status !== 'fulfilled') {
-        throw new Error('Could not load decks right now.');
+        throw new Error(strings.featureMessages.couldNotLoadDecks);
       }
 
       const storedDecks = deckResult.value;
@@ -81,11 +85,11 @@ export function useDecks(): UseDecksResult {
       if (cardResult.status === 'fulfilled') {
         setScreenError(null);
       } else {
-        setScreenError('Decks loaded, but study readiness insights could not be refreshed.');
+        setScreenError(strings.common.decksLoadedButInsightsFailed);
       }
     } catch {
       if (isMounted == null || isMounted()) {
-        setScreenError('Could not load decks right now.');
+        setScreenError(strings.featureMessages.couldNotLoadDecks);
       }
     } finally {
       if (isMounted == null || isMounted()) {

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { CardImportPreview } from '../../../features/cards/cardImport';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 import { TextImportPreviewList } from './TextImportPreviewList';
 import { TextImportWorkspace } from './TextImportWorkspace';
@@ -17,9 +18,6 @@ type CardImportPanelProps = {
   onClearImport: () => void;
 };
 
-const CARD_IMPORT_EXAMPLE =
-  'hola | hello\nperro | dog | animal domestico\ncorrer | run | moverse rapido | usado en deportes';
-
 export function CardImportPanel({
   importText,
   preview,
@@ -32,8 +30,9 @@ export function CardImportPanel({
   onClearImport
 }: CardImportPanelProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
-  const buttonLabel = isSubmitting ? 'Importing...' : 'Import cards';
+  const buttonLabel = isSubmitting ? strings.cardImport.importing : strings.cardImport.actionLabel;
 
   function getStatusText(): string | null {
     if (!preview.hasContent) {
@@ -41,11 +40,11 @@ export function CardImportPanel({
     }
 
     if (preview.validCount > 0) {
-      return `${preview.validCount} ready`;
+      return strings.cardImport.validReady(preview.validCount);
     }
 
     if (preview.invalidCount > 0) {
-      return 'Fix invalid lines to import';
+      return strings.cardImport.fixInvalidLines;
     }
 
     return null;
@@ -56,7 +55,7 @@ export function CardImportPanel({
   return (
     <TextImportWorkspace
       actionLabel={buttonLabel}
-      exampleText={CARD_IMPORT_EXAMPLE}
+      exampleText={strings.cardImport.exampleText}
       importText={importText}
       isActionDisabled={isDisabled || preview.validCount === 0 || isSubmitting}
       isSubmitting={isSubmitting}
@@ -65,14 +64,18 @@ export function CardImportPanel({
       }}
       onClearImport={onClearImport}
       onImportTextChange={onImportTextChange}
-      subtitle={selectedDeckName != null ? `Paste front | back lines for ${selectedDeckName}.` : 'Choose a deck first.'}
-      title="Import cards"
+      subtitle={
+        selectedDeckName != null
+          ? strings.cardImport.subtitleForDeck(selectedDeckName)
+          : strings.cardImport.subtitleNoDeck
+      }
+      title={strings.cardImport.title}
     >
       {preview.hasContent ? (
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryText}>{`${preview.validCount} valid`}</Text>
-          <Text style={styles.summaryText}>{`${preview.invalidCount} invalid`}</Text>
-          <Text style={styles.summaryText}>{`${preview.totalCount} total`}</Text>
+          <Text style={styles.summaryText}>{strings.common.valid(preview.validCount)}</Text>
+          <Text style={styles.summaryText}>{strings.common.invalid(preview.invalidCount)}</Text>
+          <Text style={styles.summaryText}>{strings.common.total(preview.totalCount)}</Text>
         </View>
       ) : null}
       {importResultMessage != null ? <Text style={styles.resultText}>{importResultMessage}</Text> : null}

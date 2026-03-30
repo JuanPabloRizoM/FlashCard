@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import type { DeckStudyInsights } from '../../../features/study/studyInsights';
 import { DeckReadinessBadge } from './DeckReadinessBadge';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 
 type DeckStudyInsightCardProps = {
@@ -23,13 +24,14 @@ function getTechniqueTone(
 }
 
 export function DeckStudyInsightCard({ insights }: DeckStudyInsightCardProps) {
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
 
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
         <View style={styles.headerTextWrap}>
-          <Text style={styles.sectionTitle}>Study readiness</Text>
+          <Text style={styles.sectionTitle}>{strings.deckInsights.title}</Text>
           <Text style={styles.supportText}>{insights.readinessMessage}</Text>
         </View>
         <DeckReadinessBadge label={insights.readinessLabel} readiness={insights.readiness} />
@@ -37,26 +39,26 @@ export function DeckStudyInsightCard({ insights }: DeckStudyInsightCardProps) {
 
       <View style={styles.metricRow}>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Cards</Text>
+          <Text style={styles.metricLabel}>{strings.deckInsights.cards}</Text>
           <Text style={styles.metricValue}>{insights.totalCards}</Text>
         </View>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Studyable</Text>
+          <Text style={styles.metricLabel}>{strings.deckInsights.studyable}</Text>
           <Text style={styles.metricValue}>{insights.studyableCards}</Text>
         </View>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Prompt items</Text>
+          <Text style={styles.metricLabel}>{strings.deckInsights.promptItems}</Text>
           <Text style={styles.metricValue}>{insights.validPromptItemCount}</Text>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.subsectionTitle}>Prompt coverage</Text>
+        <Text style={styles.subsectionTitle}>{strings.deckInsights.promptCoverage}</Text>
         {insights.promptCoverage.map((coverage) => (
           <View key={coverage.mode} style={styles.coverageRow}>
             <View style={styles.coverageHeader}>
               <Text style={styles.coverageLabel}>{coverage.label}</Text>
-              <Text style={styles.coverageMeta}>{`${coverage.count} cards · ${coverage.percentage}%`}</Text>
+              <Text style={styles.coverageMeta}>{strings.deckInsights.cardCoverageMeta(coverage.count, coverage.percentage)}</Text>
             </View>
             <View style={styles.coverageTrack}>
               <View style={[styles.coverageFill, { width: `${coverage.percentage}%` }]} />
@@ -66,7 +68,7 @@ export function DeckStudyInsightCard({ insights }: DeckStudyInsightCardProps) {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.subsectionTitle}>Technique outlook</Text>
+        <Text style={styles.subsectionTitle}>{strings.deckInsights.techniqueOutlook}</Text>
         <View style={styles.techniqueWrap}>
           {insights.techniqueInsights.map((technique) => (
             <View

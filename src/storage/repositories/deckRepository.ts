@@ -4,7 +4,7 @@ import type { Deck } from '../../core/models/Deck';
 import type { CreateCardInput } from '../../core/types/card';
 import type { CreateDeckInput, DeckType } from '../../core/types/deck';
 import {
-  DECK_DUPLICATE_NAME_MESSAGE,
+  getDeckDuplicateNameMessage,
   getFirstDeckValidationError,
   normalizeCreateDeckInput,
   validateCreateDeckInput
@@ -92,7 +92,7 @@ export async function createDeck(input: CreateDeckInput): Promise<Deck> {
     );
   } catch (error) {
     if (error instanceof Error && error.message.toLowerCase().includes('unique')) {
-      throw new Error(DECK_DUPLICATE_NAME_MESSAGE);
+      throw new Error(getDeckDuplicateNameMessage());
     }
 
     throw error;
@@ -193,7 +193,7 @@ export async function createDeckWithImportedCards(
     });
   } catch (error) {
     if (error instanceof Error && error.message.toLowerCase().includes('unique')) {
-      throw new Error(DECK_DUPLICATE_NAME_MESSAGE);
+      throw new Error(getDeckDuplicateNameMessage());
     }
 
     throw error;

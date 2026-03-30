@@ -4,6 +4,7 @@ import type { Deck } from '../../../core/models/Deck';
 import type { DeckStudyInsights } from '../../../features/study/studyInsights';
 import { DECK_TYPE_LABELS } from '../../../core/types/deck';
 import { DeckReadinessBadge } from './DeckReadinessBadge';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type DeckListItemProps = {
@@ -15,6 +16,7 @@ type DeckListItemProps = {
 
 export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckListItemProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   return (
     <Pressable
@@ -23,7 +25,7 @@ export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckLi
       style={({ pressed }) => [styles.deckCard, pressed ? styles.deckCardPressed : null]}
     >
       <View style={styles.deckCardHeader}>
-        <Text style={styles.deckType}>{DECK_TYPE_LABELS[deck.type]}</Text>
+        <Text style={styles.deckType}>{strings.deckTypeLabels[deck.type]}</Text>
         {insights != null ? (
           <DeckReadinessBadge label={insights.readinessLabel} readiness={insights.readiness} />
         ) : null}
@@ -33,9 +35,9 @@ export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckLi
       {insights != null ? (
         <View style={styles.deckInsightRow}>
           <Text style={styles.deckInsightText}>
-            {`${insights.studyableCards} / ${insights.totalCards} studyable cards`}
+            {strings.deckList.studyableCards(insights.studyableCards, insights.totalCards)}
           </Text>
-          <Text style={styles.deckInsightText}>{`${insights.validPromptItemCount} prompt items`}</Text>
+          <Text style={styles.deckInsightText}>{strings.deckList.promptItems(insights.validPromptItemCount)}</Text>
         </View>
       ) : null}
       <Text style={styles.deckMeta}>{timestampLabel}</Text>

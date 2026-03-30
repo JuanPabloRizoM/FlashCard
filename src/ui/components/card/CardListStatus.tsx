@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import type { Card } from '../../../core/models/Card';
 import type { CardStudyFeedback as CardStudyFeedbackType } from '../../../features/study/cardStudyPreview';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 import { getCardCompletenessLevel } from './cardListFilters';
 
@@ -24,18 +25,19 @@ function getReadinessTone(
   }
 }
 
-function getCompletenessLabel(card: Card): string {
+function getCompletenessLabel(card: Card, locale: string): string {
   switch (getCardCompletenessLevel(card)) {
     case 'detailed':
-      return 'Detailed';
+      return locale.startsWith('es') ? 'Detallada' : 'Detailed';
     case 'expanded':
-      return 'Expanded';
+      return locale.startsWith('es') ? 'Ampliada' : 'Expanded';
     default:
-      return 'Basic';
+      return locale.startsWith('es') ? 'Básica' : 'Basic';
   }
 }
 
 export function CardListStatus({ card, feedback }: CardListStatusProps) {
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
 
   return (
@@ -45,11 +47,11 @@ export function CardListStatus({ card, feedback }: CardListStatusProps) {
           <Text style={styles.readinessLabel}>{feedback.readinessLabel}</Text>
         </View>
         <View style={styles.completenessBadge}>
-          <Text style={styles.completenessLabel}>{getCompletenessLabel(card)}</Text>
+          <Text style={styles.completenessLabel}>{getCompletenessLabel(card, strings.locale)}</Text>
         </View>
       </View>
 
-      <Text style={styles.summaryText}>{`${feedback.supportedPromptCount} prompt${feedback.supportedPromptCount === 1 ? '' : 's'} ready`}</Text>
+      <Text style={styles.summaryText}>{strings.cardFeedback.promptsReady(feedback.supportedPromptCount)}</Text>
 
       {feedback.missingFieldBadges.length > 0 ? (
         <View style={styles.badgeRow}>

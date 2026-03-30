@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 
 import type { StudyAnswer } from '../../../core/types/study';
+import { getRuntimeStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionProgressProps = {
@@ -14,29 +15,41 @@ type StudySessionProgressProps = {
 };
 
 function getStageLabel(revealAnswer: boolean, isSubmittingAnswer: boolean): string {
+  const strings = getRuntimeStrings();
+
   if (isSubmittingAnswer) {
-    return 'Saving answer';
+    return strings.locale.startsWith('es') ? 'Guardando respuesta' : 'Saving answer';
   }
 
-  return revealAnswer ? 'Answer revealed' : 'Question';
+  return revealAnswer
+    ? strings.locale.startsWith('es') ? 'Respuesta mostrada' : 'Answer revealed'
+    : strings.locale.startsWith('es') ? 'Pregunta' : 'Question';
 }
 
 function getRemainingLabel(remainingCount: number): string {
+  const strings = getRuntimeStrings();
+
   if (remainingCount <= 0) {
-    return 'Session complete';
+    return strings.studySummary.title;
   }
 
   if (remainingCount === 1) {
-    return 'Last prompt';
+    return strings.locale.startsWith('es') ? 'Último prompt' : 'Last prompt';
   }
 
-  return `${remainingCount} remaining`;
+  return strings.studyProgress.remaining(remainingCount);
 }
 
 function getFeedbackMessage(lastAnswer: StudyAnswer): string {
+  const strings = getRuntimeStrings();
+
   return lastAnswer.isCorrect
-    ? 'Correct answer recorded. Moving with a clean streak.'
-    : 'Marked for review. This prompt stays visible in your progress history.';
+    ? strings.locale.startsWith('es')
+      ? 'Respuesta correcta registrada. Sigue con buen ritmo.'
+      : 'Correct answer recorded. Moving with a clean streak.'
+    : strings.locale.startsWith('es')
+      ? 'Marcada para repaso. Este prompt queda en tu historial.'
+      : 'Marked for review. This prompt stays visible in your progress history.';
 }
 
 export function StudySessionProgress({
@@ -48,6 +61,7 @@ export function StudySessionProgress({
   lastAnswer
 }: StudySessionProgressProps) {
   const colors = useThemeColors();
+  const strings = getRuntimeStrings();
   const styles = useThemedStyles(createStyles);
   const progressPercentage = totalCount === 0 ? 0 : (answeredCount / totalCount) * 100;
   const activePromptNumber = totalCount === 0 ? 0 : Math.min(answeredCount + 1, totalCount);
@@ -75,7 +89,11 @@ export function StudySessionProgress({
       <View style={styles.headerRow}>
         <View style={styles.counterWrap}>
           <Text style={styles.counterText}>{`${answeredCount} / ${totalCount}`}</Text>
-          <Text style={styles.helperText}>{`${getRemainingLabel(remainingCount)}${totalCount > 0 ? ` · Prompt ${activePromptNumber}` : ''}`}</Text>
+          <Text style={styles.helperText}>
+            {`${getRemainingLabel(remainingCount)}${
+              totalCount > 0 ? ` · ${strings.studyProgress.promptOfTotal(activePromptNumber, totalCount)}` : ''
+            }`}
+          </Text>
         </View>
         <View style={styles.stageBadge}>
           <Text style={styles.stageLabel}>{getStageLabel(revealAnswer, isSubmittingAnswer)}</Text>
@@ -84,11 +102,11 @@ export function StudySessionProgress({
 
       <View style={styles.metaRow}>
         <View style={styles.metaPill}>
-          <Text style={styles.metaLabel}>Current</Text>
-          <Text style={styles.metaValue}>{`${activePromptNumber} of ${totalCount}`}</Text>
+          <Text style={styles.metaLabel}>{strings.studyProgress.current}</Text>
+          <Text style={styles.metaValue}>{strings.studyProgress.promptOfTotal(activePromptNumber, totalCount)}</Text>
         </View>
         <View style={styles.metaPill}>
-          <Text style={styles.metaLabel}>Remaining</Text>
+          <Text style={styles.metaLabel}>{strings.studyProgress.remainingLabel}</Text>
           <Text style={styles.metaValue}>{Math.max(remainingCount, 0)}</Text>
         </View>
       </View>
@@ -118,7 +136,7 @@ export function StudySessionProgress({
             }
           ]}
         >
-          <Text style={styles.feedbackLabel}>Last result</Text>
+          <Text style={styles.feedbackLabel}>{strings.studyProgress.lastResult}</Text>
           <Text style={styles.feedbackText}>{getFeedbackMessage(lastAnswer)}</Text>
         </Animated.View>
       ) : null}

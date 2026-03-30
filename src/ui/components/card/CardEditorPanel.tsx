@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type CardEditorPanelProps = {
@@ -41,6 +42,7 @@ export function CardEditorPanel({
   onCancelEditing
 }: CardEditorPanelProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const isEditing = mode === 'edit';
 
@@ -48,11 +50,13 @@ export function CardEditorPanel({
     <View style={styles.formCard}>
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
-          <Text style={styles.sectionTitle}>{isEditing ? 'Edit card' : 'New card'}</Text>
+          <Text style={styles.sectionTitle}>
+            {isEditing ? strings.cardEditor.editCardTitle : strings.cardEditor.newCardTitle}
+          </Text>
           <Text style={styles.sectionText}>
             {isEditing
-              ? 'Update the front, back, or optional details.'
-              : 'Add a front and back, then fill in details only if you need them.'}
+              ? strings.cardEditor.editCardSupport
+              : strings.cardEditor.newCardSupport}
           </Text>
         </View>
         {isEditing && onCancelEditing != null ? (
@@ -61,70 +65,70 @@ export function CardEditorPanel({
             onPress={onCancelEditing}
             style={({ pressed }) => [styles.secondaryButton, pressed ? styles.secondaryButtonPressed : null]}
           >
-            <Text style={styles.secondaryButtonLabel}>Cancel</Text>
+            <Text style={styles.secondaryButtonLabel}>{strings.common.cancel}</Text>
           </Pressable>
         ) : null}
       </View>
 
       <View style={styles.fieldGroup}>
-        <Text style={styles.label}>Front</Text>
+        <Text style={styles.label}>{strings.cardEditor.frontLabel}</Text>
         <TextInput
           autoCapitalize="sentences"
           autoCorrect={false}
           onChangeText={onDraftFrontChange}
-          placeholder="Question or prompt"
-          placeholderTextColor={colors.muted}
+          placeholder={strings.cardEditor.frontPlaceholder}
+          placeholderTextColor={colors.textMuted}
           returnKeyType="next"
           style={[styles.input, formError != null ? styles.inputError : null]}
           value={draftFront}
         />
 
-        <Text style={styles.label}>Back</Text>
+        <Text style={styles.label}>{strings.cardEditor.backLabel}</Text>
         <TextInput
           autoCapitalize="sentences"
           autoCorrect={false}
           onChangeText={onDraftBackChange}
-          placeholder="Answer"
-          placeholderTextColor={colors.muted}
+          placeholder={strings.cardEditor.backPlaceholder}
+          placeholderTextColor={colors.textMuted}
           returnKeyType="done"
           style={[styles.input, formError != null ? styles.inputError : null]}
           value={draftBack}
         />
 
-        <Text style={styles.label}>Description (optional)</Text>
+        <Text style={styles.label}>{strings.cardEditor.descriptionLabel}</Text>
         <TextInput
           autoCapitalize="sentences"
           autoCorrect={false}
           multiline
           onChangeText={onDraftDescriptionChange}
-          placeholder="Add a description"
-          placeholderTextColor={colors.muted}
+          placeholder={strings.cardEditor.descriptionPlaceholder}
+          placeholderTextColor={colors.textMuted}
           style={[styles.input, styles.multilineInput]}
           textAlignVertical="top"
           value={draftDescription}
         />
 
-        <Text style={styles.label}>Application / Notes (optional)</Text>
+        <Text style={styles.label}>{strings.cardEditor.applicationLabel}</Text>
         <TextInput
           autoCapitalize="sentences"
           autoCorrect={false}
           multiline
           onChangeText={onDraftApplicationChange}
-          placeholder="Add notes or context"
-          placeholderTextColor={colors.muted}
+          placeholder={strings.cardEditor.applicationPlaceholder}
+          placeholderTextColor={colors.textMuted}
           style={[styles.input, styles.multilineInput]}
           textAlignVertical="top"
           value={draftApplication}
         />
 
-        <Text style={styles.label}>Image URL (optional)</Text>
+        <Text style={styles.label}>{strings.cardEditor.imageUrlLabel}</Text>
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="url"
           onChangeText={onDraftImageUriChange}
-          placeholder="Add an image URL"
-          placeholderTextColor={colors.muted}
+          placeholder={strings.cardEditor.imageUrlPlaceholder}
+          placeholderTextColor={colors.textMuted}
           style={styles.input}
           value={draftImageUri}
         />
@@ -147,7 +151,11 @@ export function CardEditorPanel({
         ]}
       >
         <Text style={styles.submitButtonLabel}>
-          {isSubmitting ? 'Saving card...' : isEditing ? 'Save changes' : 'Create card'}
+          {isSubmitting
+            ? strings.cardEditor.saveCreating
+            : isEditing
+              ? strings.cardEditor.saveChanges
+              : strings.cardEditor.createCard}
         </Text>
       </Pressable>
     </View>

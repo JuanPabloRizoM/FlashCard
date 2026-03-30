@@ -5,11 +5,23 @@ import {
   MAX_CARD_SHORT_TEXT_LENGTH,
   MAX_CARD_TITLE_LENGTH
 } from '../../core/types/card';
+import { getRuntimeStrings } from '../../ui/strings';
 
-export const INVALID_CARD_DECK_MESSAGE = 'Choose a valid deck before creating cards.';
-export const INVALID_CARD_ID_MESSAGE = 'Choose a valid card before saving changes.';
-export const INVALID_CARD_FRONT_MESSAGE = 'Enter the front of the card.';
-export const INVALID_CARD_BACK_MESSAGE = 'Enter the back of the card.';
+export function getInvalidCardDeckMessage(): string {
+  return getRuntimeStrings().validation.invalidCardDeck;
+}
+
+export function getInvalidCardIdMessage(): string {
+  return getRuntimeStrings().validation.invalidCardId;
+}
+
+function getInvalidCardFrontMessage(): string {
+  return getRuntimeStrings().validation.invalidCardFront;
+}
+
+function getInvalidCardBackMessage(): string {
+  return getRuntimeStrings().validation.invalidCardBack;
+}
 
 export type CardValidationErrors = {
   deckId: string | null;
@@ -59,39 +71,50 @@ export function normalizeCreateCardInput(input: CreateCardInput): NormalizedCrea
 }
 
 export function validateCreateCardInput(input: CreateCardInput): CardValidationErrors {
+  const strings = getRuntimeStrings();
   const normalizedInput = normalizeCreateCardInput(input);
 
   return {
     deckId:
       Number.isInteger(normalizedInput.deckId) && normalizedInput.deckId > 0
         ? null
-        : INVALID_CARD_DECK_MESSAGE,
+        : getInvalidCardDeckMessage(),
     front:
       normalizedInput.front.length === 0
-        ? INVALID_CARD_FRONT_MESSAGE
+        ? getInvalidCardFrontMessage()
         : normalizedInput.front.length > MAX_CARD_TITLE_LENGTH
-          ? `Front values must be ${MAX_CARD_TITLE_LENGTH} characters or fewer.`
+          ? strings.locale.startsWith('es')
+            ? `Los valores de frente deben tener ${MAX_CARD_TITLE_LENGTH} caracteres o menos.`
+            : `Front values must be ${MAX_CARD_TITLE_LENGTH} characters or fewer.`
           : null,
     back:
       normalizedInput.back.length === 0
-        ? INVALID_CARD_BACK_MESSAGE
+        ? getInvalidCardBackMessage()
         : normalizedInput.back.length > MAX_CARD_SHORT_TEXT_LENGTH
-          ? `Back values must be ${MAX_CARD_SHORT_TEXT_LENGTH} characters or fewer.`
+          ? strings.locale.startsWith('es')
+            ? `Los valores de reverso deben tener ${MAX_CARD_SHORT_TEXT_LENGTH} caracteres o menos.`
+            : `Back values must be ${MAX_CARD_SHORT_TEXT_LENGTH} characters or fewer.`
           : null,
     description:
       normalizedInput.description != null &&
       normalizedInput.description.length > MAX_CARD_LONG_TEXT_LENGTH
-        ? `Descriptions must be ${MAX_CARD_LONG_TEXT_LENGTH} characters or fewer.`
+        ? strings.locale.startsWith('es')
+          ? `Las descripciones deben tener ${MAX_CARD_LONG_TEXT_LENGTH} caracteres o menos.`
+          : `Descriptions must be ${MAX_CARD_LONG_TEXT_LENGTH} characters or fewer.`
         : null,
     application:
       normalizedInput.application != null &&
       normalizedInput.application.length > MAX_CARD_LONG_TEXT_LENGTH
-        ? `Applications must be ${MAX_CARD_LONG_TEXT_LENGTH} characters or fewer.`
+        ? strings.locale.startsWith('es')
+          ? `Las aplicaciones deben tener ${MAX_CARD_LONG_TEXT_LENGTH} caracteres o menos.`
+          : `Applications must be ${MAX_CARD_LONG_TEXT_LENGTH} characters or fewer.`
         : null,
     imageUri:
       normalizedInput.imageUri != null &&
       normalizedInput.imageUri.length > MAX_CARD_IMAGE_URI_LENGTH
-        ? `Image URLs must be ${MAX_CARD_IMAGE_URI_LENGTH} characters or fewer.`
+        ? strings.locale.startsWith('es')
+          ? `Las URL de imagen deben tener ${MAX_CARD_IMAGE_URI_LENGTH} caracteres o menos.`
+          : `Image URLs must be ${MAX_CARD_IMAGE_URI_LENGTH} characters or fewer.`
         : null
   };
 }
@@ -108,5 +131,5 @@ export function getFirstCardValidationError(errors: CardValidationErrors): strin
 }
 
 export function validateCardId(id: UpdateCardInput['id']): string | null {
-  return Number.isInteger(id) && id > 0 ? null : INVALID_CARD_ID_MESSAGE;
+  return Number.isInteger(id) && id > 0 ? null : getInvalidCardIdMessage();
 }

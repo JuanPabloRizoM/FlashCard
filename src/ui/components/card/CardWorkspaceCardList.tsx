@@ -3,6 +3,7 @@ import { FlatList, StyleSheet } from 'react-native';
 import type { Card } from '../../../core/models/Card';
 import { buildCardStudyFeedback } from '../../../features/study/cardStudyPreview';
 import { spacing } from '../../theme';
+import { useAppStrings } from '../../strings';
 import { CardWorkspaceFeedbackState } from './CardWorkspaceFeedbackState';
 import { DeckCardListItem } from './DeckCardListItem';
 
@@ -14,15 +15,21 @@ type CardWorkspaceCardListProps = {
   emptyMessage?: string;
 };
 
-function formatCardTimestampLabel(createdAt: string, updatedAt: string): string {
+function formatCardTimestampLabel(
+  createdAt: string,
+  updatedAt: string,
+  createdLabel: string,
+  updatedLabel: string,
+  fallbackLabel: string
+): string {
   const sourceDate = updatedAt !== createdAt ? updatedAt : createdAt;
   const date = new Date(sourceDate);
 
   if (Number.isNaN(date.getTime())) {
-    return 'Saved locally';
+    return fallbackLabel;
   }
 
-  return `${updatedAt !== createdAt ? 'Updated' : 'Created'} ${date.toLocaleDateString()}`;
+  return `${updatedAt !== createdAt ? updatedLabel : createdLabel} ${date.toLocaleDateString()}`;
 }
 
 export function CardWorkspaceCardList({
@@ -32,8 +39,9 @@ export function CardWorkspaceCardList({
   emptyTitle,
   emptyMessage
 }: CardWorkspaceCardListProps) {
+  const strings = useAppStrings();
   if (isLoading) {
-    return <CardWorkspaceFeedbackState isLoading message="Loading cards..." />;
+    return <CardWorkspaceFeedbackState isLoading message={strings.common.loadingCards} />;
   }
 
   return (
@@ -43,19 +51,25 @@ export function CardWorkspaceCardList({
       keyExtractor={(card) => card.id.toString()}
       renderItem={({ item }) => (
         <DeckCardListItem
-          actionLabel="Edit card"
+          actionLabel={strings.cardsWorkspace.editCardAction}
           card={item}
           feedback={buildCardStudyFeedback(item)}
           onActionPress={() => {
             onEditCard(item);
           }}
-          timestampLabel={formatCardTimestampLabel(item.createdAt, item.updatedAt)}
+          timestampLabel={formatCardTimestampLabel(
+            item.createdAt,
+            item.updatedAt,
+            strings.common.created,
+            strings.common.updated,
+            strings.common.savedLocally
+          )}
         />
       )}
       ListEmptyComponent={
         <CardWorkspaceFeedbackState
-          message={emptyMessage ?? 'Add a card or import a few.'}
-          title={emptyTitle ?? 'No cards yet'}
+          message={emptyMessage ?? strings.cardsWorkspace.listEmptyMessage}
+          title={emptyTitle ?? strings.cardsWorkspace.listEmptyTitle}
         />
       }
       scrollEnabled={false}

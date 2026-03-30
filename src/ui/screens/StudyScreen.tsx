@@ -8,10 +8,12 @@ import { StudySessionBanner } from '../components/study/StudySessionBanner';
 import { StudySessionCard } from '../components/study/StudySessionCard';
 import { StudySessionSetupPanel } from '../components/study/StudySessionSetupPanel';
 import { StudySessionSummary } from '../components/study/StudySessionSummary';
+import { useAppStrings } from '../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 export function StudyScreen() {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const {
     decks,
@@ -47,21 +49,21 @@ export function StudyScreen() {
 
   return (
     <ScreenContainer
-      title="Study"
-      subtitle="Choose a deck and start a session."
+      title={strings.screens.study.title}
+      subtitle={strings.screens.study.subtitle}
     >
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.panel}>
-          <Text style={styles.eyebrow}>Setup</Text>
-          <Text style={styles.sectionTitle}>Choose a deck</Text>
-          <Text style={styles.supportText}>Adjust mode, size, and technique before you start.</Text>
+          <Text style={styles.eyebrow}>{strings.screens.study.setupEyebrow}</Text>
+          <Text style={styles.sectionTitle}>{strings.screens.study.chooseDeckTitle}</Text>
+          <Text style={styles.supportText}>{strings.screens.study.chooseDeckSupport}</Text>
 
           {isLoadingDecks ? (
-            <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
+            <CardWorkspaceFeedbackState isLoading message={strings.common.loadingDecks} />
           ) : decks.length === 0 ? (
             <CardWorkspaceFeedbackState
-              message="Create a deck and cards first."
-              title="Nothing to study yet"
+              message={strings.screens.study.noStudyMessage}
+              title={strings.screens.study.noStudyTitle}
             />
           ) : (
             <View style={styles.choiceRow}>
@@ -111,7 +113,7 @@ export function StudyScreen() {
         {sessionStartResult?.status === 'empty' ? (
           <CardWorkspaceFeedbackState
             message={sessionStartResult.reason}
-            title="Session unavailable"
+            title={strings.screens.study.sessionUnavailable}
           />
         ) : null}
 

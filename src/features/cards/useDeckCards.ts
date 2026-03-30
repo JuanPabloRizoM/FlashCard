@@ -7,6 +7,7 @@ import {
   validateCreateCardInput
 } from '../../services/validation/cardValidation';
 import { createCard, listCardsByDeck, updateCard } from '../../storage/repositories/cardRepository';
+import { getRuntimeStrings } from '../../ui/strings';
 import { useCardImport } from './useCardImport';
 import type { CardImportPreview } from './cardImport';
 
@@ -42,6 +43,7 @@ type UseDeckCardsResult = {
 };
 
 export function useDeckCards(deckId: number | null): UseDeckCardsResult {
+  const strings = getRuntimeStrings();
   const [cards, setCards] = useState<Card[]>([]);
   const [editingCardId, setEditingCardId] = useState<number | null>(null);
   const [draftFront, setDraftFront] = useState('');
@@ -128,7 +130,7 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
           setScreenError(null);
         } catch {
           if (isActive) {
-            setScreenError('Could not load cards right now.');
+            setScreenError(strings.featureMessages.couldNotLoadCards);
           }
         } finally {
           if (isActive) {
@@ -147,7 +149,7 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
 
   async function onSaveCard() {
     if (deckId == null) {
-      setFormError('Choose a deck before creating cards.');
+      setFormError(strings.featureMessages.chooseDeckBeforeCreatingCards);
       return;
     }
 
@@ -197,11 +199,11 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
         );
       }
 
-      setSaveFeedbackMessage(editingCardId == null ? 'Card added' : 'Card updated');
+      setSaveFeedbackMessage(editingCardId == null ? strings.featureMessages.cardAdded : strings.featureMessages.cardUpdated);
       resetDraftState();
       setScreenError(null);
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : 'Could not save the card. Please try again.');
+      setFormError(error instanceof Error ? error.message : strings.featureMessages.couldNotSaveCard);
     } finally {
       setIsSubmitting(false);
     }

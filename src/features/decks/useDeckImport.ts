@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 
 import type { Deck } from '../../core/models/Deck';
 import { createDeckWithImportedCards } from '../../storage/repositories/deckRepository';
+import { getRuntimeStrings } from '../../ui/strings';
 import { buildDeckImportPreview, getDeckImportCardInputs } from './deckPortability';
 
 type UseDeckImportParams = {
@@ -20,17 +21,20 @@ type UseDeckImportResult = {
 };
 
 function getDeckImportErrorMessage(error: unknown): string {
+  const strings = getRuntimeStrings();
+
   if (error instanceof Error) {
     return error.message;
   }
 
-  return 'Could not import the deck right now. Please try again.';
+  return strings.featureMessages.couldNotImportDeck;
 }
 
 export function useDeckImport({
   existingDeckNames,
   onImportSuccess
 }: UseDeckImportParams): UseDeckImportResult {
+  const strings = getRuntimeStrings();
   const [importText, setImportText] = useState('');
   const [importResultMessage, setImportResultMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,7 +45,7 @@ export function useDeckImport({
 
   async function onImportDeck() {
     if (!importPreview.hasContent) {
-      setImportResultMessage('Paste an exported deck before importing.');
+      setImportResultMessage(strings.featureMessages.pasteExportedDeck);
       return;
     }
 
@@ -49,7 +53,7 @@ export function useDeckImport({
       setImportResultMessage(
         importPreview.blockingError ??
           importPreview.headerError ??
-          'This deck import is not ready yet.'
+          strings.featureMessages.deckImportNotReady
       );
       return;
     }
@@ -64,7 +68,11 @@ export function useDeckImport({
 
       onImportSuccess(result.deck);
       setImportResultMessage(
-        `Imported ${result.deck.name} with ${result.importedCardCount} card${result.importedCardCount === 1 ? '' : 's'}. Skipped ${importPreview.cardPreview.invalidCount} invalid line${importPreview.cardPreview.invalidCount === 1 ? '' : 's'}.`
+        strings.featureMessages.importedDeck(
+          result.deck.name,
+          result.importedCardCount,
+          importPreview.cardPreview.invalidCount
+        )
       );
       setImportText('');
     } catch (error) {

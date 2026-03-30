@@ -2,11 +2,10 @@ import type { Card } from '../../core/models/Card';
 import { PromptModeResolver } from '../../engine/PromptModeResolver';
 import {
   PROMPT_MODES,
-  PROMPT_MODE_LABELS,
-  STUDY_TECHNIQUE_LABELS,
   type PromptMode,
   type StudyTechniqueId
 } from '../../core/types/study';
+import { getRuntimeStrings } from '../../ui/strings';
 
 export type InsightReadiness = 'empty' | 'poor' | 'needs_improvement' | 'good';
 
@@ -57,19 +56,21 @@ function getDeckReadiness(
   studyableCards: number,
   validPromptItemCount: number
 ): Pick<DeckStudyInsights, 'readiness' | 'readinessLabel' | 'readinessMessage'> {
+  const strings = getRuntimeStrings();
+
   if (totalCards === 0) {
     return {
       readiness: 'empty',
-      readinessLabel: 'No cards',
-      readinessMessage: 'Add cards before this deck can support a study session.'
+      readinessLabel: strings.deckInsights.readinessEmpty,
+      readinessMessage: strings.deckInsights.readinessMessageEmpty
     };
   }
 
   if (studyableCards === 0) {
     return {
       readiness: 'poor',
-      readinessLabel: 'Poor',
-      readinessMessage: 'These cards do not expose any valid study prompts yet.'
+      readinessLabel: strings.deckInsights.readinessPoor,
+      readinessMessage: strings.deckInsights.readinessMessageNoPrompts
     };
   }
 
@@ -79,49 +80,52 @@ function getDeckReadiness(
   if (studyableRatio >= 0.75 && averagePromptModes >= 1.5) {
     return {
       readiness: 'good',
-      readinessLabel: 'Good',
-      readinessMessage: 'This deck should produce a solid study session with useful prompt variety.'
+      readinessLabel: strings.deckInsights.readinessGood,
+      readinessMessage: strings.deckInsights.readinessMessageGood
     };
   }
 
   if (studyableRatio >= 0.4 || validPromptItemCount >= 3) {
     return {
       readiness: 'needs_improvement',
-      readinessLabel: 'Needs improvement',
-      readinessMessage: 'Some cards are studyable, but missing fields still limit prompt coverage.'
+      readinessLabel: strings.deckInsights.readinessNeedsImprovement,
+      readinessMessage: strings.deckInsights.readinessMessageNeedsImprovement
     };
   }
 
   return {
     readiness: 'poor',
-    readinessLabel: 'Poor',
-    readinessMessage: 'Only a small portion of this deck can be used for study right now.'
+    readinessLabel: strings.deckInsights.readinessPoor,
+    readinessMessage: strings.deckInsights.readinessMessagePoor
   };
 }
 
 function getTechniqueInsight(validItemCount: number): Pick<TechniqueInsight, 'status' | 'message'> {
+  const strings = getRuntimeStrings();
+
   if (validItemCount === 0) {
     return {
       status: 'unavailable',
-      message: 'No valid prompts yet'
+      message: strings.deckInsights.techniqueUnavailable
     };
   }
 
   if (validItemCount < 3) {
     return {
       status: 'limited',
-      message: 'Few valid prompts'
+      message: strings.deckInsights.techniqueLimited
     };
   }
 
   return {
     status: 'ready',
-    message: 'Ready to study'
+    message: strings.deckInsights.techniqueReady
   };
 }
 
 
 export function buildDeckStudyInsights(cards: Card[]): DeckStudyInsights {
+  const strings = getRuntimeStrings();
   const promptCoverageCounts = PROMPT_MODES.reduce<Record<PromptMode, number>>(
     (coverage, mode) => ({ ...coverage, [mode]: 0 }),
     {} as Record<PromptMode, number>
@@ -159,7 +163,7 @@ export function buildDeckStudyInsights(cards: Card[]): DeckStudyInsights {
 
   const promptCoverage = PROMPT_MODES.map((mode) => ({
     mode,
-    label: PROMPT_MODE_LABELS[mode],
+    label: strings.promptModeLabels[mode],
     count: promptCoverageCounts[mode],
     percentage: calculatePercentage(promptCoverageCounts[mode], cards.length)
   }));
@@ -167,7 +171,7 @@ export function buildDeckStudyInsights(cards: Card[]): DeckStudyInsights {
   const techniqueInsights = (Object.keys(TECHNIQUE_PROMPT_MODES) as StudyTechniqueId[]).map(
     (techniqueId) => ({
       techniqueId,
-      label: STUDY_TECHNIQUE_LABELS[techniqueId],
+      label: strings.studyTechniqueLabels[techniqueId],
       validItemCount: techniqueCounts[techniqueId],
       ...getTechniqueInsight(techniqueCounts[techniqueId])
     })

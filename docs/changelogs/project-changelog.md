@@ -11,6 +11,15 @@
 
 ---
 
+[2026-03-30]
+- Change: Expanded Settings with real app language switching (`Español` default, `English` optional), added honest Account Settings and Billing placeholder sections, and routed app-wide UI copy through a lightweight centralized strings layer.
+- Reason: Settings needed one more real product-level control beyond appearance, while future account/billing space needed to be present without pretending those systems already exist.
+- Files: src/core/types/settings.ts, src/features/settings/AppSettingsProvider.tsx, src/ui/strings/index.ts, src/ui/strings/translations.ts, src/ui/screens/SettingsScreen.tsx, src/navigation/AppNavigator.tsx, src/ui/screens/DecksScreen.tsx, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/screens/StudyScreen.tsx, src/ui/components/card/*, src/ui/components/deck/*, src/ui/components/study/*, src/features/decks/useDecks.ts, src/features/cards/useDeckCards.ts, src/features/cards/useCardImport.ts, src/features/decks/useDeckImport.ts, src/features/study/useStudySession.ts, src/services/validation/*.ts, docs/architecture/project-structure.md, docs/flows/main-user-flows.md
+- Risk: Medium
+- Notes: Language selection persists through the existing settings storage path, defaults safely to Spanish, and Account Settings/Billing remain explicitly non-interactive placeholders.
+
+---
+
 ## Example
 
 [2026-03-18]

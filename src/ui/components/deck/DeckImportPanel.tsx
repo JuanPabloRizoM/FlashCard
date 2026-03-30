@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 import { TextImportPreviewList } from '../card/TextImportPreviewList';
 import { TextImportWorkspace } from '../card/TextImportWorkspace';
@@ -16,9 +17,6 @@ type DeckImportPanelProps = {
   onClearImport: () => void;
 };
 
-const DECK_IMPORT_EXAMPLE =
-  '# Deck: Spanish Basics\nhola | hello\nperro | dog | animal domestico\ncorrer | run | moverse rapido | usado en deportes';
-
 export function DeckImportPanel({
   importText,
   preview,
@@ -30,8 +28,9 @@ export function DeckImportPanel({
   onClearImport
 }: DeckImportPanelProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
-  const buttonLabel = isSubmitting ? 'Importing...' : 'Import deck';
+  const buttonLabel = isSubmitting ? strings.deckImport.importing : strings.deckImport.actionLabel;
 
   function getStatusText(): string | null {
     if (!preview.hasContent) {
@@ -40,14 +39,14 @@ export function DeckImportPanel({
 
     if (preview.canImport) {
       if (preview.cardPreview.validCount > 0) {
-        return `${preview.cardPreview.validCount} cards ready`;
+        return strings.deckImport.cardsReady(preview.cardPreview.validCount);
       }
 
-      return 'Deck ready';
+      return strings.deckImport.deckReady;
     }
 
     if (preview.cardPreview.invalidCount > 0) {
-      return 'Fix invalid lines to import';
+      return strings.deckImport.fixInvalidLines;
     }
 
     return null;
@@ -58,7 +57,7 @@ export function DeckImportPanel({
   return (
     <TextImportWorkspace
       actionLabel={buttonLabel}
-      exampleText={DECK_IMPORT_EXAMPLE}
+      exampleText={strings.deckImport.exampleText}
       importText={importText}
       isActionDisabled={isDisabled || !preview.canImport || isSubmitting}
       isSubmitting={isSubmitting}
@@ -68,23 +67,23 @@ export function DeckImportPanel({
       }}
       onClearImport={onClearImport}
       onImportTextChange={onImportTextChange}
-      subtitle="Paste a deck export."
-      title="Import deck"
+      subtitle={strings.deckImport.subtitle}
+      title={strings.deckImport.title}
     >
       {preview.hasContent ? (
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>
-            {preview.deckName.length > 0 ? preview.deckName : 'Deck name not ready'}
+            {preview.deckName.length > 0 ? preview.deckName : strings.deckImport.deckNameNotReady}
           </Text>
-          <Text style={styles.summaryText}>{`${preview.cardPreview.validCount} valid`}</Text>
-          <Text style={styles.summaryText}>{`${preview.cardPreview.invalidCount} invalid`}</Text>
+          <Text style={styles.summaryText}>{strings.common.valid(preview.cardPreview.validCount)}</Text>
+          <Text style={styles.summaryText}>{strings.common.invalid(preview.cardPreview.invalidCount)}</Text>
         </View>
       ) : null}
       {preview.blockingError != null ? <Text style={styles.errorText}>{preview.blockingError}</Text> : null}
       {preview.headerError != null ? <Text style={styles.errorText}>{preview.headerError}</Text> : null}
       {importResultMessage != null ? <Text style={styles.resultText}>{importResultMessage}</Text> : null}
       {preview.cardPreview.hasContent ? (
-        <TextImportPreviewList emptyValidDetailLabel="Front and back only" rows={preview.cardPreview.rows} />
+        <TextImportPreviewList emptyValidDetailLabel={strings.deckImport.frontBackOnly} rows={preview.cardPreview.rows} />
       ) : null}
       {statusText != null ? <Text style={styles.supportText}>{statusText}</Text> : null}
     </TextImportWorkspace>

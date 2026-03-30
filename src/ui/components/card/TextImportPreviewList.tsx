@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type PreviewRow = {
@@ -25,13 +26,14 @@ export function TextImportPreviewList({
   emptyValidDetailLabel
 }: TextImportPreviewListProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const visibleRows = rows.slice(0, MAX_VISIBLE_PREVIEW_ROWS);
   const hiddenRowCount = Math.max(rows.length - visibleRows.length, 0);
 
   return (
     <View style={styles.previewSection}>
-      <Text style={styles.previewTitle}>Preview</Text>
+      <Text style={styles.previewTitle}>{strings.common.preview}</Text>
       <View style={styles.previewList}>
         {visibleRows.map((row) => {
           const validDetails = [row.back, row.description, row.application].filter(Boolean).join(' | ');
@@ -41,9 +43,9 @@ export function TextImportPreviewList({
               key={`${row.lineNumber}-${row.rawLine}`}
               style={[styles.previewRow, row.isValid ? styles.previewRowValid : styles.previewRowInvalid]}
             >
-              <Text style={styles.previewLineLabel}>{`Line ${row.lineNumber}`}</Text>
+              <Text style={styles.previewLineLabel}>{strings.common.line(row.lineNumber)}</Text>
               <Text style={styles.previewMainText}>
-                {row.front.length > 0 ? row.front : row.rawLine.trim() || 'Empty line'}
+                {row.front.length > 0 ? row.front : row.rawLine.trim() || strings.common.emptyLine}
               </Text>
               {row.isValid ? (
                 <Text style={styles.previewDetailText}>{validDetails || emptyValidDetailLabel}</Text>
@@ -54,7 +56,7 @@ export function TextImportPreviewList({
           );
         })}
       </View>
-      {hiddenRowCount > 0 ? <Text style={styles.supportText}>{`${hiddenRowCount} more lines.`}</Text> : null}
+      {hiddenRowCount > 0 ? <Text style={styles.supportText}>{strings.common.moreLines(hiddenRowCount)}</Text> : null}
     </View>
   );
 }

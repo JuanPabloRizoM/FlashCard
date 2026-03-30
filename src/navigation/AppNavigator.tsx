@@ -8,6 +8,7 @@ import { CardsScreen } from '../ui/screens/CardsScreen';
 import { DecksScreen } from '../ui/screens/DecksScreen';
 import { SettingsScreen } from '../ui/screens/SettingsScreen';
 import { StudyScreen } from '../ui/screens/StudyScreen';
+import { useAppStrings } from '../ui/strings';
 import { spacing, typography, useThemeColors } from '../ui/theme';
 import type { RootTabParamList } from './types';
 
@@ -16,6 +17,7 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 export function AppNavigator() {
   const { resolvedTheme } = useAppSettings();
   const colors = useThemeColors();
+  const strings = useAppStrings();
 
   const navigationTheme = useMemo<NavigationTheme>(
     () => ({
@@ -64,6 +66,8 @@ export function AppNavigator() {
           name="Decks"
           component={DecksScreen}
           options={{
+            title: strings.tabs.decks,
+            tabBarLabel: strings.tabs.decks,
             tabBarIcon: ({ color, focused }) => <TabBarIcon color={color} focused={focused} name="decks" />
           }}
         />
@@ -71,6 +75,8 @@ export function AppNavigator() {
           name="Cards"
           component={CardsScreen}
           options={{
+            title: strings.tabs.cards,
+            tabBarLabel: strings.tabs.cards,
             tabBarIcon: ({ color, focused }) => <TabBarIcon color={color} focused={focused} name="cards" />
           }}
         />
@@ -78,6 +84,8 @@ export function AppNavigator() {
           name="Study"
           component={StudyScreen}
           options={{
+            title: strings.tabs.study,
+            tabBarLabel: strings.tabs.study,
             tabBarIcon: ({ color, focused }) => <TabBarIcon color={color} focused={focused} name="study" />
           }}
         />
@@ -85,6 +93,8 @@ export function AppNavigator() {
           name="Settings"
           component={SettingsScreen}
           options={{
+            title: strings.tabs.settings,
+            tabBarLabel: strings.tabs.settings,
             tabBarIcon: ({ color, focused }) => <TabBarIcon color={color} focused={focused} name="settings" />
           }}
         />

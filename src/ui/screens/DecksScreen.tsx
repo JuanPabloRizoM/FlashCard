@@ -6,24 +6,26 @@ import { useDecks } from '../../features/decks/useDecks';
 import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { DeckListItem } from '../components/deck/DeckListItem';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
+import { useAppStrings } from '../strings';
 import { DeckDetailScreen } from './DeckDetailScreen';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
-function formatDeckTimestampLabel(deck: Deck): string {
+function formatDeckTimestampLabel(deck: Deck, createdLabel: string, updatedLabel: string, fallbackLabel: string): string {
   const sourceDate = deck.updatedAt !== deck.createdAt ? deck.updatedAt : deck.createdAt;
   const date = new Date(sourceDate);
 
   if (Number.isNaN(date.getTime())) {
-    return 'Saved locally';
+    return fallbackLabel;
   }
 
-  const prefix = deck.updatedAt !== deck.createdAt ? 'Updated' : 'Created';
+  const prefix = deck.updatedAt !== deck.createdAt ? updatedLabel : createdLabel;
 
   return `${prefix} ${date.toLocaleDateString()}`;
 }
 
 export function DecksScreen() {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
   const {
@@ -53,17 +55,14 @@ export function DecksScreen() {
   }
 
   return (
-    <ScreenContainer
-      title="Decks"
-      subtitle="Create a deck and start adding cards."
-    >
+    <ScreenContainer title={strings.screens.decks.title} subtitle={strings.screens.decks.subtitle}>
       <View style={styles.layout}>
         <View style={styles.formCard}>
-          <Text style={styles.eyebrow}>New deck</Text>
-          <Text style={styles.cardTitle}>Create a deck</Text>
-          <Text style={styles.helperText}>Pick a clear name.</Text>
+          <Text style={styles.eyebrow}>{strings.screens.decks.newDeckEyebrow}</Text>
+          <Text style={styles.cardTitle}>{strings.screens.decks.newDeckTitle}</Text>
+          <Text style={styles.helperText}>{strings.screens.decks.newDeckHelper}</Text>
 
-          <Text style={styles.label}>Deck name</Text>
+          <Text style={styles.label}>{strings.screens.decks.deckNameLabel}</Text>
           <TextInput
             autoCapitalize="sentences"
             autoCorrect={false}
@@ -71,7 +70,7 @@ export function DecksScreen() {
             onSubmitEditing={() => {
               void onCreateDeck();
             }}
-            placeholder="Spanish verbs"
+            placeholder={strings.screens.decks.deckNamePlaceholder}
             placeholderTextColor={colors.textMuted}
             returnKeyType="done"
             style={[styles.input, formError != null ? styles.inputError : null]}
@@ -93,7 +92,7 @@ export function DecksScreen() {
             ]}
           >
             <Text style={styles.submitButtonLabel}>
-              {isSubmitting ? 'Saving deck...' : 'Create deck'}
+              {isSubmitting ? strings.screens.decks.savingDeck : strings.screens.decks.createDeck}
             </Text>
           </Pressable>
         </View>
@@ -102,14 +101,14 @@ export function DecksScreen() {
 
         <View style={styles.listHeader}>
           <View style={styles.listHeaderCopy}>
-            <Text style={styles.listTitle}>Saved decks</Text>
-            <Text style={styles.listSubtitle}>Open a deck to manage it.</Text>
+            <Text style={styles.listTitle}>{strings.screens.decks.savedDecksTitle}</Text>
+            <Text style={styles.listSubtitle}>{strings.screens.decks.savedDecksSubtitle}</Text>
           </View>
-          <Text style={styles.listCount}>{`${decks.length} total`}</Text>
+          <Text style={styles.listCount}>{strings.common.total(decks.length)}</Text>
         </View>
 
         {isLoading ? (
-          <CardWorkspaceFeedbackState isLoading message="Loading decks..." />
+          <CardWorkspaceFeedbackState isLoading message={strings.common.loadingDecks} />
         ) : (
           <FlatList
             contentContainerStyle={decks.length === 0 ? styles.emptyListContent : styles.listContent}
@@ -117,8 +116,8 @@ export function DecksScreen() {
             keyExtractor={(deck) => deck.id.toString()}
             ListEmptyComponent={
               <CardWorkspaceFeedbackState
-                message="Create a deck to get started."
-                title="No decks yet"
+                message={strings.screens.decks.noDecksMessage}
+                title={strings.screens.decks.noDecksTitle}
               />
             }
             renderItem={({ item }) => {
@@ -131,7 +130,12 @@ export function DecksScreen() {
                   onPress={() => {
                     setSelectedDeck(item);
                   }}
-                  timestampLabel={formatDeckTimestampLabel(item)}
+                  timestampLabel={formatDeckTimestampLabel(
+                    item,
+                    strings.common.created,
+                    strings.common.updated,
+                    strings.common.savedLocally
+                  )}
                 />
               );
             }}

@@ -1,7 +1,7 @@
 import type { Card } from '../../core/models/Card';
 import type { CreateCardInput, UpdateCardInput } from '../../core/types/card';
 import {
-  INVALID_CARD_DECK_MESSAGE,
+  getInvalidCardDeckMessage,
   getFirstCardValidationError,
   normalizeCreateCardInput,
   validateCardId,
@@ -27,13 +27,13 @@ async function ensureDeckExists(deckId: number): Promise<void> {
   const deck = state.decks.find((candidateDeck) => candidateDeck.id === deckId);
 
   if (deck == null) {
-    throw new Error(INVALID_CARD_DECK_MESSAGE);
+    throw new Error(getInvalidCardDeckMessage());
   }
 }
 
 export async function listCardsByDeck(deckId: number): Promise<Card[]> {
   if (!Number.isInteger(deckId) || deckId <= 0) {
-    throw new Error(INVALID_CARD_DECK_MESSAGE);
+    throw new Error(getInvalidCardDeckMessage());
   }
 
   await ensureDeckExists(deckId);
@@ -153,7 +153,7 @@ export async function updateCard(input: UpdateCardInput): Promise<Card> {
     const existingCard = currentState.cards.find((card) => card.id === input.id);
 
     if (existingCard == null) {
-      throw new Error(INVALID_CARD_DECK_MESSAGE);
+      throw new Error(getInvalidCardDeckMessage());
     }
 
     const nextCard: Card = {

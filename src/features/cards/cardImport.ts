@@ -4,6 +4,7 @@ import {
   normalizeCreateCardInput,
   validateCreateCardInput
 } from '../../services/validation/cardValidation';
+import { getRuntimeStrings } from '../../ui/strings';
 
 export type CardImportPreviewRow = {
   lineNumber: number;
@@ -32,22 +33,26 @@ const MIN_IMPORT_FIELDS = 2;
 const MAX_IMPORT_FIELDS = 4;
 
 function buildImportError(fields: string[]): string | null {
+  const strings = getRuntimeStrings();
+
   if (fields.length < MIN_IMPORT_FIELDS || fields.length > MAX_IMPORT_FIELDS) {
-    return 'Use `front | back`, with optional `description | application`, keeping empty fields in order when needed.';
+    return strings.importValidation.useFormat;
   }
 
   if (fields[0]?.trim().length === 0) {
-    return 'Front is required.';
+    return strings.importValidation.frontRequired;
   }
 
   if (fields[1]?.trim().length === 0) {
-    return 'Back is required.';
+    return strings.importValidation.backRequired;
   }
 
   return null;
 }
 
 function buildPreviewRow(rawLine: string, lineNumber: number, deckId: number | null): CardImportPreviewRow {
+  const strings = getRuntimeStrings();
+
   if (rawLine.trim().length === 0) {
     return {
       lineNumber,
@@ -57,7 +62,7 @@ function buildPreviewRow(rawLine: string, lineNumber: number, deckId: number | n
       description: null,
       application: null,
       isValid: false,
-      error: 'Line is empty.',
+      error: strings.importValidation.lineEmpty,
       input: null
     };
   }
@@ -88,7 +93,7 @@ function buildPreviewRow(rawLine: string, lineNumber: number, deckId: number | n
       description: fields[2] ?? null,
       application: fields[3] ?? null,
       isValid: false,
-      error: 'Choose a deck before importing cards.',
+      error: strings.featureMessages.chooseDeckBeforeImportingCards,
       input: null
     };
   }

@@ -100,3 +100,14 @@
 3. The app stores that preference in lightweight local device storage.
 4. On a later app launch, settings hydrate safely before the main app shell renders.
 5. The app resolves the active theme from the saved preference and applies it across navigation and shared UI surfaces.
+
+---
+
+## Choose App Language
+
+1. On first load, the app defaults to `Español` if no saved language exists.
+2. The user opens the `Settings` tab.
+3. The user chooses `Español` or `English` in the `Language` section.
+4. The app saves that language through the same lightweight settings persistence path used by appearance.
+5. Visible copy across Decks, Deck detail, Cards, Study, Settings, and shared helper states updates to the selected language.
+6. On a later app launch, settings hydrate before the main app shell renders, so the saved language is restored without a fake selector or screen-by-screen drift.

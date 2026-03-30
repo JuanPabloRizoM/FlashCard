@@ -12,10 +12,12 @@ import { useColorScheme } from 'react-native';
 import {
   DEFAULT_APP_SETTINGS,
   normalizeAppSettings,
+  type AppLanguage,
   type AppSettings,
   type AppThemePreference
 } from '../../core/types/settings';
 import type { StudySessionMode, StudySessionSize } from '../../core/types/study';
+import { getAppStrings, setRuntimeLanguage } from '../../ui/strings';
 import type { ResolvedTheme } from '../../ui/theme';
 import { loadAppSettings, saveAppSettings } from '../../storage/appSettingsStorage';
 
@@ -24,6 +26,7 @@ type AppSettingsContextValue = {
   resolvedTheme: ResolvedTheme;
   saveError: string | null;
   setThemePreference: (themePreference: AppThemePreference) => void;
+  setLanguage: (language: AppLanguage) => void;
   setDefaultStudyMode: (mode: StudySessionMode) => void;
   setDefaultSessionSize: (size: StudySessionSize) => void;
   resetStudyDefaults: () => void;
@@ -51,6 +54,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
         return;
       }
 
+      setRuntimeLanguage(nextSettings.language);
       setSettings(nextSettings);
       setIsHydrated(true);
     }
@@ -62,14 +66,27 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     };
   }, []);
 
+  useEffect(() => {
+    setRuntimeLanguage(settings.language);
+  }, [settings.language]);
+
   const persistSettings = useCallback(async (nextSettings: AppSettings) => {
     try {
       await saveAppSettings(nextSettings);
       setSaveError(null);
     } catch {
-      setSaveError('Changes apply now, but could not be saved to this device.');
+      const nextStrings = getAppStrings(nextSettings.language);
+      setSaveError(
+        nextSettings.language !== settings.language
+          ? nextStrings.locale.startsWith('es')
+            ? 'El idioma cambió por ahora, pero no se pudo guardar en este dispositivo.'
+            : 'The language changed for now, but it could not be saved on this device.'
+          : nextStrings.locale.startsWith('es')
+            ? 'Los cambios se aplicaron por ahora, pero no se pudieron guardar en este dispositivo.'
+            : 'The changes apply for now, but they could not be saved on this device.'
+      );
     }
-  }, []);
+  }, [settings.language]);
 
   const applySettings = useCallback(
     (value: AppSettings | ((currentSettings: AppSettings) => AppSettings)) => {
@@ -101,6 +118,12 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
         applySettings((currentSettings) => ({
           ...currentSettings,
           themePreference
+        }));
+      },
+      setLanguage: (language) => {
+        applySettings((currentSettings) => ({
+          ...currentSettings,
+          language
         }));
       },
       setDefaultStudyMode: (mode) => {

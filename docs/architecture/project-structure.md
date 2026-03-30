@@ -122,6 +122,8 @@
 - `theme/spacing.ts`
 - `theme/typography.ts`
 - `theme/useTheme.ts`
+- `strings/index.ts`
+- `strings/translations.ts`
 - `screens/DecksScreen.tsx` owns rendering only; deck persistence flows through feature + repository layers
 - `screens/DeckDetailScreen.tsx` is a deck overview and routing entry point into the Cards workspace
 - `screens/DeckDetailScreen.tsx` may expose reviewed deck-export UI, but export formatting must stay in the deck feature layer
@@ -130,6 +132,7 @@
 - `screens/CardsScreen.tsx` may host deck-import UI, but deck parsing and transactional write orchestration must stay in the deck feature + repository layers
 - `screens/StudyScreen.tsx` renders engine output and delegates all study logic to the feature + engine layers
 - `screens/SettingsScreen.tsx` owns app-level appearance controls and honest product information only; it must not expose fake toggles
+- `strings/` owns localized app copy and must stay lightweight, centralized, and app-wide rather than scattering language branches across screens
 
 ---
 
@@ -158,6 +161,7 @@
 - UI layer must remain free of study/business/storage logic
 - Settings may control app-level defaults, but those defaults must be consumed through feature layers rather than screens reaching into engine internals
 - Lightweight settings persistence belongs to the settings/storage boundary, not to Study screens or engine files
+- Theme and language preferences belong to the app settings boundary and must persist through the existing settings storage path
 - Native app persistence may use SQLite, but web persistence must fail safely or use a web-compatible fallback rather than assuming SQLite support
 - Deck export/import formatting belongs to the deck/card feature layers, while confirmed writes still belong to repositories
 - Study progress persistence belongs to repository + feature layers, not screens

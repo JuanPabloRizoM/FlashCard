@@ -1,5 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type DeckExportPanelProps = {
@@ -20,15 +21,14 @@ export function DeckExportPanel({
   onToggleVisibility
 }: DeckExportPanelProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
-          <Text style={styles.sectionTitle}>Export deck</Text>
-          <Text style={styles.supportText}>
-            Copy this deck as text.
-          </Text>
+          <Text style={styles.sectionTitle}>{strings.deckExport.title}</Text>
+          <Text style={styles.supportText}>{strings.deckExport.support}</Text>
         </View>
         <Pressable
           accessibilityRole="button"
@@ -38,7 +38,9 @@ export function DeckExportPanel({
             pressed ? styles.secondaryButtonPressed : null
           ]}
         >
-          <Text style={styles.secondaryButtonLabel}>{isVisible ? 'Hide export' : 'Export deck'}</Text>
+          <Text style={styles.secondaryButtonLabel}>
+            {isVisible ? strings.deckExport.hideExport : strings.deckExport.actionLabel}
+          </Text>
         </Pressable>
       </View>
 
@@ -46,7 +48,7 @@ export function DeckExportPanel({
         <>
           <View style={styles.summaryCard}>
             <Text style={styles.summaryTitle}>{deckName}</Text>
-            <Text style={styles.summaryText}>Header plus one card per line.</Text>
+            <Text style={styles.summaryText}>{strings.deckExport.summaryText}</Text>
           </View>
 
           <ScrollView style={styles.exportScroller} contentContainerStyle={styles.exportScrollerContent}>
@@ -64,7 +66,7 @@ export function DeckExportPanel({
             }}
             style={({ pressed }) => [styles.primaryButton, pressed ? styles.primaryButtonPressed : null]}
           >
-            <Text style={styles.primaryButtonLabel}>Copy text</Text>
+            <Text style={styles.primaryButtonLabel}>{strings.common.copyText}</Text>
           </Pressable>
         </>
       ) : null}

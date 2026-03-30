@@ -6,13 +6,25 @@ import {
   MAX_DECK_NAME_LENGTH,
   type DeckType
 } from '../../core/types/deck';
+import { getRuntimeStrings } from '../../ui/strings';
 
 const DECK_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
 
-export const DECK_DUPLICATE_NAME_MESSAGE = 'A deck with that name already exists.';
-export const INVALID_DECK_NAME_MESSAGE = 'Enter a deck name.';
-export const INVALID_DECK_TYPE_MESSAGE = 'Choose a valid deck type.';
-export const INVALID_DECK_COLOR_MESSAGE = 'Choose a valid deck color.';
+export function getDeckDuplicateNameMessage(): string {
+  return getRuntimeStrings().validation.duplicateDeckName;
+}
+
+function getInvalidDeckNameMessage(): string {
+  return getRuntimeStrings().validation.invalidDeckName;
+}
+
+function getInvalidDeckTypeMessage(): string {
+  return getRuntimeStrings().validation.invalidDeckType;
+}
+
+function getInvalidDeckColorMessage(): string {
+  return getRuntimeStrings().validation.invalidDeckColor;
+}
 
 export type DeckValidationErrors = {
   name: string | null;
@@ -66,24 +78,29 @@ export function isDeckType(value: string): value is DeckType {
 }
 
 export function validateCreateDeckInput(input: CreateDeckInput): DeckValidationErrors {
+  const strings = getRuntimeStrings();
   const normalizedInput = normalizeCreateDeckInput(input);
 
   return {
     name:
       normalizedInput.name.length === 0
-        ? INVALID_DECK_NAME_MESSAGE
+        ? getInvalidDeckNameMessage()
         : normalizedInput.name.length > MAX_DECK_NAME_LENGTH
-          ? `Deck names must be ${MAX_DECK_NAME_LENGTH} characters or fewer.`
+          ? strings.locale.startsWith('es')
+            ? `Los nombres de mazo deben tener ${MAX_DECK_NAME_LENGTH} caracteres o menos.`
+            : `Deck names must be ${MAX_DECK_NAME_LENGTH} characters or fewer.`
           : null,
     description:
       normalizedInput.description != null &&
       normalizedInput.description.length > MAX_DECK_DESCRIPTION_LENGTH
-        ? `Deck descriptions must be ${MAX_DECK_DESCRIPTION_LENGTH} characters or fewer.`
+        ? strings.locale.startsWith('es')
+          ? `Las descripciones de mazo deben tener ${MAX_DECK_DESCRIPTION_LENGTH} caracteres o menos.`
+          : `Deck descriptions must be ${MAX_DECK_DESCRIPTION_LENGTH} characters or fewer.`
         : null,
-    type: isDeckType(normalizedInput.type) ? null : INVALID_DECK_TYPE_MESSAGE,
+    type: isDeckType(normalizedInput.type) ? null : getInvalidDeckTypeMessage(),
     color:
       normalizedInput.color != null && !DECK_COLOR_PATTERN.test(normalizedInput.color)
-        ? INVALID_DECK_COLOR_MESSAGE
+        ? getInvalidDeckColorMessage()
         : null
   };
 }

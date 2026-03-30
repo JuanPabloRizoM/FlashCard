@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
 import { DeckImportPanel } from '../deck/DeckImportPanel';
+import { useAppStrings } from '../../strings';
 import { spacing } from '../../theme';
 import { CardWorkspaceFeedbackState } from './CardWorkspaceFeedbackState';
 
@@ -24,9 +25,13 @@ export function CardWorkspaceNoDecks({
   onImportDeck,
   onClearImport
 }: CardWorkspaceNoDecksProps) {
+  const strings = useAppStrings();
   return (
     <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-      <CardWorkspaceFeedbackState message="Import a deck here or create one in Decks." title="No decks" />
+      <CardWorkspaceFeedbackState
+        message={strings.cardsWorkspace.importNoDecksMessage}
+        title={strings.cardsWorkspace.importNoDecksTitle}
+      />
       <DeckImportPanel
         importResultMessage={importResultMessage}
         importText={importText}

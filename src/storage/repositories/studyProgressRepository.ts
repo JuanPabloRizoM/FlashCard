@@ -9,8 +9,8 @@ import type {
 import {
   getFirstStudyProgressKeyValidationError,
   getFirstStudyProgressUpsertValidationError,
-  INVALID_STUDY_PROGRESS_CARD_MESSAGE,
-  INVALID_STUDY_PROGRESS_DECK_MESSAGE,
+  getInvalidStudyProgressCardMessage,
+  getInvalidStudyProgressDeckMessage,
   validateStudyProgressCardId,
   validateStudyProgressDeckId,
   validateStudyProgressKey,
@@ -59,7 +59,7 @@ async function ensureCardExists(cardId: number): Promise<void> {
   const card = await db.getFirstAsync<{ id: number }>('SELECT id FROM cards WHERE id = ?', cardId);
 
   if (card == null) {
-    throw new Error(INVALID_STUDY_PROGRESS_CARD_MESSAGE);
+    throw new Error(getInvalidStudyProgressCardMessage());
   }
 }
 
@@ -68,7 +68,7 @@ async function ensureDeckExists(deckId: number): Promise<void> {
   const deck = await db.getFirstAsync<{ id: number }>('SELECT id FROM decks WHERE id = ?', deckId);
 
   if (deck == null) {
-    throw new Error(INVALID_STUDY_PROGRESS_DECK_MESSAGE);
+    throw new Error(getInvalidStudyProgressDeckMessage());
   }
 }
 

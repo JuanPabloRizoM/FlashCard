@@ -11,7 +11,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 import type { Deck } from '../../core/models/Deck';
-import { DECK_TYPE_LABELS } from '../../core/types/deck';
 import type { RootTabParamList } from '../../navigation/types';
 import { useDeckCards } from '../../features/cards/useDeckCards';
 import { buildDeckExportText } from '../../features/decks/deckPortability';
@@ -22,6 +21,7 @@ import { DeckCardListItem } from '../components/card/DeckCardListItem';
 import { DeckExportPanel } from '../components/deck/DeckExportPanel';
 import { DeckStudyInsightCard } from '../components/deck/DeckStudyInsightCard';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
+import { useAppStrings } from '../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 type DeckDetailScreenProps = {
@@ -29,18 +29,23 @@ type DeckDetailScreenProps = {
   onBack: () => void;
 };
 
-function formatCardTimestampLabel(createdAt: string): string {
+function formatCardTimestampLabel(
+  createdAt: string,
+  fallbackLabel: string,
+  createdOnLabel: (dateLabel: string) => string
+): string {
   const date = new Date(createdAt);
 
   if (Number.isNaN(date.getTime())) {
-    return 'Saved locally';
+    return fallbackLabel;
   }
 
-  return `Created ${date.toLocaleDateString()}`;
+  return createdOnLabel(date.toLocaleDateString());
 }
 
 export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const { cards, screenError, isLoading } = useDeckCards(deck.id);
@@ -66,29 +71,29 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
         Clipboard.setString(exportText);
       }
 
-      setCopyMessage('Export text copied to the clipboard.');
+      setCopyMessage(strings.screens.deckDetail.exportCopied);
     } catch {
-      setCopyMessage('Could not copy automatically. Select and copy the export text manually.');
+      setCopyMessage(strings.screens.deckDetail.exportCopyFallback);
     }
   }
 
   return (
     <ScreenContainer
       subtitle={
-        deck.description ?? `${DECK_TYPE_LABELS[deck.type]} deck`
+        deck.description ?? strings.screens.deckDetail.deckSuffix(strings.deckTypeLabels[deck.type])
       }
       title={deck.name}
     >
       <View style={styles.layout}>
         <Pressable accessibilityRole="button" onPress={onBack} style={styles.backButton}>
-          <Text style={styles.backButtonLabel}>Back to decks</Text>
+          <Text style={styles.backButtonLabel}>{strings.screens.deckDetail.backToDecks}</Text>
         </Pressable>
 
         <View style={styles.deckMetaRow}>
           <View style={styles.metaBadge}>
-            <Text style={styles.deckType}>{DECK_TYPE_LABELS[deck.type]}</Text>
+            <Text style={styles.deckType}>{strings.deckTypeLabels[deck.type]}</Text>
           </View>
-          <Text style={styles.deckCounter}>{`${cards.length} cards`}</Text>
+          <Text style={styles.deckCounter}>{strings.screens.deckDetail.cardsCount(cards.length)}</Text>
         </View>
 
         <DeckStudyInsightCard insights={deckInsights} />
@@ -112,10 +117,8 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
 
         <View style={styles.sectionHeader}>
           <View style={styles.sectionCopy}>
-            <Text style={styles.sectionTitle}>Cards</Text>
-            <Text style={styles.sectionText}>
-              Add or edit cards in the Cards tab.
-            </Text>
+            <Text style={styles.sectionTitle}>{strings.screens.deckDetail.cardsSectionTitle}</Text>
+            <Text style={styles.sectionText}>{strings.screens.deckDetail.cardsSectionText}</Text>
           </View>
           <Pressable
             accessibilityRole="button"
@@ -124,12 +127,12 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
             }}
             style={({ pressed }) => [styles.primaryButton, pressed ? styles.primaryButtonPressed : null]}
           >
-            <Text style={styles.primaryButtonLabel}>Create cards</Text>
+            <Text style={styles.primaryButtonLabel}>{strings.screens.deckDetail.createCards}</Text>
           </Pressable>
         </View>
 
         {isLoading ? (
-          <CardWorkspaceFeedbackState isLoading message="Loading cards..." />
+          <CardWorkspaceFeedbackState isLoading message={strings.common.loadingCards} />
         ) : (
           <FlatList
             contentContainerStyle={cards.length === 0 ? styles.emptyListContent : styles.listContent}
@@ -137,8 +140,8 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
             keyExtractor={(card) => card.id.toString()}
             ListEmptyComponent={
               <CardWorkspaceFeedbackState
-                message="Open Cards to add the first card."
-                title="No cards yet"
+                message={strings.screens.deckDetail.noCardsMessage}
+                title={strings.screens.deckDetail.noCardsTitle}
               />
             }
             renderItem={({ item }) => {
@@ -148,7 +151,11 @@ export function DeckDetailScreen({ deck, onBack }: DeckDetailScreenProps) {
                 <DeckCardListItem
                   card={item}
                   feedback={feedback}
-                  timestampLabel={formatCardTimestampLabel(item.createdAt)}
+                  timestampLabel={formatCardTimestampLabel(
+                    item.createdAt,
+                    strings.common.savedLocally,
+                    strings.screens.deckDetail.cardCreatedOn
+                  )}
                 />
               );
             }}

@@ -1,8 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { StudySessionMode, StudySessionSize } from '../../../core/types/study';
-import { STUDY_SESSION_MODE_LABELS, STUDY_SESSION_SIZE_LABELS } from '../../../core/types/study';
-
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionBannerProps = {
@@ -19,11 +18,12 @@ export function StudySessionBanner({
   sessionSize
 }: StudySessionBannerProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle}>In session</Text>
+        <Text style={styles.sectionTitle}>{strings.studyBanner.currentSession}</Text>
         <View style={styles.techniqueBadge}>
           <Text style={styles.techniqueLabel}>{techniqueLabel}</Text>
         </View>
@@ -31,15 +31,13 @@ export function StudySessionBanner({
       <Text style={styles.deckName}>{deckName}</Text>
       <View style={styles.metaRow}>
         <View style={styles.metaBadge}>
-          <Text style={styles.metaBadgeLabel}>{STUDY_SESSION_MODE_LABELS[sessionMode]}</Text>
+          <Text style={styles.metaBadgeLabel}>{strings.studySessionModeLabels[sessionMode]}</Text>
         </View>
         <View style={styles.metaBadge}>
-          <Text style={styles.metaBadgeLabel}>{`${STUDY_SESSION_SIZE_LABELS[sessionSize]} items`}</Text>
+          <Text style={styles.metaBadgeLabel}>{strings.studyBanner.items(strings.studySessionSizeLabels[sessionSize])}</Text>
         </View>
       </View>
-      <Text style={styles.supportText}>
-        Reveal, answer, continue.
-      </Text>
+      <Text style={styles.supportText}>{strings.studyCard.answerHint}</Text>
     </View>
   );
 }

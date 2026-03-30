@@ -11,6 +11,7 @@ import {
   type StudySessionSize,
   type StudyTechniqueId
 } from '../../../core/types/study';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type StudySessionSetupPanelProps = {
@@ -41,11 +42,12 @@ export function StudySessionSetupPanel({
   onStartSession
 }: StudySessionSetupPanelProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.panel}>
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Choose a technique</Text>
+        <Text style={styles.sectionTitle}>{strings.studySetup.techniqueTitle}</Text>
         <View style={styles.choiceRow}>
           {STUDY_TECHNIQUE_IDS.map((techniqueId) => (
             <Pressable
@@ -66,7 +68,7 @@ export function StudySessionSetupPanel({
                   techniqueId === selectedTechniqueId ? styles.choiceLabelActive : null
                 ]}
               >
-                {STUDY_TECHNIQUE_LABELS[techniqueId]}
+                {strings.studyTechniqueLabels[techniqueId]}
               </Text>
             </Pressable>
           ))}
@@ -74,14 +76,10 @@ export function StudySessionSetupPanel({
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Study mode</Text>
-        <Text style={styles.supportText}>
-          Mixed balances review. Weak and Fresh focus the queue.
-        </Text>
+        <Text style={styles.sectionTitle}>{strings.studySetup.modeTitle}</Text>
+        <Text style={styles.supportText}>{strings.studySetup.modeSupport}</Text>
         {isSessionActive ? (
-          <Text style={styles.inlineNotice}>
-            Finish this session to change setup.
-          </Text>
+          <Text style={styles.inlineNotice}>{strings.studySetup.finishSessionToChange}</Text>
         ) : null}
         <View style={styles.choiceRow}>
           {STUDY_SESSION_MODES.map((mode) => (
@@ -103,7 +101,7 @@ export function StudySessionSetupPanel({
                   mode === selectedSessionMode ? styles.choiceLabelActive : null
                 ]}
               >
-                {STUDY_SESSION_MODE_LABELS[mode]}
+                {strings.studySessionModeLabels[mode]}
               </Text>
             </Pressable>
           ))}
@@ -111,7 +109,7 @@ export function StudySessionSetupPanel({
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Session size</Text>
+        <Text style={styles.sectionTitle}>{strings.studySetup.sizeTitle}</Text>
         <View style={styles.choiceRow}>
           {STUDY_SESSION_SIZES.map((size) => (
             <Pressable
@@ -132,7 +130,7 @@ export function StudySessionSetupPanel({
                   size === selectedSessionSize ? styles.choiceLabelActive : null
                 ]}
               >
-                {STUDY_SESSION_SIZE_LABELS[size]}
+                {strings.studySessionSizeLabels[size]}
               </Text>
             </Pressable>
           ))}
@@ -150,7 +148,7 @@ export function StudySessionSetupPanel({
         ]}
       >
         <Text style={styles.primaryButtonLabel}>
-          {isStartingSession ? 'Starting...' : 'Start session'}
+          {isStartingSession ? strings.studySetup.startingSession : strings.studySetup.startSession}
         </Text>
       </Pressable>
     </View>

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from
 import type { Card } from '../../core/models/Card';
 import type { CreateCardInput } from '../../core/types/card';
 import { createCardsBatch } from '../../storage/repositories/cardRepository';
+import { getRuntimeStrings } from '../../ui/strings';
 import { buildCardImportPreview } from './cardImport';
 
 type UseCardImportParams = {
@@ -26,6 +27,7 @@ export function useCardImport({
   setCards,
   setScreenError
 }: UseCardImportParams): UseCardImportResult {
+  const strings = getRuntimeStrings();
   const [importText, setImportText] = useState('');
   const [importResultMessage, setImportResultMessage] = useState<string | null>(null);
   const [isImportSubmitting, setIsImportSubmitting] = useState(false);
@@ -46,12 +48,12 @@ export function useCardImport({
     }, []);
 
     if (deckId == null) {
-      setImportResultMessage('Choose a deck before importing cards.');
+      setImportResultMessage(strings.featureMessages.chooseDeckBeforeImportingCards);
       return;
     }
 
     if (validInputs.length === 0) {
-      setImportResultMessage('No valid lines are ready to import yet.');
+      setImportResultMessage(strings.featureMessages.noValidCardLines);
       return;
     }
 
@@ -60,16 +62,14 @@ export function useCardImport({
       const createdCards = await createCardsBatch(validInputs);
 
       setCards((currentCards) => [...createdCards, ...currentCards]);
-      setImportResultMessage(
-        `Imported ${createdCards.length} card${createdCards.length === 1 ? '' : 's'}. Skipped ${importPreview.invalidCount} invalid line${importPreview.invalidCount === 1 ? '' : 's'}.`
-      );
+      setImportResultMessage(strings.featureMessages.importedCards(createdCards.length, importPreview.invalidCount));
       setImportText('');
       setScreenError(null);
     } catch (error) {
       setImportResultMessage(
         error instanceof Error
           ? error.message
-          : 'Could not import cards right now. Please try again.'
+          : strings.featureMessages.couldNotImportCards
       );
     } finally {
       setIsImportSubmitting(false);

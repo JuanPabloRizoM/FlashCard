@@ -3,7 +3,7 @@ import type { Card } from '../../core/models/Card';
 import type { CreateCardInput } from '../../core/types/card';
 import { DEFAULT_DECK_TYPE, type CreateDeckInput } from '../../core/types/deck';
 import {
-  DECK_DUPLICATE_NAME_MESSAGE,
+  getDeckDuplicateNameMessage,
   getFirstDeckValidationError,
   normalizeCreateDeckInput,
   normalizeDeckName,
@@ -14,6 +14,7 @@ import {
   type CardImportPreview,
   type CardImportPreviewRow
 } from '../cards/cardImport';
+import { getRuntimeStrings } from '../../ui/strings';
 
 export const DECK_EXPORT_HEADER_PREFIX = '# Deck:';
 const CARD_IMPORT_PREVIEW_DECK_ID = 1;
@@ -131,6 +132,7 @@ export function buildDeckImportPreview(
   source: string,
   existingDeckNames: string[]
 ): DeckImportPreview {
+  const strings = getRuntimeStrings();
   const hasContent = source.trim().length > 0;
 
   if (!hasContent) {
@@ -169,7 +171,7 @@ export function buildDeckImportPreview(
       deckName: '',
       headerLineNumber,
       headerError: null,
-      blockingError: 'Start the import with `# Deck: Deck name` on the first non-empty line.',
+      blockingError: strings.importValidation.deckHeaderRequired,
       cardPreview: buildEmptyCardPreview(),
       canImport: false
     };
@@ -184,7 +186,7 @@ export function buildDeckImportPreview(
   const validationError = getFirstDeckValidationError(validateCreateDeckInput(normalizedDeck));
   const headerError =
     validationError ??
-    (existingDeckNameSet.has(normalizeDeckKey(normalizedDeck.name)) ? DECK_DUPLICATE_NAME_MESSAGE : null);
+    (existingDeckNameSet.has(normalizeDeckKey(normalizedDeck.name)) ? getDeckDuplicateNameMessage() : null);
   const cardSource = lines.slice(headerIndex + 1).join('\n');
   const cardPreview =
     cardSource.trim().length === 0
@@ -202,7 +204,7 @@ export function buildDeckImportPreview(
     blockingError:
       headerError == null || cardPreview.validCount > 0 || cardPreview.totalCount === 0
         ? null
-        : 'Fix invalid card lines or remove them before importing this deck.',
+        : strings.importValidation.fixInvalidDeckLines,
     cardPreview,
     canImport
   };

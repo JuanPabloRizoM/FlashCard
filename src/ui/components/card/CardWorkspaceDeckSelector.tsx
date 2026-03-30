@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Deck } from '../../../core/models/Deck';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type CardWorkspaceDeckSelectorProps = {
@@ -21,17 +22,20 @@ export function CardWorkspaceDeckSelector({
   onSelectDeck
 }: CardWorkspaceDeckSelectorProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.panel}>
       <View style={styles.headerRow}>
         <View style={styles.contextWrap}>
-          <Text style={styles.contextLabel}>{isEditing ? 'Editing in' : 'Creating in'}</Text>
-          <Text style={styles.contextValue}>{selectedDeckName ?? 'Choose a deck'}</Text>
+          <Text style={styles.contextLabel}>
+            {isEditing ? strings.cardsWorkspace.editingIn : strings.cardsWorkspace.creatingIn}
+          </Text>
+          <Text style={styles.contextValue}>{selectedDeckName ?? strings.common.chooseDeck}</Text>
         </View>
         {isEditing ? (
           <View style={styles.statusBadge}>
-            <Text style={styles.statusLabel}>Editing</Text>
+            <Text style={styles.statusLabel}>{strings.common.editing}</Text>
           </View>
         ) : null}
       </View>

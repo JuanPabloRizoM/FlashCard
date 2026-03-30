@@ -1,6 +1,7 @@
 import type { Card } from '../../core/models/Card';
 import { PromptModeResolver } from '../../engine/PromptModeResolver';
-import { PROMPT_MODES, PROMPT_MODE_LABELS, type PromptMode } from '../../core/types/study';
+import { PROMPT_MODES, type PromptMode } from '../../core/types/study';
+import { getRuntimeStrings } from '../../ui/strings';
 
 export type StudyInsightCardInput = Pick<
   Card,
@@ -46,22 +47,23 @@ function toResolverCard(card: StudyInsightCardInput): Card {
 }
 
 function getMissingFieldBadges(card: StudyInsightCardInput): string[] {
+  const strings = getRuntimeStrings();
   const badges: string[] = [];
 
   if (card.back.length === 0) {
-    badges.push('Missing back');
+    badges.push(strings.importValidation.missingBack);
   }
 
   if (card.description == null) {
-    badges.push('Missing description');
+    badges.push(strings.importValidation.missingDescription);
   }
 
   if (card.application == null) {
-    badges.push('Missing application');
+    badges.push(strings.importValidation.missingApplication);
   }
 
   if (card.imageUri == null && badges.length < 3) {
-    badges.push('No image prompt');
+    badges.push(strings.importValidation.noImagePrompt);
   }
 
   return badges;
@@ -72,30 +74,33 @@ function getPromptSupportGuidance(
   mode: PromptMode,
   isSupported: boolean
 ): string {
+  const strings = getRuntimeStrings();
+
   if (isSupported) {
-    return 'Supported now';
+    return strings.importValidation.supportedNow;
   }
 
   if (card.front.length === 0) {
-    return 'Add front';
+    return strings.importValidation.addFront;
   }
 
   switch (mode) {
     case 'title_to_translation':
     case 'translation_to_title':
-      return 'Add back';
+      return strings.importValidation.addBack;
     case 'title_to_definition':
-      return 'Add description';
+      return strings.importValidation.addDescription;
     case 'title_to_application':
-      return 'Add application';
+      return strings.importValidation.addApplication;
     case 'image_to_title':
-      return 'Add image URL';
+      return strings.importValidation.addImageUrl;
     default:
-      return 'Complete more fields';
+      return strings.importValidation.completeMoreFields;
   }
 }
 
 export function buildCardStudyFeedback(card: StudyInsightCardInput): CardStudyFeedback {
+  const strings = getRuntimeStrings();
   const supportedPromptModes = promptModeResolver.resolveSupportedPromptModes(toResolverCard(card));
   const supportedPromptCount = supportedPromptModes.length;
 
@@ -105,8 +110,8 @@ export function buildCardStudyFeedback(card: StudyInsightCardInput): CardStudyFe
       supportedPromptModes,
       supportedPromptCount,
       readiness: 'good',
-      readinessLabel: 'Ready',
-      readinessMessage: 'This card already supports multiple prompt modes.',
+      readinessLabel: strings.importValidation.ready,
+      readinessMessage: strings.importValidation.cardReadyMessage,
       missingFieldBadges: getMissingFieldBadges(card)
     };
   }
@@ -117,8 +122,8 @@ export function buildCardStudyFeedback(card: StudyInsightCardInput): CardStudyFe
       supportedPromptModes,
       supportedPromptCount,
       readiness: 'needs_improvement',
-      readinessLabel: 'Limited',
-      readinessMessage: 'This card is studyable, but it only supports a narrow prompt range.',
+      readinessLabel: strings.importValidation.limited,
+      readinessMessage: strings.importValidation.cardLimitedMessage,
       missingFieldBadges: getMissingFieldBadges(card)
     };
   }
@@ -128,20 +133,21 @@ export function buildCardStudyFeedback(card: StudyInsightCardInput): CardStudyFe
     supportedPromptModes,
     supportedPromptCount,
     readiness: 'poor',
-    readinessLabel: 'Not ready',
-    readinessMessage: 'Add a back, description, application, or image to make this card studyable.',
+    readinessLabel: strings.importValidation.notReady,
+    readinessMessage: strings.importValidation.cardNotReadyMessage,
     missingFieldBadges: getMissingFieldBadges(card)
   };
 }
 
 export function buildCardEditorStudyPreview(card: StudyInsightCardInput): CardEditorStudyPreview {
+  const strings = getRuntimeStrings();
   const feedback = buildCardStudyFeedback(card);
 
   return {
     feedback,
     promptSupport: PROMPT_MODES.map((mode) => ({
       mode,
-      label: PROMPT_MODE_LABELS[mode],
+      label: strings.promptModeLabels[mode],
       isSupported: feedback.supportedPromptModes.includes(mode),
       guidance: getPromptSupportGuidance(
         card,

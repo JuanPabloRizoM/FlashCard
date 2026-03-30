@@ -3,6 +3,7 @@ import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native
 
 import type { StudyAnswer } from '../../../core/types/study';
 import type { StudyQueueItem } from '../../../core/models/StudySession';
+import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 import { StudySessionAnswerActions } from './StudySessionAnswerActions';
 import { StudySessionProgress } from './StudySessionProgress';
@@ -20,6 +21,27 @@ type StudySessionCardProps = {
   onSubmitAnswer: (isCorrect: boolean) => void | Promise<void>;
 };
 
+function getLocalizedPromptLabel(label: string, locale: string): string {
+  if (!locale.startsWith('es')) {
+    return label;
+  }
+
+  switch (label) {
+    case 'Front':
+      return 'Frente';
+    case 'Back':
+      return 'Reverso';
+    case 'Image':
+      return 'Imagen';
+    case 'Description':
+      return 'Descripción';
+    case 'Application':
+      return 'Aplicación';
+    default:
+      return label;
+  }
+}
+
 export function StudySessionCard({
   currentItem,
   techniqueLabel,
@@ -33,6 +55,7 @@ export function StudySessionCard({
   onSubmitAnswer
 }: StudySessionCardProps) {
   const colors = useThemeColors();
+  const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const itemKey = useMemo(
     () => `${currentItem.card.id}:${currentItem.promptMode}`,
@@ -88,14 +111,16 @@ export function StudySessionCard({
         ]}
       >
         <View style={styles.promptHeader}>
-          <Text style={styles.promptLabel}>{currentItem.prompt.label}</Text>
-          <Text style={styles.promptMeta}>{`Prompt ${Math.min(answeredCount + 1, totalCount)} of ${totalCount}`}</Text>
+          <Text style={styles.promptLabel}>{getLocalizedPromptLabel(currentItem.prompt.label, strings.locale)}</Text>
+          <Text style={styles.promptMeta}>
+            {strings.studyProgress.promptOfTotal(Math.min(answeredCount + 1, totalCount), totalCount)}
+          </Text>
         </View>
 
         {currentItem.prompt.kind === 'image' ? (
           <View style={styles.imagePromptWrap}>
             <Image source={{ uri: currentItem.prompt.value }} style={styles.imagePrompt} />
-            <Text style={styles.imageHint}>Image prompt</Text>
+            <Text style={styles.imageHint}>{strings.studyCard.imagePrompt}</Text>
           </View>
         ) : (
           <Text style={styles.promptValue}>{currentItem.prompt.value}</Text>
@@ -118,12 +143,16 @@ export function StudySessionCard({
               }
             ]}
           >
-            <Text style={styles.answerLabel}>{currentItem.response.label}</Text>
+            <Text style={styles.answerLabel}>
+              {getLocalizedPromptLabel(currentItem.response.label, strings.locale)}
+            </Text>
             <Text style={styles.answerValue}>{currentItem.response.value}</Text>
             <Text style={styles.answerHint}>
               {isSubmittingAnswer
-                ? 'Saving your result and loading the next prompt...'
-                : 'Choose the result that best matches how confidently you answered.'}
+                ? strings.locale.startsWith('es')
+                  ? 'Guardando tu resultado y cargando el siguiente prompt...'
+                  : 'Saving your result and loading the next prompt...'
+                : strings.studyCard.answerHint}
             </Text>
           </Animated.View>
         ) : (
@@ -132,7 +161,7 @@ export function StudySessionCard({
             onPress={onRevealAnswer}
             style={[styles.secondaryButton, isSubmittingAnswer ? styles.buttonDisabled : null]}
           >
-            <Text style={styles.secondaryButtonLabel}>Reveal answer</Text>
+            <Text style={styles.secondaryButtonLabel}>{strings.studyCard.revealAnswer}</Text>
           </Pressable>
         )}
       </Animated.View>
