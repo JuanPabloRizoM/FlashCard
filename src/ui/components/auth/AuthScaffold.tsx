@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { APP_NAME } from '../../../core/types/settings';
-import { useThemeColors, useThemedStyles, spacing, typography, type ThemeColors } from '../../theme';
+import { useThemedStyles, spacing, typography, type ThemeColors } from '../../theme';
 
 type AuthScaffoldProps = {
   title: string;
@@ -29,8 +29,6 @@ export function AuthScaffold({
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.shell}>
           <View style={styles.heroCard}>
-            <View style={styles.heroGlowLarge} />
-            <View style={styles.heroGlowSmall} />
             <View style={styles.heroBadge}>
               <Text style={styles.heroBadgeLabel}>{APP_NAME}</Text>
             </View>
@@ -77,32 +75,8 @@ const createStyles = (colors: ThemeColors) =>
       borderRadius: 28,
       borderWidth: 1,
       gap: spacing.m,
-      overflow: 'hidden',
       paddingHorizontal: spacing.l,
-      paddingVertical: spacing.xl,
-      position: 'relative',
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 16 },
-      shadowOpacity: 0.18,
-      shadowRadius: 24
-    },
-    heroGlowLarge: {
-      backgroundColor: colors.primarySoft,
-      borderRadius: 999,
-      height: 160,
-      position: 'absolute',
-      right: -48,
-      top: -52,
-      width: 160
-    },
-    heroGlowSmall: {
-      backgroundColor: colors.surfaceMuted,
-      borderRadius: 999,
-      height: 84,
-      left: -24,
-      position: 'absolute',
-      top: 40,
-      width: 84
+      paddingVertical: spacing.xl
     },
     heroBadge: {
       alignSelf: 'flex-start',
@@ -138,11 +112,7 @@ const createStyles = (colors: ThemeColors) =>
       borderRadius: 24,
       borderWidth: 1,
       gap: spacing.m,
-      padding: spacing.l,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 10 },
-      shadowOpacity: 0.1,
-      shadowRadius: 20
+      padding: spacing.l
     },
     backButton: {
       alignSelf: 'flex-start',
