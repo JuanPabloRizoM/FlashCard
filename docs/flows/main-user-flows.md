@@ -1,5 +1,26 @@
 # Main User Flows
 
+## Enter As Guest
+
+1. On first boot with no saved auth shell state, the app opens the auth landing flow instead of the main tabs.
+2. The user taps `Continuar como invitado` / `Continue as guest`.
+3. The auth shell persists a local guest session.
+4. The app switches into the main tab shell without requiring a backend login.
+5. On a later app launch, that guest session is restored before the main app shell renders.
+
+---
+
+## Move Through The Auth Shell
+
+1. On the auth landing screen, the user can choose Google, email sign-in, account creation, or guest entry.
+2. `Continue with Google` remains a visible convenience action, but it stays an honest local placeholder until real OAuth is connected.
+3. `Sign in with email` opens the sign-in screen with local validation for email and password only.
+4. `Create account` opens the sign-up screen with local validation for email, password, and matching confirmation only.
+5. `Forgot password` opens a reset screen with a clean confirmation state, but it does not send a real email yet.
+6. None of those non-guest actions create a fake authenticated session in Auth v1.
+
+---
+
 ## Create A Deck
 
 1. The user opens the `Decks` tab.

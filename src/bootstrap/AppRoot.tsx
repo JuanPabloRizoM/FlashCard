@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { AuthProvider } from '../features/auth/AuthProvider';
 import { AppSettingsProvider, useAppSettings } from '../features/settings/AppSettingsProvider';
-import { AppNavigator } from '../navigation/AppNavigator';
+import { RootNavigator } from '../navigation/RootNavigator';
 import { initializeDatabase } from '../storage/database';
 
 function AppShell() {
@@ -11,7 +12,9 @@ function AppShell() {
   return (
     <>
       <StatusBar style={resolvedTheme === 'dark' ? 'light' : 'dark'} />
-      <AppNavigator />
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
     </>
   );
 }

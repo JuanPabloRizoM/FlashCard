@@ -316,3 +316,12 @@
 - Files: src/core/types/settings.ts, src/features/settings/AppSettingsProvider.tsx, src/bootstrap/AppRoot.tsx, src/navigation/AppNavigator.tsx, src/ui/theme/colors.ts, src/ui/theme/useTheme.ts, src/ui/theme/index.ts, src/ui/screens/SettingsScreen.tsx, src/ui/screens/DecksScreen.tsx, src/ui/screens/DeckDetailScreen.tsx, src/ui/screens/CardsScreen.tsx, src/ui/screens/StudyScreen.tsx, src/ui/components/layout/ScreenContainer.tsx, src/ui/components/navigation/TabBarIcon.tsx, src/ui/components/deck/*, src/ui/components/card/*, src/ui/components/study/*, docs/architecture/project-structure.md, docs/flows/main-user-flows.md, docs/features/study.md, docs/ui/design-system.md
 - Risk: Medium
 - Notes: Settings now keeps only appearance and app information. Study defaults remain in the app settings layer for compatibility, but they are no longer exposed from the Settings screen.
+
+---
+
+[2026-04-01]
+- Change: Added Auth v1 as a visual/auth shell with localized auth screens, guest entry, local auth-session persistence, and a real auth-vs-app boot boundary.
+- Reason: The product needed a future-ready authentication structure before backend auth, Google OAuth, password reset delivery, or cloud sync are implemented.
+- Files: src/core/types/auth.ts, src/features/auth/AuthProvider.tsx, src/features/auth/authValidation.ts, src/storage/authSessionStorage.native.ts, src/storage/authSessionStorage.web.ts, src/navigation/RootNavigator.tsx, src/navigation/AuthFlow.tsx, src/bootstrap/AppRoot.tsx, src/ui/components/auth/AuthScaffold.tsx, src/ui/screens/auth/AuthLandingScreen.tsx, src/ui/screens/auth/SignInScreen.tsx, src/ui/screens/auth/CreateAccountScreen.tsx, src/ui/screens/auth/ForgotPasswordScreen.tsx, src/ui/strings/translations.ts, docs/features/auth.md, docs/architecture/project-structure.md, docs/flows/main-user-flows.md
+- Risk: Medium
+- Notes: Guest mode is the only path that currently enters the main app. Email sign-in, account creation, Google sign-in, and password reset remain honest placeholders with local validation only and no fake backend success.

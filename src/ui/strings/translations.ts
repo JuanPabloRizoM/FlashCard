@@ -127,6 +127,57 @@ export type AppStrings = {
       };
     };
   };
+  auth: {
+    landing: {
+      title: string;
+      subtitle: string;
+      googleButton: string;
+      googleSupport: string;
+      emailButton: string;
+      createAccount: string;
+      guestButton: string;
+      footer: string;
+    };
+    common: {
+      back: string;
+      emailLabel: string;
+      emailPlaceholder: string;
+      passwordLabel: string;
+      passwordPlaceholder: string;
+    };
+    signIn: {
+      title: string;
+      subtitle: string;
+      submit: string;
+      forgotPassword: string;
+      unavailableNotice: string;
+    };
+    createAccount: {
+      title: string;
+      subtitle: string;
+      nameLabel: string;
+      namePlaceholder: string;
+      nameSupport: string;
+      confirmPasswordLabel: string;
+      confirmPasswordPlaceholder: string;
+      submit: string;
+      unavailableNotice: string;
+    };
+    forgotPassword: {
+      title: string;
+      subtitle: string;
+      submit: string;
+      confirmationTitle: string;
+      confirmationMessage: (email: string) => string;
+      sendAnother: string;
+    };
+    validation: {
+      invalidEmail: string;
+      passwordRequired: string;
+      confirmPasswordRequired: string;
+      passwordsDoNotMatch: string;
+    };
+  };
   cardsWorkspace: {
     workspaceLabel: string;
     modeLabels: {
@@ -488,6 +539,58 @@ const es: AppStrings = {
         light: 'Claro',
         dark: 'Oscuro'
       }
+    }
+  },
+  auth: {
+    landing: {
+      title: 'Aprende a tu ritmo',
+      subtitle: 'Crea mazos, estudia y guarda tu progreso local.',
+      googleButton: 'Continuar con Google',
+      googleSupport: 'Google estará disponible cuando conectemos el acceso real.',
+      emailButton: 'Iniciar sesión con correo',
+      createAccount: 'Crear cuenta',
+      guestButton: 'Continuar como invitado',
+      footer: 'Al continuar, aceptarás los términos y la política de privacidad cuando estén disponibles.'
+    },
+    common: {
+      back: 'Volver',
+      emailLabel: 'Correo',
+      emailPlaceholder: 'tu@correo.com',
+      passwordLabel: 'Contraseña',
+      passwordPlaceholder: 'Escribe tu contraseña'
+    },
+    signIn: {
+      title: 'Iniciar sesión',
+      subtitle: 'Usa tu correo cuando el acceso real esté conectado.',
+      submit: 'Iniciar sesión',
+      forgotPassword: 'Olvidé mi contraseña',
+      unavailableNotice: 'El inicio de sesión con correo aún no está conectado. Puedes seguir como invitado por ahora.'
+    },
+    createAccount: {
+      title: 'Crear cuenta',
+      subtitle: 'Prepara tu cuenta para cuando la sincronización esté disponible.',
+      nameLabel: 'Nombre',
+      namePlaceholder: 'Tu nombre',
+      nameSupport: 'Opcional por ahora.',
+      confirmPasswordLabel: 'Confirmar contraseña',
+      confirmPasswordPlaceholder: 'Vuelve a escribir la contraseña',
+      submit: 'Crear cuenta',
+      unavailableNotice: 'La creación de cuentas aún no está conectada. Puedes seguir como invitado por ahora.'
+    },
+    forgotPassword: {
+      title: 'Recuperar contraseña',
+      subtitle: 'Escribe tu correo para preparar el reinicio.',
+      submit: 'Enviar enlace',
+      confirmationTitle: 'Reinicio listo',
+      confirmationMessage: (email) =>
+        `Cuando el acceso esté conectado, enviaremos el enlace a ${email}.`,
+      sendAnother: 'Usar otro correo'
+    },
+    validation: {
+      invalidEmail: 'Escribe un correo válido.',
+      passwordRequired: 'Escribe una contraseña.',
+      confirmPasswordRequired: 'Confirma la contraseña.',
+      passwordsDoNotMatch: 'Las contraseñas no coinciden.'
     }
   },
   cardsWorkspace: {
@@ -856,6 +959,58 @@ const en: AppStrings = {
         light: 'Light',
         dark: 'Dark'
       }
+    }
+  },
+  auth: {
+    landing: {
+      title: 'Study at your pace',
+      subtitle: 'Build decks, study, and keep your progress local.',
+      googleButton: 'Continue with Google',
+      googleSupport: 'Google sign-in will appear once real auth is connected.',
+      emailButton: 'Sign in with email',
+      createAccount: 'Create account',
+      guestButton: 'Continue as guest',
+      footer: 'By continuing, you will accept the Terms and Privacy Policy once they are available.'
+    },
+    common: {
+      back: 'Back',
+      emailLabel: 'Email',
+      emailPlaceholder: 'you@example.com',
+      passwordLabel: 'Password',
+      passwordPlaceholder: 'Enter your password'
+    },
+    signIn: {
+      title: 'Sign in',
+      subtitle: 'Use your email once real sign-in is connected.',
+      submit: 'Sign in',
+      forgotPassword: 'Forgot password',
+      unavailableNotice: 'Email sign-in is not connected yet. You can keep using the app as a guest for now.'
+    },
+    createAccount: {
+      title: 'Create account',
+      subtitle: 'Set up your account shell for when sync is available.',
+      nameLabel: 'Name',
+      namePlaceholder: 'Your name',
+      nameSupport: 'Optional for now.',
+      confirmPasswordLabel: 'Confirm password',
+      confirmPasswordPlaceholder: 'Re-enter your password',
+      submit: 'Create account',
+      unavailableNotice: 'Account creation is not connected yet. You can keep using the app as a guest for now.'
+    },
+    forgotPassword: {
+      title: 'Reset password',
+      subtitle: 'Enter your email to prepare the reset flow.',
+      submit: 'Send reset link',
+      confirmationTitle: 'Reset ready',
+      confirmationMessage: (email) =>
+        `Once auth is connected, the reset link will be sent to ${email}.`,
+      sendAnother: 'Use another email'
+    },
+    validation: {
+      invalidEmail: 'Enter a valid email.',
+      passwordRequired: 'Enter a password.',
+      confirmPasswordRequired: 'Confirm your password.',
+      passwordsDoNotMatch: 'Passwords do not match.'
     }
   },
   cardsWorkspace: {

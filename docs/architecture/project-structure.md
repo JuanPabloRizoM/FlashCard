@@ -13,12 +13,14 @@
 ## /src
 
 ### bootstrap/
-- `AppRoot.tsx` (base app shell that mounts status bar + navigator)
+- `AppRoot.tsx` (base app shell that mounts status bar, settings, auth shell, and the root navigator)
 
 ---
 
 ### navigation/
-- `AppNavigator.tsx` (root navigation container + bottom tabs)
+- `AppNavigator.tsx` (main app navigation container + bottom tabs)
+- `RootNavigator.tsx` (auth vs main-app boundary)
+- `AuthFlow.tsx` (local auth route shell for landing, sign-in, sign-up, and reset)
 - `types.ts` (typed route contracts)
 
 ---
@@ -36,6 +38,7 @@
 - `types/study.ts`
 - `types/studyProgress.ts`
 - `types/settings.ts`
+- `types/auth.ts`
 
 ---
 
@@ -60,6 +63,8 @@
 - `database.web.ts`
 - `appSettingsStorage.native.ts`
 - `appSettingsStorage.web.ts`
+- `authSessionStorage.native.ts`
+- `authSessionStorage.web.ts`
 - `webStorage.ts`
 - `webAppStore.ts`
 - `migrations.ts`
@@ -75,8 +80,11 @@
 ### features/
 - decks/
 - cards/
+- auth/
 - settings/
 - study/
+- `auth/AuthProvider.tsx`
+- `auth/authValidation.ts`
 - `decks/useDecks.ts`
 - `decks/useDeckImport.ts`
 - `decks/deckPortability.ts`
@@ -93,6 +101,7 @@
 ---
 
 ### ui/
+- `components/auth/AuthScaffold.tsx`
 - `components/layout/ScreenContainer.tsx`
 - `components/deck/DeckReadinessBadge.tsx`
 - `components/deck/DeckStudyInsightCard.tsx`
@@ -112,6 +121,10 @@
 - `screens/CardsScreen.tsx`
 - `screens/StudyScreen.tsx`
 - `screens/SettingsScreen.tsx`
+- `screens/auth/AuthLandingScreen.tsx`
+- `screens/auth/SignInScreen.tsx`
+- `screens/auth/CreateAccountScreen.tsx`
+- `screens/auth/ForgotPasswordScreen.tsx`
 - `components/study/StudySessionCard.tsx`
 - `components/study/StudySessionProgress.tsx`
 - `components/study/StudySessionAnswerActions.tsx`
@@ -133,6 +146,7 @@
 - `screens/StudyScreen.tsx` renders engine output and delegates all study logic to the feature + engine layers
 - `screens/SettingsScreen.tsx` owns app-level appearance controls and honest product information only; it must not expose fake toggles
 - `strings/` owns localized app copy and must stay lightweight, centralized, and app-wide rather than scattering language branches across screens
+- Auth shell text must also flow through the centralized language layer so `Español` and `English` stay consistent at boot
 
 ---
 
@@ -162,6 +176,7 @@
 - Settings may control app-level defaults, but those defaults must be consumed through feature layers rather than screens reaching into engine internals
 - Lightweight settings persistence belongs to the settings/storage boundary, not to Study screens or engine files
 - Theme and language preferences belong to the app settings boundary and must persist through the existing settings storage path
+- Guest/auth shell state belongs to the auth/settings boot boundary and must stay separate from repository-backed study data
 - Native app persistence may use SQLite, but web persistence must fail safely or use a web-compatible fallback rather than assuming SQLite support
 - Deck export/import formatting belongs to the deck/card feature layers, while confirmed writes still belong to repositories
 - Study progress persistence belongs to repository + feature layers, not screens
