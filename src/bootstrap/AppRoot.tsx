@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider } from '../features/auth/AuthProvider';
 import { AppSettingsProvider, useAppSettings } from '../features/settings/AppSettingsProvider';
@@ -27,8 +28,10 @@ export function AppRoot() {
   }, []);
 
   return (
-    <AppSettingsProvider>
-      <AppShell />
-    </AppSettingsProvider>
+    <SafeAreaProvider>
+      <AppSettingsProvider>
+        <AppShell />
+      </AppSettingsProvider>
+    </SafeAreaProvider>
   );
 }
