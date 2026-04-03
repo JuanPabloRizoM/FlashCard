@@ -136,6 +136,7 @@ export type AppStrings = {
       emailButton: string;
       createAccount: string;
       guestButton: string;
+      guestSupport: string;
       footer: string;
     };
     common: {
@@ -157,7 +158,6 @@ export type AppStrings = {
       subtitle: string;
       nameLabel: string;
       namePlaceholder: string;
-      nameSupport: string;
       confirmPasswordLabel: string;
       confirmPasswordPlaceholder: string;
       submit: string;
@@ -543,14 +543,15 @@ const es: AppStrings = {
   },
   auth: {
     landing: {
-      title: 'Aprende a tu ritmo',
-      subtitle: 'Crea mazos, estudia y guarda tu progreso local.',
+      title: 'Tu estudio, a tu ritmo',
+      subtitle: 'Crea mazos, repasa tarjetas y guarda tu avance local.',
       googleButton: 'Continuar con Google',
-      googleSupport: 'Google estará disponible cuando conectemos el acceso real.',
+      googleSupport: 'Google llegará cuando conectemos el acceso.',
       emailButton: 'Iniciar sesión con correo',
       createAccount: 'Crear cuenta',
       guestButton: 'Continuar como invitado',
-      footer: 'Al continuar, aceptarás los términos y la política de privacidad cuando estén disponibles.'
+      guestSupport: 'Empieza ahora y usa la app localmente.',
+      footer: 'Términos y privacidad aparecerán aquí cuando el acceso esté disponible.'
     },
     common: {
       back: 'Volver',
@@ -561,29 +562,28 @@ const es: AppStrings = {
     },
     signIn: {
       title: 'Iniciar sesión',
-      subtitle: 'Usa tu correo cuando el acceso real esté conectado.',
+      subtitle: 'Entra con tu correo cuando el acceso esté listo.',
       submit: 'Iniciar sesión',
       forgotPassword: 'Olvidé mi contraseña',
-      unavailableNotice: 'El inicio de sesión con correo aún no está conectado. Puedes seguir como invitado por ahora.'
+      unavailableNotice: 'El acceso con correo aún no está disponible. Puedes seguir como invitado.'
     },
     createAccount: {
       title: 'Crear cuenta',
-      subtitle: 'Prepara tu cuenta para cuando la sincronización esté disponible.',
-      nameLabel: 'Nombre',
+      subtitle: 'Deja tu cuenta lista para cuando la sincronización esté disponible.',
+      nameLabel: 'Nombre (opcional)',
       namePlaceholder: 'Tu nombre',
-      nameSupport: 'Opcional por ahora.',
       confirmPasswordLabel: 'Confirmar contraseña',
       confirmPasswordPlaceholder: 'Vuelve a escribir la contraseña',
       submit: 'Crear cuenta',
-      unavailableNotice: 'La creación de cuentas aún no está conectada. Puedes seguir como invitado por ahora.'
+      unavailableNotice: 'La creación de cuentas aún no está disponible. Puedes seguir como invitado.'
     },
     forgotPassword: {
       title: 'Recuperar contraseña',
-      subtitle: 'Escribe tu correo para preparar el reinicio.',
+      subtitle: 'Escribe tu correo y te mostraremos el siguiente paso.',
       submit: 'Enviar enlace',
-      confirmationTitle: 'Reinicio listo',
+      confirmationTitle: 'Reinicio preparado',
       confirmationMessage: (email) =>
-        `Cuando el acceso esté conectado, enviaremos el enlace a ${email}.`,
+        `Cuando el acceso esté listo, enviaremos el enlace a ${email}.`,
       sendAnother: 'Usar otro correo'
     },
     validation: {
@@ -964,13 +964,14 @@ const en: AppStrings = {
   auth: {
     landing: {
       title: 'Study at your pace',
-      subtitle: 'Build decks, study, and keep your progress local.',
+      subtitle: 'Build decks, review cards, and keep your progress local.',
       googleButton: 'Continue with Google',
-      googleSupport: 'Google sign-in will appear once real auth is connected.',
+      googleSupport: 'Google will appear once sign-in is connected.',
       emailButton: 'Sign in with email',
       createAccount: 'Create account',
       guestButton: 'Continue as guest',
-      footer: 'By continuing, you will accept the Terms and Privacy Policy once they are available.'
+      guestSupport: 'Start now and keep everything on this device.',
+      footer: 'Terms and Privacy will appear here once account access is available.'
     },
     common: {
       back: 'Back',
@@ -981,29 +982,28 @@ const en: AppStrings = {
     },
     signIn: {
       title: 'Sign in',
-      subtitle: 'Use your email once real sign-in is connected.',
+      subtitle: 'Use your email once sign-in is ready.',
       submit: 'Sign in',
       forgotPassword: 'Forgot password',
-      unavailableNotice: 'Email sign-in is not connected yet. You can keep using the app as a guest for now.'
+      unavailableNotice: 'Email sign-in is not available yet. You can keep using the app as a guest.'
     },
     createAccount: {
       title: 'Create account',
-      subtitle: 'Set up your account shell for when sync is available.',
-      nameLabel: 'Name',
+      subtitle: 'Get your account ready for when sync is available.',
+      nameLabel: 'Name (optional)',
       namePlaceholder: 'Your name',
-      nameSupport: 'Optional for now.',
       confirmPasswordLabel: 'Confirm password',
       confirmPasswordPlaceholder: 'Re-enter your password',
       submit: 'Create account',
-      unavailableNotice: 'Account creation is not connected yet. You can keep using the app as a guest for now.'
+      unavailableNotice: 'Account creation is not available yet. You can keep using the app as a guest.'
     },
     forgotPassword: {
       title: 'Reset password',
-      subtitle: 'Enter your email to prepare the reset flow.',
+      subtitle: 'Enter your email and we’ll show the next step.',
       submit: 'Send reset link',
-      confirmationTitle: 'Reset ready',
+      confirmationTitle: 'Reset prepared',
       confirmationMessage: (email) =>
-        `Once auth is connected, the reset link will be sent to ${email}.`,
+        `Once sign-in is ready, the reset link will be sent to ${email}.`,
       sendAnother: 'Use another email'
     },
     validation: {

@@ -47,46 +47,59 @@ export function SignInScreen({ onBack, onOpenForgotPassword }: SignInScreenProps
       title={strings.auth.signIn.title}
     >
       <View style={styles.fieldGroup}>
-        <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="email-address"
-          onChangeText={(value) => {
-            setEmail(value);
-            setFormError(null);
-          }}
-          placeholder={strings.auth.common.emailPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          style={[styles.input, formError != null ? styles.inputError : null]}
-          value={email}
-        />
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
+          <TextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+            onChangeText={(value) => {
+              setEmail(value);
+              setFormError(null);
+            }}
+            placeholder={strings.auth.common.emailPlaceholder}
+            placeholderTextColor={colors.textMuted}
+            style={[styles.input, formError != null ? styles.inputError : null]}
+            value={email}
+          />
+        </View>
 
-        <Text style={styles.label}>{strings.auth.common.passwordLabel}</Text>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={(value) => {
-            setPassword(value);
-            setFormError(null);
-          }}
-          placeholder={strings.auth.common.passwordPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          secureTextEntry
-          style={[styles.input, formError != null ? styles.inputError : null]}
-          value={password}
-        />
+        <View style={styles.fieldBlock}>
+          <View style={styles.labelRow}>
+            <Text style={styles.label}>{strings.auth.common.passwordLabel}</Text>
+            <Pressable accessibilityRole="button" onPress={onOpenForgotPassword} style={styles.inlineLinkButton}>
+              <Text style={styles.inlineLinkLabel}>{strings.auth.signIn.forgotPassword}</Text>
+            </Pressable>
+          </View>
+          <TextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={(value) => {
+              setPassword(value);
+              setFormError(null);
+            }}
+            placeholder={strings.auth.common.passwordPlaceholder}
+            placeholderTextColor={colors.textMuted}
+            secureTextEntry
+            style={[styles.input, formError != null ? styles.inputError : null]}
+            value={password}
+          />
+        </View>
       </View>
 
-      {formError != null ? <Text style={styles.errorText}>{formError}</Text> : null}
-      {infoMessage != null ? <Text style={styles.infoText}>{infoMessage}</Text> : null}
+      {formError != null ? (
+        <View style={styles.errorBanner}>
+          <Text style={styles.errorText}>{formError}</Text>
+        </View>
+      ) : null}
+      {infoMessage != null ? (
+        <View style={styles.infoBanner}>
+          <Text style={styles.infoText}>{infoMessage}</Text>
+        </View>
+      ) : null}
 
       <Pressable accessibilityRole="button" onPress={() => void onSubmit()} style={styles.primaryButton}>
         <Text style={styles.primaryButtonLabel}>{strings.auth.signIn.submit}</Text>
-      </Pressable>
-
-      <Pressable accessibilityRole="button" onPress={onOpenForgotPassword} style={styles.linkButton}>
-        <Text style={styles.linkButtonLabel}>{strings.auth.signIn.forgotPassword}</Text>
       </Pressable>
     </AuthScaffold>
   );
@@ -95,7 +108,15 @@ export function SignInScreen({ onBack, onOpenForgotPassword }: SignInScreenProps
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     fieldGroup: {
+      gap: spacing.m
+    },
+    fieldBlock: {
       gap: spacing.s
+    },
+    labelRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between'
     },
     label: {
       color: colors.textPrimary,
@@ -105,19 +126,36 @@ const createStyles = (colors: ThemeColors) =>
     input: {
       backgroundColor: colors.surfaceMuted,
       borderColor: colors.border,
-      borderRadius: 14,
+      borderRadius: 16,
       borderWidth: 1,
       color: colors.textPrimary,
       fontSize: typography.body,
       paddingHorizontal: spacing.m,
-      paddingVertical: 14
+      paddingVertical: 15
     },
     inputError: {
       borderColor: colors.error
     },
+    errorBanner: {
+      backgroundColor: colors.errorSoft,
+      borderColor: colors.error,
+      borderRadius: 16,
+      borderWidth: 1,
+      paddingHorizontal: spacing.m,
+      paddingVertical: spacing.s
+    },
     errorText: {
       color: colors.error,
-      fontSize: typography.caption
+      fontSize: typography.caption,
+      lineHeight: 18
+    },
+    infoBanner: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+      borderRadius: 16,
+      borderWidth: 1,
+      paddingHorizontal: spacing.m,
+      paddingVertical: spacing.s
     },
     infoText: {
       color: colors.primary,
@@ -127,19 +165,19 @@ const createStyles = (colors: ThemeColors) =>
     primaryButton: {
       alignItems: 'center',
       backgroundColor: colors.primary,
-      borderRadius: 14,
+      borderRadius: 16,
       paddingHorizontal: spacing.m,
-      paddingVertical: 16
+      paddingVertical: 17
     },
     primaryButtonLabel: {
       color: colors.surface,
       fontSize: typography.body,
       fontWeight: '700'
     },
-    linkButton: {
-      alignSelf: 'flex-start'
+    inlineLinkButton: {
+      paddingVertical: spacing.xs
     },
-    linkButtonLabel: {
+    inlineLinkLabel: {
       color: colors.primary,
       fontSize: typography.bodySmall,
       fontWeight: '700'

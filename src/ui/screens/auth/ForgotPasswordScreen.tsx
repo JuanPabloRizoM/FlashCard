@@ -56,23 +56,29 @@ export function ForgotPasswordScreen({ onBack }: ForgotPasswordScreenProps) {
       ) : (
         <>
           <View style={styles.fieldGroup}>
-            <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
-            <TextInput
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="email-address"
-              onChangeText={(value) => {
-                setEmail(value);
-                setFormError(null);
-              }}
-              placeholder={strings.auth.common.emailPlaceholder}
-              placeholderTextColor={colors.textMuted}
-              style={[styles.input, formError != null ? styles.inputError : null]}
-              value={email}
-            />
+            <View style={styles.fieldBlock}>
+              <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+                onChangeText={(value) => {
+                  setEmail(value);
+                  setFormError(null);
+                }}
+                placeholder={strings.auth.common.emailPlaceholder}
+                placeholderTextColor={colors.textMuted}
+                style={[styles.input, formError != null ? styles.inputError : null]}
+                value={email}
+              />
+            </View>
           </View>
 
-          {formError != null ? <Text style={styles.errorText}>{formError}</Text> : null}
+          {formError != null ? (
+            <View style={styles.errorBanner}>
+              <Text style={styles.errorText}>{formError}</Text>
+            </View>
+          ) : null}
 
           <Pressable accessibilityRole="button" onPress={() => void onSubmit()} style={styles.primaryButton}>
             <Text style={styles.primaryButtonLabel}>{strings.auth.forgotPassword.submit}</Text>
@@ -86,6 +92,9 @@ export function ForgotPasswordScreen({ onBack }: ForgotPasswordScreenProps) {
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     fieldGroup: {
+      gap: spacing.m
+    },
+    fieldBlock: {
       gap: spacing.s
     },
     label: {
@@ -96,26 +105,35 @@ const createStyles = (colors: ThemeColors) =>
     input: {
       backgroundColor: colors.surfaceMuted,
       borderColor: colors.border,
-      borderRadius: 14,
+      borderRadius: 16,
       borderWidth: 1,
       color: colors.textPrimary,
       fontSize: typography.body,
       paddingHorizontal: spacing.m,
-      paddingVertical: 14
+      paddingVertical: 15
     },
     inputError: {
       borderColor: colors.error
     },
+    errorBanner: {
+      backgroundColor: colors.errorSoft,
+      borderColor: colors.error,
+      borderRadius: 16,
+      borderWidth: 1,
+      paddingHorizontal: spacing.m,
+      paddingVertical: spacing.s
+    },
     errorText: {
       color: colors.error,
-      fontSize: typography.caption
+      fontSize: typography.caption,
+      lineHeight: 18
     },
     primaryButton: {
       alignItems: 'center',
       backgroundColor: colors.primary,
-      borderRadius: 14,
+      borderRadius: 16,
       paddingHorizontal: spacing.m,
-      paddingVertical: 16
+      paddingVertical: 17
     },
     primaryButtonLabel: {
       color: colors.surface,
@@ -123,11 +141,11 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: '700'
     },
     confirmationCard: {
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.border,
-      borderRadius: 18,
+      backgroundColor: colors.successSoft,
+      borderColor: colors.success,
+      borderRadius: 20,
       borderWidth: 1,
-      gap: spacing.s,
+      gap: spacing.m,
       padding: spacing.l
     },
     confirmationTitle: {
@@ -144,7 +162,7 @@ const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
       alignSelf: 'flex-start',
       backgroundColor: colors.surface,
-      borderColor: colors.border,
+      borderColor: colors.borderStrong,
       borderRadius: 999,
       borderWidth: 1,
       paddingHorizontal: spacing.m,

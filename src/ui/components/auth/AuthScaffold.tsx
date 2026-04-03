@@ -22,30 +22,33 @@ export function AuthScaffold({
   backLabel,
   footer
 }: AuthScaffoldProps) {
-  const colors = useThemeColors();
   const styles = useThemedStyles(createStyles);
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.heroCard}>
-          <View style={styles.heroBadge}>
-            <Text style={styles.heroBadgeLabel}>{APP_NAME}</Text>
+        <View style={styles.shell}>
+          <View style={styles.heroCard}>
+            <View style={styles.heroGlowLarge} />
+            <View style={styles.heroGlowSmall} />
+            <View style={styles.heroBadge}>
+              <Text style={styles.heroBadgeLabel}>{APP_NAME}</Text>
+            </View>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.subtitle}>{subtitle}</Text>
           </View>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
-        </View>
 
-        <View style={styles.formCard}>
-          {onBack != null && backLabel != null ? (
-            <Pressable accessibilityRole="button" onPress={onBack} style={styles.backButton}>
-              <Text style={styles.backButtonLabel}>{backLabel}</Text>
-            </Pressable>
-          ) : null}
-          {children}
-        </View>
+          <View style={styles.formCard}>
+            {onBack != null && backLabel != null ? (
+              <Pressable accessibilityRole="button" onPress={onBack} style={styles.backButton}>
+                <Text style={styles.backButtonLabel}>{backLabel}</Text>
+              </Pressable>
+            ) : null}
+            {children}
+          </View>
 
-        {footer != null ? <View style={styles.footerWrap}>{footer}</View> : null}
+          {footer != null ? <View style={styles.footerWrap}>{footer}</View> : null}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -58,24 +61,55 @@ const createStyles = (colors: ThemeColors) =>
       backgroundColor: colors.background
     },
     content: {
-      gap: spacing.m,
       paddingHorizontal: spacing.l,
       paddingTop: spacing.m,
       paddingBottom: spacing.xl
+    },
+    shell: {
+      alignSelf: 'center',
+      gap: spacing.m,
+      maxWidth: 560,
+      width: '100%'
     },
     heroCard: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
       borderRadius: 28,
       borderWidth: 1,
-      gap: spacing.s,
+      gap: spacing.m,
+      overflow: 'hidden',
       paddingHorizontal: spacing.l,
-      paddingVertical: spacing.xl
+      paddingVertical: spacing.xl,
+      position: 'relative',
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 16 },
+      shadowOpacity: 0.18,
+      shadowRadius: 24
+    },
+    heroGlowLarge: {
+      backgroundColor: colors.primarySoft,
+      borderRadius: 999,
+      height: 160,
+      position: 'absolute',
+      right: -48,
+      top: -52,
+      width: 160
+    },
+    heroGlowSmall: {
+      backgroundColor: colors.surfaceMuted,
+      borderRadius: 999,
+      height: 84,
+      left: -24,
+      position: 'absolute',
+      top: 40,
+      width: 84
     },
     heroBadge: {
       alignSelf: 'flex-start',
       backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
       borderRadius: 999,
+      borderWidth: 1,
       paddingHorizontal: spacing.s,
       paddingVertical: spacing.xs
     },
@@ -89,12 +123,14 @@ const createStyles = (colors: ThemeColors) =>
     title: {
       color: colors.textPrimary,
       fontSize: typography.hero,
-      fontWeight: '700'
+      fontWeight: '800',
+      letterSpacing: -0.4
     },
     subtitle: {
       color: colors.textSecondary,
       fontSize: typography.body,
-      lineHeight: 24
+      lineHeight: 24,
+      maxWidth: 420
     },
     formCard: {
       backgroundColor: colors.surface,
@@ -102,10 +138,20 @@ const createStyles = (colors: ThemeColors) =>
       borderRadius: 24,
       borderWidth: 1,
       gap: spacing.m,
-      padding: spacing.l
+      padding: spacing.l,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.1,
+      shadowRadius: 20
     },
     backButton: {
-      alignSelf: 'flex-start'
+      alignSelf: 'flex-start',
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 999,
+      borderWidth: 1,
+      paddingHorizontal: spacing.s,
+      paddingVertical: spacing.xs
     },
     backButtonLabel: {
       color: colors.primary,
@@ -113,6 +159,7 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: '700'
     },
     footerWrap: {
-      paddingHorizontal: spacing.s
+      paddingHorizontal: spacing.s,
+      paddingBottom: spacing.s
     }
   });

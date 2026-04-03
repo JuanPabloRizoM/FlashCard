@@ -62,69 +62,86 @@ export function CreateAccountScreen({ onBack }: CreateAccountScreenProps) {
       title={strings.auth.createAccount.title}
     >
       <View style={styles.fieldGroup}>
-        <Text style={styles.label}>{strings.auth.createAccount.nameLabel}</Text>
-        <TextInput
-          autoCapitalize="words"
-          autoCorrect={false}
-          onChangeText={(value) => {
-            setName(value);
-            setFormError(null);
-          }}
-          placeholder={strings.auth.createAccount.namePlaceholder}
-          placeholderTextColor={colors.textMuted}
-          style={styles.input}
-          value={name}
-        />
-        <Text style={styles.helperText}>{strings.auth.createAccount.nameSupport}</Text>
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{strings.auth.createAccount.nameLabel}</Text>
+          <TextInput
+            autoCapitalize="words"
+            autoCorrect={false}
+            onChangeText={(value) => {
+              setName(value);
+              setFormError(null);
+            }}
+            placeholder={strings.auth.createAccount.namePlaceholder}
+            placeholderTextColor={colors.textMuted}
+            style={styles.input}
+            value={name}
+          />
+        </View>
 
-        <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="email-address"
-          onChangeText={(value) => {
-            setEmail(value);
-            setFormError(null);
-          }}
-          placeholder={strings.auth.common.emailPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          style={[styles.input, formError != null ? styles.inputError : null]}
-          value={email}
-        />
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
+          <TextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+            onChangeText={(value) => {
+              setEmail(value);
+              setFormError(null);
+            }}
+            placeholder={strings.auth.common.emailPlaceholder}
+            placeholderTextColor={colors.textMuted}
+            style={[styles.input, formError != null ? styles.inputError : null]}
+            value={email}
+          />
+        </View>
 
-        <Text style={styles.label}>{strings.auth.common.passwordLabel}</Text>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={(value) => {
-            setPassword(value);
-            setFormError(null);
-          }}
-          placeholder={strings.auth.common.passwordPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          secureTextEntry
-          style={[styles.input, formError != null ? styles.inputError : null]}
-          value={password}
-        />
+        <View style={styles.passwordCard}>
+          <View style={styles.fieldBlock}>
+            <Text style={styles.label}>{strings.auth.common.passwordLabel}</Text>
+            <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={(value) => {
+                setPassword(value);
+                setFormError(null);
+              }}
+              placeholder={strings.auth.common.passwordPlaceholder}
+              placeholderTextColor={colors.textMuted}
+              secureTextEntry
+              style={[styles.input, formError != null ? styles.inputError : null]}
+              value={password}
+            />
+          </View>
 
-        <Text style={styles.label}>{strings.auth.createAccount.confirmPasswordLabel}</Text>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={(value) => {
-            setConfirmPassword(value);
-            setFormError(null);
-          }}
-          placeholder={strings.auth.createAccount.confirmPasswordPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          secureTextEntry
-          style={[styles.input, formError != null ? styles.inputError : null]}
-          value={confirmPassword}
-        />
+          <View style={styles.fieldBlock}>
+            <Text style={styles.label}>{strings.auth.createAccount.confirmPasswordLabel}</Text>
+            <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={(value) => {
+                setConfirmPassword(value);
+                setFormError(null);
+              }}
+              placeholder={strings.auth.createAccount.confirmPasswordPlaceholder}
+              placeholderTextColor={colors.textMuted}
+              secureTextEntry
+              style={[styles.input, formError != null ? styles.inputError : null]}
+              value={confirmPassword}
+            />
+          </View>
+        </View>
       </View>
 
-      {formError != null ? <Text style={styles.errorText}>{formError}</Text> : null}
-      {infoMessage != null ? <Text style={styles.infoText}>{infoMessage}</Text> : null}
+      {formError != null ? (
+        <View style={styles.errorBanner}>
+          <Text style={styles.errorText}>{formError}</Text>
+        </View>
+      ) : null}
+      {infoMessage != null ? (
+        <View style={styles.infoBanner}>
+          <Text style={styles.infoText}>{infoMessage}</Text>
+        </View>
+      ) : null}
 
       <Pressable accessibilityRole="button" onPress={() => void onSubmit()} style={styles.primaryButton}>
         <Text style={styles.primaryButtonLabel}>{strings.auth.createAccount.submit}</Text>
@@ -136,34 +153,57 @@ export function CreateAccountScreen({ onBack }: CreateAccountScreenProps) {
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     fieldGroup: {
+      gap: spacing.m
+    },
+    fieldBlock: {
       gap: spacing.s
+    },
+    passwordCard: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 20,
+      borderWidth: 1,
+      gap: spacing.m,
+      padding: spacing.m
     },
     label: {
       color: colors.textPrimary,
       fontSize: typography.bodySmall,
       fontWeight: '600'
     },
-    helperText: {
-      color: colors.textSecondary,
-      fontSize: typography.caption,
-      lineHeight: 18
-    },
     input: {
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: 14,
+      borderRadius: 16,
       borderWidth: 1,
       color: colors.textPrimary,
       fontSize: typography.body,
       paddingHorizontal: spacing.m,
-      paddingVertical: 14
+      paddingVertical: 15
     },
     inputError: {
       borderColor: colors.error
     },
+    errorBanner: {
+      backgroundColor: colors.errorSoft,
+      borderColor: colors.error,
+      borderRadius: 16,
+      borderWidth: 1,
+      paddingHorizontal: spacing.m,
+      paddingVertical: spacing.s
+    },
     errorText: {
       color: colors.error,
-      fontSize: typography.caption
+      fontSize: typography.caption,
+      lineHeight: 18
+    },
+    infoBanner: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+      borderRadius: 16,
+      borderWidth: 1,
+      paddingHorizontal: spacing.m,
+      paddingVertical: spacing.s
     },
     infoText: {
       color: colors.primary,
@@ -173,9 +213,9 @@ const createStyles = (colors: ThemeColors) =>
     primaryButton: {
       alignItems: 'center',
       backgroundColor: colors.primary,
-      borderRadius: 14,
+      borderRadius: 16,
       paddingHorizontal: spacing.m,
-      paddingVertical: 16
+      paddingVertical: 17
     },
     primaryButtonLabel: {
       color: colors.surface,

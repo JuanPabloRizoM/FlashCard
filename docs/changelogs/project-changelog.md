@@ -325,3 +325,12 @@
 - Files: src/core/types/auth.ts, src/features/auth/AuthProvider.tsx, src/features/auth/authValidation.ts, src/storage/authSessionStorage.native.ts, src/storage/authSessionStorage.web.ts, src/navigation/RootNavigator.tsx, src/navigation/AuthFlow.tsx, src/bootstrap/AppRoot.tsx, src/ui/components/auth/AuthScaffold.tsx, src/ui/screens/auth/AuthLandingScreen.tsx, src/ui/screens/auth/SignInScreen.tsx, src/ui/screens/auth/CreateAccountScreen.tsx, src/ui/screens/auth/ForgotPasswordScreen.tsx, src/ui/strings/translations.ts, docs/features/auth.md, docs/architecture/project-structure.md, docs/flows/main-user-flows.md
 - Risk: Medium
 - Notes: Guest mode is the only path that currently enters the main app. Email sign-in, account creation, Google sign-in, and password reset remain honest placeholders with local validation only and no fake backend success.
+
+---
+
+[2026-04-03]
+- Change: Polished the Auth v1 UI with a calmer scaffold, stronger welcome-screen hierarchy, softer form feedback states, and tighter bilingual auth microcopy.
+- Reason: The auth shell structure worked, but it still felt too close to raw scaffolding instead of a deliberate front door to the product.
+- Files: src/ui/components/auth/AuthScaffold.tsx, src/ui/screens/auth/AuthLandingScreen.tsx, src/ui/screens/auth/SignInScreen.tsx, src/ui/screens/auth/CreateAccountScreen.tsx, src/ui/screens/auth/ForgotPasswordScreen.tsx, src/ui/strings/translations.ts
+- Risk: Low
+- Notes: This pass did not change guest behavior, navigation flow, or placeholder-auth honesty. It only improved hierarchy, spacing, copy, and feedback presentation.

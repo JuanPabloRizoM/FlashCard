@@ -28,7 +28,7 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
       subtitle={strings.auth.landing.subtitle}
       title={strings.auth.landing.title}
     >
-      <View style={styles.actionGroup}>
+      <View style={styles.primaryGroup}>
         <Pressable accessibilityRole="button" onPress={() => void onGooglePress()} style={styles.googleButton}>
           <View style={styles.googleBadge}>
             <Text style={styles.googleBadgeLabel}>G</Text>
@@ -41,11 +41,15 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
         <Pressable accessibilityRole="button" onPress={onOpenSignIn} style={styles.primaryButton}>
           <Text style={styles.primaryButtonLabel}>{strings.auth.landing.emailButton}</Text>
         </Pressable>
+      </View>
 
+      <View style={styles.secondaryGroup}>
         <Pressable accessibilityRole="button" onPress={onOpenCreateAccount} style={styles.secondaryButton}>
           <Text style={styles.secondaryButtonLabel}>{strings.auth.landing.createAccount}</Text>
         </Pressable>
+      </View>
 
+      <View style={styles.guestCard}>
         <Pressable
           accessibilityRole="button"
           onPress={() => {
@@ -55,6 +59,7 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
         >
           <Text style={styles.guestButtonLabel}>{strings.auth.landing.guestButton}</Text>
         </Pressable>
+        <Text style={styles.guestSupport}>{strings.auth.landing.guestSupport}</Text>
       </View>
     </AuthScaffold>
   );
@@ -62,24 +67,34 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
-    actionGroup: {
+    primaryGroup: {
+      gap: spacing.s
+    },
+    secondaryGroup: {
+      gap: spacing.s
+    },
+    guestCard: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 20,
+      borderWidth: 1,
       gap: spacing.s
     },
     googleButton: {
       alignItems: 'center',
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderColor: colors.borderStrong,
-      borderRadius: 16,
+      borderRadius: 18,
       borderWidth: 1,
       flexDirection: 'row',
       gap: spacing.s,
       justifyContent: 'center',
       paddingHorizontal: spacing.m,
-      paddingVertical: 16
+      paddingVertical: 18
     },
     googleBadge: {
       alignItems: 'center',
-      backgroundColor: colors.surface,
+      backgroundColor: colors.surfaceMuted,
       borderColor: colors.border,
       borderRadius: 999,
       borderWidth: 1,
@@ -100,14 +115,15 @@ const createStyles = (colors: ThemeColors) =>
     placeholderText: {
       color: colors.textSecondary,
       fontSize: typography.caption,
-      lineHeight: 18
+      lineHeight: 19,
+      paddingHorizontal: spacing.s
     },
     primaryButton: {
       alignItems: 'center',
       backgroundColor: colors.primary,
-      borderRadius: 16,
+      borderRadius: 18,
       paddingHorizontal: spacing.m,
-      paddingVertical: 16
+      paddingVertical: 18
     },
     primaryButtonLabel: {
       color: colors.surface,
@@ -116,31 +132,36 @@ const createStyles = (colors: ThemeColors) =>
     },
     secondaryButton: {
       alignItems: 'center',
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.primary,
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.borderStrong,
       borderRadius: 16,
       borderWidth: 1,
       paddingHorizontal: spacing.m,
       paddingVertical: 16
     },
     secondaryButtonLabel: {
-      color: colors.primary,
+      color: colors.textPrimary,
       fontSize: typography.body,
       fontWeight: '700'
     },
     guestButton: {
       alignItems: 'center',
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: 16,
-      borderWidth: 1,
       paddingHorizontal: spacing.m,
-      paddingVertical: 16
+      paddingTop: spacing.m,
+      paddingBottom: spacing.xs
     },
     guestButtonLabel: {
       color: colors.textPrimary,
       fontSize: typography.body,
       fontWeight: '700'
+    },
+    guestSupport: {
+      color: colors.textSecondary,
+      fontSize: typography.caption,
+      lineHeight: 18,
+      paddingBottom: spacing.m,
+      paddingHorizontal: spacing.m,
+      textAlign: 'center'
     },
     footerText: {
       color: colors.textMuted,
