@@ -12,13 +12,39 @@ export type AuthSession = {
   updatedAt: string | null;
 };
 
-export type AuthPlaceholderResult = {
-  status: 'unavailable';
-};
+export type AuthActionResult =
+  | {
+      status: 'success';
+      message?: string;
+    }
+  | {
+      status: 'info';
+      message: string;
+    }
+  | {
+      status: 'redirecting';
+      message?: string;
+    }
+  | {
+      status: 'error';
+      message: string;
+    };
 
-export type AuthResetPasswordResult = {
-  status: 'preview';
-  email: string;
+export type AuthResetPasswordResult =
+  | {
+      status: 'success';
+      email: string;
+      message: string;
+    }
+  | {
+      status: 'error';
+      message: string;
+    };
+
+export type AuthProfile = {
+  provider: AuthProviderId;
+  email: string | null;
+  displayName: string | null;
 };
 
 export const DEFAULT_AUTH_SESSION: AuthSession = {

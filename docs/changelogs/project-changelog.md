@@ -334,3 +334,12 @@
 - Files: src/ui/components/auth/AuthScaffold.tsx, src/ui/screens/auth/AuthLandingScreen.tsx, src/ui/screens/auth/SignInScreen.tsx, src/ui/screens/auth/CreateAccountScreen.tsx, src/ui/screens/auth/ForgotPasswordScreen.tsx, src/ui/strings/translations.ts
 - Risk: Low
 - Notes: This pass did not change guest behavior, navigation flow, or placeholder-auth honesty. It only improved hierarchy, spacing, copy, and feedback presentation.
+
+---
+
+[2026-04-04]
+- Change: Integrated real Supabase Auth into the existing auth shell with email/password sign-in, email/password sign-up, reset-email delivery, Google OAuth wiring, and session restore on app boot.
+- Reason: The auth flow shell was already in place, and the next step was to replace placeholder actions with real authentication while preserving guest mode.
+- Files: package.json, app.json, src/core/types/auth.ts, src/features/auth/AuthProvider.tsx, src/ui/screens/auth/AuthLandingScreen.tsx, src/ui/screens/auth/SignInScreen.tsx, src/ui/screens/auth/CreateAccountScreen.tsx, src/ui/screens/auth/ForgotPasswordScreen.tsx, src/ui/strings/translations.ts, src/services/supabase/supabaseClient.ts, src/storage/supabaseAuthStorage.native.ts, src/storage/supabaseAuthStorage.web.ts, docs/features/auth.md, docs/flows/main-user-flows.md
+- Risk: Medium
+- Notes: Guest mode still works locally. Real Supabase environment variables and dashboard redirect/provider configuration are still required before production auth can succeed.

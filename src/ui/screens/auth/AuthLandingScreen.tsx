@@ -18,8 +18,14 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   async function onGooglePress() {
-    await signInWithGoogle();
-    setInfoMessage(strings.auth.landing.googleSupport);
+    const result = await signInWithGoogle();
+
+    if (result.status === 'error' || result.status === 'info' || result.status === 'redirecting') {
+      setInfoMessage(result.message ?? strings.auth.landing.googleSupport);
+      return;
+    }
+
+    setInfoMessage(null);
   }
 
   return (

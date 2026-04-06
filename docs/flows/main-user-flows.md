@@ -13,11 +13,11 @@
 ## Move Through The Auth Shell
 
 1. On the auth landing screen, the user can choose Google, email sign-in, account creation, or guest entry.
-2. `Continue with Google` remains a visible convenience action, but it stays an honest local placeholder until real OAuth is connected.
-3. `Sign in with email` opens the sign-in screen with local validation for email and password only.
-4. `Create account` opens the sign-up screen with local validation for email, password, and matching confirmation only.
-5. `Forgot password` opens a reset screen with a clean confirmation state, but it does not send a real email yet.
-6. None of those non-guest actions create a fake authenticated session in Auth v1.
+2. `Continue with Google` starts the Supabase OAuth flow.
+3. `Sign in with email` validates the form locally, then signs in through Supabase.
+4. `Create account` validates the form locally, then creates the account through Supabase.
+5. `Forgot password` sends a real Supabase reset email and shows a confirmation state.
+6. On a successful authenticated session, the auth shell restores into the main app on later launches.
 
 ---
 

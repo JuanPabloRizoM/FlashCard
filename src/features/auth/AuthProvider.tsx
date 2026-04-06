@@ -7,25 +7,35 @@ import {
   useState,
   type ReactNode
 } from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import { Platform } from 'react-native';
 
 import {
   DEFAULT_AUTH_SESSION,
   normalizeAuthSession,
-  type AuthPlaceholderResult,
+  type AuthActionResult,
+  type AuthProfile,
   type AuthResetPasswordResult,
   type AuthSession
 } from '../../core/types/auth';
+import { getRuntimeStrings } from '../../ui/strings';
 import { loadAuthSession, saveAuthSession } from '../../storage/authSessionStorage';
 import { normalizeEmail } from './authValidation';
+import {
+  getSupabaseRedirectUrl,
+  isSupabaseConfigured,
+  mapSupabaseSessionToAuthProfile,
+  supabase
+} from '../../services/supabase/supabaseClient';
 
 type AuthContextValue = {
   session: AuthSession;
   hasAccess: boolean;
   continueAsGuest: () => Promise<void>;
   signOut: () => Promise<void>;
-  signIn: (input: { email: string; password: string }) => Promise<AuthPlaceholderResult>;
-  signUp: (input: { name?: string | null; email: string; password: string }) => Promise<AuthPlaceholderResult>;
-  signInWithGoogle: () => Promise<AuthPlaceholderResult>;
+  signIn: (input: { email: string; password: string }) => Promise<AuthActionResult>;
+  signUp: (input: { name?: string | null; email: string; password: string }) => Promise<AuthActionResult>;
+  signInWithGoogle: () => Promise<AuthActionResult>;
   resetPassword: (email: string) => Promise<AuthResetPasswordResult>;
 };
 
@@ -39,6 +49,96 @@ function buildTimestamp(): string {
   return new Date().toISOString();
 }
 
+function buildAuthenticatedSession(profile: AuthProfile): AuthSession {
+  return {
+    status: 'authenticated',
+    provider: profile.provider,
+    email: profile.email,
+    displayName: profile.displayName,
+    updatedAt: buildTimestamp()
+  };
+}
+
+function keepGuestOrSignOut(currentSession: AuthSession): AuthSession {
+  if (currentSession.status === 'guest') {
+    return currentSession;
+  }
+
+  return {
+    ...DEFAULT_AUTH_SESSION,
+    updatedAt: buildTimestamp()
+  };
+}
+
+function createConfigError(): AuthActionResult {
+  return {
+    status: 'error',
+    message: getRuntimeStrings().auth.common.configMissing
+  };
+}
+
+function createErrorResult(error: unknown, action: 'google' | 'sign_in' | 'sign_up' | 'reset_password'): AuthActionResult {
+  const strings = getRuntimeStrings();
+
+  if (!isSupabaseConfigured || supabase == null) {
+    return createConfigError();
+  }
+
+  if (error instanceof Error) {
+    const normalizedMessage = error.message.toLowerCase();
+
+    if (action === 'sign_in') {
+      if (normalizedMessage.includes('invalid login credentials')) {
+        return { status: 'error', message: strings.auth.signIn.invalidCredentials };
+      }
+
+      if (normalizedMessage.includes('email not confirmed')) {
+        return { status: 'error', message: strings.auth.signIn.emailNotConfirmed };
+      }
+    }
+
+    if (action === 'sign_up') {
+      if (normalizedMessage.includes('already registered')) {
+        return { status: 'error', message: strings.auth.createAccount.emailInUse };
+      }
+
+      if (normalizedMessage.includes('password should be at least')) {
+        return { status: 'error', message: strings.auth.createAccount.weakPassword };
+      }
+    }
+
+    if (action === 'google' && normalizedMessage.includes('provider is not enabled')) {
+      return { status: 'error', message: strings.auth.landing.googleNotAvailable };
+    }
+
+    return {
+      status: 'error',
+      message: strings.auth.common.genericError
+    };
+  }
+
+  return {
+    status: 'error',
+    message: strings.auth.common.genericError
+  };
+}
+
+function createResetError(error: unknown): AuthResetPasswordResult {
+  const result = createErrorResult(error, 'reset_password');
+
+  if (result.status !== 'error') {
+    return {
+      status: 'error',
+      message: getRuntimeStrings().auth.common.genericError
+    };
+  }
+
+  return {
+    status: 'error',
+    message: result.message
+  };
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<AuthSession>(DEFAULT_AUTH_SESSION);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -46,14 +146,58 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     let isMounted = true;
 
+    let subscription: { unsubscribe: () => void } | null = null;
+
     async function hydrateAuthSession() {
       const storedSession = await loadAuthSession();
+      let nextSession =
+        storedSession.status === 'guest'
+          ? storedSession
+          : {
+              ...DEFAULT_AUTH_SESSION,
+              updatedAt: storedSession.updatedAt
+            };
+
+      if (isSupabaseConfigured && supabase != null) {
+        const {
+          data: { session: supabaseSession }
+        } = await supabase.auth.getSession();
+
+        if (supabaseSession != null) {
+          nextSession = buildAuthenticatedSession(mapSupabaseSessionToAuthProfile(supabaseSession));
+          await saveAuthSession(nextSession);
+        }
+
+        const {
+          data: { subscription: authSubscription }
+        } = supabase.auth.onAuthStateChange((_event, nextSupabaseSession) => {
+          if (!isMounted) {
+            return;
+          }
+
+          setSession((currentSession) => {
+            const resolvedSession =
+              nextSupabaseSession != null
+                ? buildAuthenticatedSession(mapSupabaseSessionToAuthProfile(nextSupabaseSession))
+                : keepGuestOrSignOut(currentSession);
+
+            void saveAuthSession(resolvedSession).catch(() => {
+              // Keep the app shell usable even if persistence fails.
+            });
+
+            return resolvedSession;
+          });
+        });
+
+        subscription = authSubscription;
+      }
 
       if (!isMounted) {
+        subscription?.unsubscribe();
         return;
       }
 
-      setSession(storedSession);
+      setSession(nextSession);
       setIsHydrated(true);
     }
 
@@ -61,6 +205,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     return () => {
       isMounted = false;
+      subscription?.unsubscribe();
     };
   }, []);
 
@@ -92,18 +237,157 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
       },
       signOut: async () => {
+        if (isSupabaseConfigured && supabase != null) {
+          await supabase.auth.signOut();
+        }
+
         applySession({
           ...DEFAULT_AUTH_SESSION,
           updatedAt: buildTimestamp()
         });
       },
-      signIn: async () => ({ status: 'unavailable' }),
-      signUp: async () => ({ status: 'unavailable' }),
-      signInWithGoogle: async () => ({ status: 'unavailable' }),
-      resetPassword: async (email) => ({
-        status: 'preview',
-        email: normalizeEmail(email)
-      })
+      signIn: async ({ email, password }) => {
+        if (!isSupabaseConfigured || supabase == null) {
+          return createConfigError();
+        }
+
+        const normalizedEmail = normalizeEmail(email);
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password
+        });
+
+        if (error != null) {
+          return createErrorResult(error, 'sign_in');
+        }
+
+        if (data.session != null) {
+          applySession(buildAuthenticatedSession(mapSupabaseSessionToAuthProfile(data.session)));
+        }
+
+        return { status: 'success' };
+      },
+      signUp: async ({ name, email, password }) => {
+        if (!isSupabaseConfigured || supabase == null) {
+          return createConfigError();
+        }
+
+        const normalizedEmail = normalizeEmail(email);
+        const normalizedName = name?.trim() ?? '';
+        const { data, error } = await supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+          options: {
+            data: normalizedName.length > 0 ? { name: normalizedName, full_name: normalizedName } : undefined,
+            emailRedirectTo: getSupabaseRedirectUrl()
+          }
+        });
+
+        if (error != null) {
+          return createErrorResult(error, 'sign_up');
+        }
+
+        if (data.session != null) {
+          applySession(buildAuthenticatedSession(mapSupabaseSessionToAuthProfile(data.session)));
+          return { status: 'success' };
+        }
+
+        return {
+          status: 'info',
+          message: getRuntimeStrings().auth.createAccount.confirmEmailNotice(normalizedEmail)
+        };
+      },
+      signInWithGoogle: async () => {
+        if (!isSupabaseConfigured || supabase == null) {
+          return createConfigError();
+        }
+
+        const redirectTo = getSupabaseRedirectUrl();
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo,
+            skipBrowserRedirect: Platform.OS !== 'web'
+          }
+        });
+
+        if (error != null) {
+          return createErrorResult(error, 'google');
+        }
+
+        if (Platform.OS === 'web') {
+          return {
+            status: 'redirecting',
+            message: getRuntimeStrings().auth.landing.googleRedirecting
+          };
+        }
+
+        if (data.url == null) {
+          return {
+            status: 'error',
+            message: getRuntimeStrings().auth.landing.googleNotAvailable
+          };
+        }
+
+        const browserResult = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+
+        if (browserResult.type !== 'success' || browserResult.url == null) {
+          return {
+            status: 'info',
+            message: getRuntimeStrings().auth.landing.googleCancelled
+          };
+        }
+
+        const hashFragment = browserResult.url.split('#')[1] ?? '';
+        const fragmentParams = new URLSearchParams(hashFragment);
+        const accessToken = fragmentParams.get('access_token');
+        const refreshToken = fragmentParams.get('refresh_token');
+
+        if (accessToken == null || refreshToken == null) {
+          return {
+            status: 'error',
+            message: getRuntimeStrings().auth.landing.googleCallbackFailed
+          };
+        }
+
+        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken
+        });
+
+        if (sessionError != null) {
+          return createErrorResult(sessionError, 'google');
+        }
+
+        if (sessionData.session != null) {
+          applySession(buildAuthenticatedSession(mapSupabaseSessionToAuthProfile(sessionData.session)));
+        }
+
+        return { status: 'success' };
+      },
+      resetPassword: async (email) => {
+        if (!isSupabaseConfigured || supabase == null) {
+          return {
+            status: 'error',
+            message: getRuntimeStrings().auth.common.configMissing
+          };
+        }
+
+        const normalizedEmail = normalizeEmail(email);
+        const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+          redirectTo: getSupabaseRedirectUrl()
+        });
+
+        if (error != null) {
+          return createResetError(error);
+        }
+
+        return {
+          status: 'success',
+          email: normalizedEmail,
+          message: getRuntimeStrings().auth.forgotPassword.confirmationMessage(normalizedEmail)
+        };
+      }
     }),
     [applySession, session]
   );

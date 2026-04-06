@@ -19,6 +19,8 @@ export function ForgotPasswordScreen({ onBack }: ForgotPasswordScreenProps) {
   const [email, setEmail] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+  const [submittedMessage, setSubmittedMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit() {
     if (!isValidEmail(email)) {
@@ -27,8 +29,17 @@ export function ForgotPasswordScreen({ onBack }: ForgotPasswordScreenProps) {
     }
 
     setFormError(null);
+    setIsSubmitting(true);
     const result = await resetPassword(normalizeEmail(email));
+    setIsSubmitting(false);
+
+    if (result.status === 'error') {
+      setFormError(result.message);
+      return;
+    }
+
     setSubmittedEmail(result.email);
+    setSubmittedMessage(result.message);
   }
 
   return (
@@ -41,11 +52,14 @@ export function ForgotPasswordScreen({ onBack }: ForgotPasswordScreenProps) {
       {submittedEmail != null ? (
         <View style={styles.confirmationCard}>
           <Text style={styles.confirmationTitle}>{strings.auth.forgotPassword.confirmationTitle}</Text>
-          <Text style={styles.confirmationText}>{strings.auth.forgotPassword.confirmationMessage(submittedEmail)}</Text>
+          <Text style={styles.confirmationText}>
+            {submittedMessage ?? strings.auth.forgotPassword.confirmationMessage(submittedEmail)}
+          </Text>
           <Pressable
             accessibilityRole="button"
             onPress={() => {
               setSubmittedEmail(null);
+              setSubmittedMessage(null);
               setEmail('');
             }}
             style={styles.secondaryButton}
@@ -80,7 +94,12 @@ export function ForgotPasswordScreen({ onBack }: ForgotPasswordScreenProps) {
             </View>
           ) : null}
 
-          <Pressable accessibilityRole="button" onPress={() => void onSubmit()} style={styles.primaryButton}>
+          <Pressable
+            accessibilityRole="button"
+            disabled={isSubmitting}
+            onPress={() => void onSubmit()}
+            style={[styles.primaryButton, isSubmitting ? styles.primaryButtonDisabled : null]}
+          >
             <Text style={styles.primaryButtonLabel}>{strings.auth.forgotPassword.submit}</Text>
           </Pressable>
         </>
@@ -134,6 +153,9 @@ const createStyles = (colors: ThemeColors) =>
       borderRadius: 16,
       paddingHorizontal: spacing.m,
       paddingVertical: 17
+    },
+    primaryButtonDisabled: {
+      opacity: 0.7
     },
     primaryButtonLabel: {
       color: colors.surface,

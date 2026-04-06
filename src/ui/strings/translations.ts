@@ -133,6 +133,10 @@ export type AppStrings = {
       subtitle: string;
       googleButton: string;
       googleSupport: string;
+      googleRedirecting: string;
+      googleCancelled: string;
+      googleCallbackFailed: string;
+      googleNotAvailable: string;
       emailButton: string;
       createAccount: string;
       guestButton: string;
@@ -145,13 +149,16 @@ export type AppStrings = {
       emailPlaceholder: string;
       passwordLabel: string;
       passwordPlaceholder: string;
+      configMissing: string;
+      genericError: string;
     };
     signIn: {
       title: string;
       subtitle: string;
       submit: string;
       forgotPassword: string;
-      unavailableNotice: string;
+      invalidCredentials: string;
+      emailNotConfirmed: string;
     };
     createAccount: {
       title: string;
@@ -161,7 +168,9 @@ export type AppStrings = {
       confirmPasswordLabel: string;
       confirmPasswordPlaceholder: string;
       submit: string;
-      unavailableNotice: string;
+      confirmEmailNotice: (email: string) => string;
+      emailInUse: string;
+      weakPassword: string;
     };
     forgotPassword: {
       title: string;
@@ -547,6 +556,10 @@ const es: AppStrings = {
       subtitle: 'Crea mazos, repasa tarjetas y guarda tu avance local.',
       googleButton: 'Continuar con Google',
       googleSupport: 'Google llegará cuando conectemos el acceso.',
+      googleRedirecting: 'Redirigiendo a Google...',
+      googleCancelled: 'Se canceló el acceso con Google.',
+      googleCallbackFailed: 'No se pudo completar el acceso con Google.',
+      googleNotAvailable: 'Google aún no está disponible para este proyecto.',
       emailButton: 'Iniciar sesión con correo',
       createAccount: 'Crear cuenta',
       guestButton: 'Continuar como invitado',
@@ -558,14 +571,17 @@ const es: AppStrings = {
       emailLabel: 'Correo',
       emailPlaceholder: 'tu@correo.com',
       passwordLabel: 'Contraseña',
-      passwordPlaceholder: 'Escribe tu contraseña'
+      passwordPlaceholder: 'Escribe tu contraseña',
+      configMissing: 'Faltan los ajustes de Supabase en este entorno.',
+      genericError: 'No se pudo completar la acción ahora mismo.'
     },
     signIn: {
       title: 'Iniciar sesión',
       subtitle: 'Entra con tu correo cuando el acceso esté listo.',
       submit: 'Iniciar sesión',
       forgotPassword: 'Olvidé mi contraseña',
-      unavailableNotice: 'El acceso con correo aún no está disponible. Puedes seguir como invitado.'
+      invalidCredentials: 'Correo o contraseña incorrectos.',
+      emailNotConfirmed: 'Confirma tu correo antes de iniciar sesión.'
     },
     createAccount: {
       title: 'Crear cuenta',
@@ -575,7 +591,9 @@ const es: AppStrings = {
       confirmPasswordLabel: 'Confirmar contraseña',
       confirmPasswordPlaceholder: 'Vuelve a escribir la contraseña',
       submit: 'Crear cuenta',
-      unavailableNotice: 'La creación de cuentas aún no está disponible. Puedes seguir como invitado.'
+      confirmEmailNotice: (email) => `Revisa ${email} para confirmar tu cuenta.`,
+      emailInUse: 'Ya existe una cuenta con ese correo.',
+      weakPassword: 'Usa una contraseña más segura.'
     },
     forgotPassword: {
       title: 'Recuperar contraseña',
@@ -967,6 +985,10 @@ const en: AppStrings = {
       subtitle: 'Build decks, review cards, and keep your progress local.',
       googleButton: 'Continue with Google',
       googleSupport: 'Google will appear once sign-in is connected.',
+      googleRedirecting: 'Redirecting to Google...',
+      googleCancelled: 'Google sign-in was cancelled.',
+      googleCallbackFailed: 'Could not complete Google sign-in.',
+      googleNotAvailable: 'Google sign-in is not available for this project yet.',
       emailButton: 'Sign in with email',
       createAccount: 'Create account',
       guestButton: 'Continue as guest',
@@ -978,14 +1000,17 @@ const en: AppStrings = {
       emailLabel: 'Email',
       emailPlaceholder: 'you@example.com',
       passwordLabel: 'Password',
-      passwordPlaceholder: 'Enter your password'
+      passwordPlaceholder: 'Enter your password',
+      configMissing: 'Supabase configuration is missing in this environment.',
+      genericError: 'Could not complete that action right now.'
     },
     signIn: {
       title: 'Sign in',
       subtitle: 'Use your email once sign-in is ready.',
       submit: 'Sign in',
       forgotPassword: 'Forgot password',
-      unavailableNotice: 'Email sign-in is not available yet. You can keep using the app as a guest.'
+      invalidCredentials: 'Email or password is incorrect.',
+      emailNotConfirmed: 'Confirm your email before signing in.'
     },
     createAccount: {
       title: 'Create account',
@@ -995,7 +1020,9 @@ const en: AppStrings = {
       confirmPasswordLabel: 'Confirm password',
       confirmPasswordPlaceholder: 'Re-enter your password',
       submit: 'Create account',
-      unavailableNotice: 'Account creation is not available yet. You can keep using the app as a guest.'
+      confirmEmailNotice: (email) => `Check ${email} to confirm your account.`,
+      emailInUse: 'An account with that email already exists.',
+      weakPassword: 'Use a stronger password.'
     },
     forgotPassword: {
       title: 'Reset password',

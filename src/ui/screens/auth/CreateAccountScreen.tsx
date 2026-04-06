@@ -22,6 +22,7 @@ export function CreateAccountScreen({ onBack }: CreateAccountScreenProps) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit() {
     if (!isValidEmail(email)) {
@@ -46,12 +47,22 @@ export function CreateAccountScreen({ onBack }: CreateAccountScreenProps) {
 
     setFormError(null);
     setInfoMessage(null);
-    await signUp({
+    setIsSubmitting(true);
+    const result = await signUp({
       name: normalizeName(name),
       email: normalizeEmail(email),
       password
     });
-    setInfoMessage(strings.auth.createAccount.unavailableNotice);
+    setIsSubmitting(false);
+
+    if (result.status === 'error') {
+      setFormError(result.message);
+      return;
+    }
+
+    if (result.status === 'info' || result.status === 'redirecting') {
+      setInfoMessage(result.message ?? null);
+    }
   }
 
   return (
@@ -143,7 +154,12 @@ export function CreateAccountScreen({ onBack }: CreateAccountScreenProps) {
         </View>
       ) : null}
 
-      <Pressable accessibilityRole="button" onPress={() => void onSubmit()} style={styles.primaryButton}>
+      <Pressable
+        accessibilityRole="button"
+        disabled={isSubmitting}
+        onPress={() => void onSubmit()}
+        style={[styles.primaryButton, isSubmitting ? styles.primaryButtonDisabled : null]}
+      >
         <Text style={styles.primaryButtonLabel}>{strings.auth.createAccount.submit}</Text>
       </Pressable>
     </AuthScaffold>
@@ -216,6 +232,9 @@ const createStyles = (colors: ThemeColors) =>
       borderRadius: 16,
       paddingHorizontal: spacing.m,
       paddingVertical: 17
+    },
+    primaryButtonDisabled: {
+      opacity: 0.7
     },
     primaryButtonLabel: {
       color: colors.surface,
