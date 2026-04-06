@@ -1,13 +1,16 @@
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 import type { Deck } from '../../core/models/Deck';
 import { useDecks } from '../../features/decks/useDecks';
+import type { RootTabParamList } from '../../navigation/types';
 import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { DeckListItem } from '../components/deck/DeckListItem';
+import { DeckSummaryModal } from '../components/deck/DeckSummaryModal';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useAppStrings } from '../strings';
-import { DeckDetailScreen } from './DeckDetailScreen';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 function formatDeckTimestampLabel(deck: Deck, createdLabel: string, updatedLabel: string, fallbackLabel: string): string {
@@ -24,6 +27,7 @@ function formatDeckTimestampLabel(deck: Deck, createdLabel: string, updatedLabel
 }
 
 export function DecksScreen() {
+  const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const colors = useThemeColors();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
@@ -38,21 +42,8 @@ export function DecksScreen() {
     isSubmitting,
     canSubmit,
     onDraftNameChange,
-    onCreateDeck,
-    onRefreshDeckInsights
+    onCreateDeck
   } = useDecks();
-
-  if (selectedDeck != null) {
-    return (
-      <DeckDetailScreen
-        deck={selectedDeck}
-        onBack={() => {
-          setSelectedDeck(null);
-          void onRefreshDeckInsights();
-        }}
-      />
-    );
-  }
 
   return (
     <ScreenContainer title={strings.screens.decks.title} subtitle={strings.screens.decks.subtitle}>
@@ -142,6 +133,27 @@ export function DecksScreen() {
           />
         )}
       </View>
+
+      <DeckSummaryModal
+        deck={selectedDeck}
+        insights={selectedDeck != null ? deckInsightsByDeckId[selectedDeck.id] ?? null : null}
+        onClose={() => {
+          setSelectedDeck(null);
+        }}
+        onOpenCards={() => {
+          if (selectedDeck == null) {
+            return;
+          }
+
+          setSelectedDeck(null);
+          navigation.navigate('Cards', { selectedDeckId: selectedDeck.id });
+        }}
+        onStudy={() => {
+          setSelectedDeck(null);
+          navigation.navigate('Study');
+        }}
+        visible={selectedDeck != null}
+      />
     </ScreenContainer>
   );
 }

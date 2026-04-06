@@ -66,10 +66,14 @@ export type AppStrings = {
       noDecksMessage: string;
     };
     deckDetail: {
+      summaryEyebrow: string;
       backToDecks: string;
       cardsSectionTitle: string;
       cardsSectionText: string;
       createCards: string;
+      openCards: string;
+      studyDeck: string;
+      closeSummary: string;
       noCardsTitle: string;
       noCardsMessage: string;
       exportCopied: string;
@@ -488,10 +492,14 @@ const es: AppStrings = {
       noDecksMessage: 'Crea un mazo para empezar.'
     },
     deckDetail: {
+      summaryEyebrow: 'Resumen del mazo',
       backToDecks: 'Volver a mazos',
       cardsSectionTitle: 'Tarjetas',
       cardsSectionText: 'Agrega o edita tarjetas en la pestaña Tarjetas.',
       createCards: 'Crear tarjetas',
+      openCards: 'Abrir tarjetas',
+      studyDeck: 'Estudiar',
+      closeSummary: 'Cerrar',
       noCardsTitle: 'Aún no hay tarjetas',
       noCardsMessage: 'Abre Tarjetas para agregar la primera.',
       exportCopied: 'El texto exportado se copió al portapapeles.',
@@ -917,10 +925,14 @@ const en: AppStrings = {
       noDecksMessage: 'Create a deck to get started.'
     },
     deckDetail: {
+      summaryEyebrow: 'Deck summary',
       backToDecks: 'Back to decks',
       cardsSectionTitle: 'Cards',
       cardsSectionText: 'Add or edit cards in the Cards tab.',
       createCards: 'Create cards',
+      openCards: 'Open cards',
+      studyDeck: 'Study',
+      closeSummary: 'Close',
       noCardsTitle: 'No cards yet',
       noCardsMessage: 'Open Cards to add the first card.',
       exportCopied: 'Export text copied to the clipboard.',
