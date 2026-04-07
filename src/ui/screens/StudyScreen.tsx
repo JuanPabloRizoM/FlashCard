@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 import { STUDY_TECHNIQUE_LABELS } from '../../core/types/study';
 import { useStudySession } from '../../features/study/useStudySession';
+import type { RootTabParamList } from '../../navigation/types';
 import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { StudySessionBanner } from '../components/study/StudySessionBanner';
@@ -11,10 +14,14 @@ import { StudySessionSummary } from '../components/study/StudySessionSummary';
 import { useAppStrings } from '../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
-export function StudyScreen() {
+type StudyScreenProps = BottomTabScreenProps<RootTabParamList, 'Study'>;
+
+export function StudyScreen({ navigation, route }: StudyScreenProps) {
   const colors = useThemeColors();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
+  const routeSelectedDeckId = route.params?.selectedDeckId ?? null;
+  const [handoffDeckId, setHandoffDeckId] = useState<number | null>(routeSelectedDeckId);
   const {
     decks,
     selectedDeck,
@@ -41,7 +48,31 @@ export function StudyScreen() {
     onSubmitAnswer,
     onRestartSession,
     onRetryIncorrectAnswers
-  } = useStudySession();
+  } = useStudySession(handoffDeckId);
+
+  useEffect(() => {
+    if (routeSelectedDeckId == null) {
+      return;
+    }
+
+    setHandoffDeckId(routeSelectedDeckId);
+    navigation.setParams({ selectedDeckId: undefined });
+  }, [navigation, routeSelectedDeckId]);
+
+  useEffect(() => {
+    if (handoffDeckId == null) {
+      return;
+    }
+
+    if (selectedDeckId === handoffDeckId) {
+      setHandoffDeckId(null);
+      return;
+    }
+
+    if (decks.length > 0 && !decks.some((deck) => deck.id === handoffDeckId)) {
+      setHandoffDeckId(null);
+    }
+  }, [decks, handoffDeckId, selectedDeckId]);
 
   const hasStudyContent = currentItem != null || sessionSummary != null;
   const isSessionActive = currentItem != null;

@@ -361,3 +361,12 @@
 - Files: app.json, package.json, package-lock.json, src/core/types/card.ts, src/services/validation/cardValidation.ts, src/features/cards/cardImport.ts, src/features/cards/csvImport.ts, src/features/cards/useCsvImport.ts, src/features/cards/useDeckCards.ts, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardImageInput.tsx, src/ui/components/card/CsvImportPanel.tsx, src/ui/components/card/CsvImportMappingField.tsx, src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/TextImportPreviewList.tsx, src/ui/components/card/CardWorkspacePanel.tsx, src/ui/components/card/CardWorkspaceNoDecks.tsx, src/ui/screens/CardsScreen.tsx, src/ui/strings/translations.ts
 - Risk: Medium
 - Notes: Images can now be uploaded from the device, pasted from the clipboard, previewed, replaced, or removed. File import now supports real CSV parsing with header mapping into front, back, description, application, and image fields, and it reuses the shared Import Hub review path.
+
+---
+
+[2026-04-07]
+- Change: Fixed the Decks-to-Study handoff so deck summary modal actions now pass the selected deck into Study the same way Cards already receives its deck handoff.
+- Reason: Tapping Study from a deck summary could open Study with the first available deck instead of the deck the user selected, which broke navigation trust.
+- Files: src/navigation/types.ts, src/ui/screens/DecksScreen.tsx, src/features/study/useStudySession.ts, src/ui/screens/StudyScreen.tsx
+- Risk: Low
+- Notes: Study now consumes an optional `selectedDeckId` route param once, honors it when valid, and preserves the normal first-deck fallback only when no intentional handoff exists.

@@ -24,6 +24,7 @@ import {
 } from './sessionSummary';
 import { useAppSettings } from '../settings/AppSettingsProvider';
 import { getRuntimeStrings } from '../../ui/strings';
+import { resolveSelectedDeckId } from '../../ui/components/card/cardWorkspaceUtils';
 
 type UseStudySessionResult = {
   decks: Deck[];
@@ -56,7 +57,7 @@ type UseStudySessionResult = {
 
 const studyEngine = new StudyEngine();
 
-export function useStudySession(): UseStudySessionResult {
+export function useStudySession(requestedDeckId: number | null = null): UseStudySessionResult {
   const { settings } = useAppSettings();
   const strings = getRuntimeStrings();
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -90,7 +91,9 @@ export function useStudySession(): UseStudySessionResult {
         }
 
         setDecks(storedDecks);
-        setSelectedDeckId((currentDeckId) => currentDeckId ?? storedDecks[0]?.id ?? null);
+        setSelectedDeckId((currentDeckId) =>
+          resolveSelectedDeckId(storedDecks, currentDeckId, requestedDeckId)
+        );
         setScreenError(null);
       } catch {
         if (isMounted) {
@@ -109,6 +112,16 @@ export function useStudySession(): UseStudySessionResult {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (requestedDeckId == null || decks.length === 0) {
+      return;
+    }
+
+    setSelectedDeckId((currentDeckId) =>
+      resolveSelectedDeckId(decks, currentDeckId, requestedDeckId)
+    );
+  }, [decks, requestedDeckId]);
 
   function applySessionStart(nextSession: StudySessionStartResult, cards: Card[]) {
     setSession(nextSession.status === 'ready' ? nextSession.session : null);

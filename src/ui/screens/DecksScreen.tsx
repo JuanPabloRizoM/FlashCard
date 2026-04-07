@@ -149,8 +149,12 @@ export function DecksScreen() {
           navigation.navigate('Cards', { selectedDeckId: selectedDeck.id });
         }}
         onStudy={() => {
+          if (selectedDeck == null) {
+            return;
+          }
+
           setSelectedDeck(null);
-          navigation.navigate('Study');
+          navigation.navigate('Study', { selectedDeckId: selectedDeck.id });
         }}
         visible={selectedDeck != null}
       />
