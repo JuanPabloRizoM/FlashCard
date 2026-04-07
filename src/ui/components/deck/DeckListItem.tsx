@@ -2,10 +2,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Deck } from '../../../core/models/Deck';
 import type { DeckStudyInsights } from '../../../features/study/studyInsights';
-import { DECK_TYPE_LABELS } from '../../../core/types/deck';
 import { DeckReadinessBadge } from './DeckReadinessBadge';
 import { useAppStrings } from '../../strings';
-import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
+import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 
 type DeckListItemProps = {
   deck: Deck;
@@ -14,10 +13,26 @@ type DeckListItemProps = {
   onPress: () => void;
 };
 
+type DeckMetaPillProps = {
+  label: string;
+};
+
+function DeckMetaPill({ label }: DeckMetaPillProps) {
+  const styles = useThemedStyles(createStyles);
+
+  return (
+    <View style={styles.metaPill}>
+      <Text style={styles.metaPillLabel}>{label}</Text>
+    </View>
+  );
+}
+
 export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckListItemProps) {
-  const colors = useThemeColors();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
+  const totalCards = insights?.totalCards ?? 0;
+  const studyableCards = insights?.studyableCards ?? 0;
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -25,21 +40,22 @@ export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckLi
       style={({ pressed }) => [styles.deckCard, pressed ? styles.deckCardPressed : null]}
     >
       <View style={styles.deckCardHeader}>
-        <Text style={styles.deckType}>{strings.deckTypeLabels[deck.type]}</Text>
-        {insights != null ? (
-          <DeckReadinessBadge label={insights.readinessLabel} readiness={insights.readiness} />
-        ) : null}
-      </View>
-      <Text style={styles.deckName}>{deck.name}</Text>
-      {deck.description != null ? <Text style={styles.deckDescription}>{deck.description}</Text> : null}
-      {insights != null ? (
-        <View style={styles.deckInsightRow}>
-          <Text style={styles.deckInsightText}>
-            {strings.deckList.studyableCards(insights.studyableCards, insights.totalCards)}
-          </Text>
-          <Text style={styles.deckInsightText}>{strings.deckList.promptItems(insights.validPromptItemCount)}</Text>
+        <View style={styles.deckTypePill}>
+          <Text style={styles.deckType}>{strings.deckTypeLabels[deck.type]}</Text>
         </View>
-      ) : null}
+        <DeckReadinessBadge
+          label={insights?.readinessLabel ?? strings.deckInsights.readinessEmpty}
+          readiness={insights?.readiness ?? 'empty'}
+        />
+      </View>
+      <View style={styles.copyBlock}>
+        <Text style={styles.deckName}>{deck.name}</Text>
+        {deck.description != null ? <Text style={styles.deckDescription}>{deck.description}</Text> : null}
+      </View>
+      <View style={styles.deckMetaRow}>
+        <DeckMetaPill label={strings.deckList.cardsCount(totalCards)} />
+        <DeckMetaPill label={strings.deckList.readyToStudy(studyableCards)} />
+      </View>
       <Text style={styles.deckMeta}>{timestampLabel}</Text>
     </Pressable>
   );
@@ -50,19 +66,32 @@ const createStyles = (colors: ThemeColors) =>
   deckCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
-    gap: spacing.s,
-    padding: spacing.m
+    gap: spacing.m,
+    padding: spacing.l,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.22,
+    shadowRadius: 28
   },
   deckCardPressed: {
-    borderColor: colors.borderStrong,
-    opacity: 0.96
+    borderColor: colors.primary,
+    transform: [{ scale: 0.992 }]
   },
   deckCardHeader: {
     alignItems: 'center',
     flexDirection: 'row',
+    gap: spacing.s,
     justifyContent: 'space-between'
+  },
+  deckTypePill: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: spacing.s,
+    paddingVertical: spacing.xs
   },
   deckType: {
     color: colors.primary,
@@ -71,22 +100,33 @@ const createStyles = (colors: ThemeColors) =>
     letterSpacing: 0.3,
     textTransform: 'uppercase'
   },
+  copyBlock: {
+    gap: spacing.xs
+  },
   deckName: {
     color: colors.textPrimary,
-    fontSize: typography.subtitle,
+    fontSize: typography.title,
     fontWeight: '700'
   },
   deckDescription: {
     color: colors.textSecondary,
     fontSize: typography.bodySmall,
-    lineHeight: 22
+    lineHeight: 21
   },
-  deckInsightRow: {
+  deckMetaRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.s
   },
-  deckInsightText: {
+  metaPill: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: spacing.s,
+    paddingVertical: spacing.xs
+  },
+  metaPillLabel: {
     color: colors.textSecondary,
     fontSize: typography.caption,
     fontWeight: '600'

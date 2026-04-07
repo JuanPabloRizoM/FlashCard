@@ -11,6 +11,13 @@
 
 ---
 
+[2026-04-07]
+- Change: Polished the Decks experience with a stronger collection overview, more intentional deck cards, and a lighter premium deck summary modal with a Study-first action hierarchy.
+- Reason: Deck browsing and inspection were functionally correct, but the visual hierarchy still felt flatter and less intentional than the rest of the product.
+- Files: src/ui/screens/DecksScreen.tsx, src/ui/components/deck/DeckCollectionOverview.tsx, src/ui/components/deck/DeckListItem.tsx, src/ui/components/deck/DeckSummaryModal.tsx, src/ui/components/deck/DeckSummaryPieces.tsx, src/ui/strings/translations.ts
+- Risk: Low
+- Notes: The modal remains the only deck-inspection path from Decks, and both `Study this deck` and `Open cards` continue to pass the selected deck context into their destination screens.
+
 [2026-04-06]
 - Change: Replaced the split card-import and deck-import panels in Cards with one Import Hub that shares one source selector, one preview-first flow, and one confirm-before-write import surface.
 - Reason: Import was already useful, but it was structurally fragmented and would have duplicated UX and validation logic as more sources were added.

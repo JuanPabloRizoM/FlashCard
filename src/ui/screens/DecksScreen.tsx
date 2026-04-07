@@ -1,5 +1,5 @@
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
@@ -7,6 +7,7 @@ import type { Deck } from '../../core/models/Deck';
 import { useDecks } from '../../features/decks/useDecks';
 import type { RootTabParamList } from '../../navigation/types';
 import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
+import { DeckCollectionOverview } from '../components/deck/DeckCollectionOverview';
 import { DeckListItem } from '../components/deck/DeckListItem';
 import { DeckSummaryModal } from '../components/deck/DeckSummaryModal';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
@@ -44,10 +45,25 @@ export function DecksScreen() {
     onDraftNameChange,
     onCreateDeck
   } = useDecks();
+  const readyDeckCount = useMemo(
+    () => decks.filter((deck) => (deckInsightsByDeckId[deck.id]?.studyableCards ?? 0) > 0).length,
+    [deckInsightsByDeckId, decks]
+  );
+  const studyableCardCount = useMemo(
+    () =>
+      decks.reduce((total, deck) => total + (deckInsightsByDeckId[deck.id]?.studyableCards ?? 0), 0),
+    [deckInsightsByDeckId, decks]
+  );
 
   return (
     <ScreenContainer title={strings.screens.decks.title} subtitle={strings.screens.decks.subtitle}>
       <View style={styles.layout}>
+        <DeckCollectionOverview
+          deckCount={decks.length}
+          readyDeckCount={readyDeckCount}
+          studyableCardCount={studyableCardCount}
+        />
+
         <View style={styles.formCard}>
           <Text style={styles.eyebrow}>{strings.screens.decks.newDeckEyebrow}</Text>
           <Text style={styles.cardTitle}>{strings.screens.decks.newDeckTitle}</Text>
@@ -171,7 +187,7 @@ const createStyles = (colors: ThemeColors) =>
   formCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
     gap: spacing.s,
     padding: spacing.l
@@ -238,8 +254,9 @@ const createStyles = (colors: ThemeColors) =>
     fontSize: typography.caption
   },
   listHeader: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
     flexDirection: 'row',
+    gap: spacing.m,
     justifyContent: 'space-between'
   },
   listHeaderCopy: {
@@ -257,11 +274,12 @@ const createStyles = (colors: ThemeColors) =>
     lineHeight: 18
   },
   listCount: {
-    color: colors.textMuted,
-    fontSize: typography.caption
+    color: colors.textSecondary,
+    fontSize: typography.caption,
+    fontWeight: '600'
   },
   listContent: {
-    gap: spacing.s,
+    gap: spacing.m,
     paddingBottom: spacing.xl
   },
   emptyListContent: {

@@ -3,8 +3,9 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Deck } from '../../../core/models/Deck';
 import type { DeckStudyInsights } from '../../../features/study/studyInsights';
 import { useAppStrings } from '../../strings';
-import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
+import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 import { DeckReadinessBadge } from './DeckReadinessBadge';
+import { DeckSummaryMetaPill, DeckSummaryStat } from './DeckSummaryPieces';
 
 type DeckSummaryModalProps = {
   deck: Deck | null;
@@ -15,22 +16,6 @@ type DeckSummaryModalProps = {
   onStudy: () => void;
 };
 
-type SummaryStatProps = {
-  label: string;
-  value: string;
-};
-
-function SummaryStat({ label, value }: SummaryStatProps) {
-  const styles = useThemedStyles(createStyles);
-
-  return (
-    <View style={styles.statCard}>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
-}
-
 export function DeckSummaryModal({
   deck,
   insights,
@@ -39,7 +24,6 @@ export function DeckSummaryModal({
   onOpenCards,
   onStudy
 }: DeckSummaryModalProps) {
-  const colors = useThemeColors();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
 
@@ -68,7 +52,12 @@ export function DeckSummaryModal({
             <View style={styles.headerCopy}>
               <Text style={styles.eyebrow}>{strings.screens.deckDetail.summaryEyebrow}</Text>
               <Text style={styles.title}>{deck.name}</Text>
-              <Text style={styles.subtitle}>{strings.screens.deckDetail.deckSuffix(strings.deckTypeLabels[deck.type])}</Text>
+              <Text style={styles.subtitle}>
+                {strings.screens.deckDetail.deckSuffix(strings.deckTypeLabels[deck.type])}
+              </Text>
+              <View style={styles.metaRow}>
+                <DeckSummaryMetaPill label={strings.deckTypeLabels[deck.type]} />
+              </View>
             </View>
 
             <Pressable
@@ -82,8 +71,8 @@ export function DeckSummaryModal({
           </View>
 
           <View style={styles.metricsRow}>
-            <SummaryStat label={strings.deckInsights.cards} value={totalCards.toString()} />
-            <SummaryStat label={strings.deckInsights.studyable} value={studyableCards.toString()} />
+            <DeckSummaryStat label={strings.deckInsights.cards} value={totalCards.toString()} />
+            <DeckSummaryStat label={strings.deckInsights.studyable} value={studyableCards.toString()} />
           </View>
 
           <View style={styles.readinessCard}>
@@ -97,18 +86,18 @@ export function DeckSummaryModal({
           <View style={styles.actionsRow}>
             <Pressable
               accessibilityRole="button"
-              onPress={onOpenCards}
+              onPress={onStudy}
               style={({ pressed }) => [styles.primaryAction, pressed ? styles.primaryActionPressed : null]}
             >
-              <Text style={styles.primaryActionLabel}>{strings.screens.deckDetail.openCards}</Text>
+              <Text style={styles.primaryActionLabel}>{strings.screens.deckDetail.studyDeck}</Text>
             </Pressable>
 
             <Pressable
               accessibilityRole="button"
-              onPress={onStudy}
+              onPress={onOpenCards}
               style={({ pressed }) => [styles.secondaryAction, pressed ? styles.secondaryActionPressed : null]}
             >
-              <Text style={styles.secondaryActionLabel}>{strings.screens.deckDetail.studyDeck}</Text>
+              <Text style={styles.secondaryActionLabel}>{strings.screens.deckDetail.openCards}</Text>
             </Pressable>
           </View>
 
@@ -125,7 +114,7 @@ const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     overlay: {
       alignItems: 'center',
-      backgroundColor: 'rgba(22, 32, 51, 0.28)',
+      backgroundColor: 'rgba(7, 12, 21, 0.7)',
       flex: 1,
       justifyContent: 'center',
       padding: spacing.l
@@ -133,11 +122,15 @@ const createStyles = (colors: ThemeColors) =>
     modalCard: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: 24,
+      borderRadius: 28,
       borderWidth: 1,
       gap: spacing.m,
       maxWidth: 520,
       padding: spacing.l,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 22 },
+      shadowOpacity: 0.34,
+      shadowRadius: 34,
       width: '100%'
     },
     headerRow: {
@@ -159,7 +152,7 @@ const createStyles = (colors: ThemeColors) =>
     },
     title: {
       color: colors.textPrimary,
-      fontSize: typography.subtitle,
+      fontSize: typography.title,
       fontWeight: '700'
     },
     subtitle: {
@@ -186,28 +179,15 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 22,
       lineHeight: 24
     },
+    metaRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.s,
+      paddingTop: spacing.xs
+    },
     metricsRow: {
       flexDirection: 'row',
       gap: spacing.s
-    },
-    statCard: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.border,
-      borderRadius: 18,
-      borderWidth: 1,
-      flex: 1,
-      gap: spacing.xs,
-      paddingHorizontal: spacing.m,
-      paddingVertical: spacing.m
-    },
-    statValue: {
-      color: colors.textPrimary,
-      fontSize: typography.subtitle,
-      fontWeight: '700'
-    },
-    statLabel: {
-      color: colors.textSecondary,
-      fontSize: typography.caption
     },
     readinessCard: {
       backgroundColor: colors.surfaceMuted,
@@ -235,16 +215,14 @@ const createStyles = (colors: ThemeColors) =>
       lineHeight: 18
     },
     actionsRow: {
-      flexDirection: 'row',
       gap: spacing.s
     },
     primaryAction: {
       alignItems: 'center',
       backgroundColor: colors.primary,
-      borderRadius: 14,
-      flex: 1,
+      borderRadius: 16,
       paddingHorizontal: spacing.m,
-      paddingVertical: 14
+      paddingVertical: 15
     },
     primaryActionPressed: {
       backgroundColor: colors.primaryPressed
@@ -256,19 +234,18 @@ const createStyles = (colors: ThemeColors) =>
     },
     secondaryAction: {
       alignItems: 'center',
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.primary,
-      borderRadius: 14,
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.borderStrong,
+      borderRadius: 16,
       borderWidth: 1,
-      flex: 1,
       paddingHorizontal: spacing.m,
-      paddingVertical: 14
+      paddingVertical: 15
     },
     secondaryActionPressed: {
-      backgroundColor: colors.surfaceMuted
+      borderColor: colors.primary
     },
     secondaryActionLabel: {
-      color: colors.primary,
+      color: colors.textPrimary,
       fontSize: typography.body,
       fontWeight: '700'
     },

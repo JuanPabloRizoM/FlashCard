@@ -53,6 +53,11 @@ export type AppStrings = {
     decks: {
       title: string;
       subtitle: string;
+      collectionEyebrow: string;
+      collectionTitle: string;
+      collectionSubtitle: string;
+      readyDecksStat: string;
+      studyableCardsStat: string;
       newDeckEyebrow: string;
       newDeckTitle: string;
       newDeckHelper: string;
@@ -389,7 +394,9 @@ export type AppStrings = {
     correct: string;
   };
   deckList: {
+    cardsCount: (count: number) => string;
     studyableCards: (studyableCount: number, totalCount: number) => string;
+    readyToStudy: (count: number) => string;
     promptItems: (count: number) => string;
   };
   deckInsights: {
@@ -564,27 +571,32 @@ const es: AppStrings = {
   screens: {
     decks: {
       title: 'Mazos',
-      subtitle: 'Crea un mazo y empieza a agregar tarjetas.',
+      subtitle: 'Organiza tu material y entra rápido a tarjetas o estudio.',
+      collectionEyebrow: 'Biblioteca',
+      collectionTitle: 'Tus mazos activos',
+      collectionSubtitle: 'Abre un mazo para revisar su estado y continuar sin perder contexto.',
+      readyDecksStat: 'Mazos con contenido estudiable',
+      studyableCardsStat: 'Tarjetas listas para estudiar',
       newDeckEyebrow: 'Nuevo mazo',
       newDeckTitle: 'Crear un mazo',
-      newDeckHelper: 'Elige un nombre claro.',
+      newDeckHelper: 'Usa un nombre corto y claro para encontrarlo rápido.',
       deckNameLabel: 'Nombre del mazo',
       deckNamePlaceholder: 'Verbos en español',
       createDeck: 'Crear mazo',
       savingDeck: 'Guardando mazo...',
       savedDecksTitle: 'Mazos guardados',
-      savedDecksSubtitle: 'Abre un mazo para gestionarlo.',
+      savedDecksSubtitle: 'Toca un mazo para ver un resumen rápido y seguir.',
       noDecksTitle: 'Aún no hay mazos',
       noDecksMessage: 'Crea un mazo para empezar.'
     },
     deckDetail: {
-      summaryEyebrow: 'Resumen del mazo',
+      summaryEyebrow: 'Vista rápida',
       backToDecks: 'Volver a mazos',
       cardsSectionTitle: 'Tarjetas',
       cardsSectionText: 'Agrega o edita tarjetas en la pestaña Tarjetas.',
       createCards: 'Crear tarjetas',
       openCards: 'Abrir tarjetas',
-      studyDeck: 'Estudiar',
+      studyDeck: 'Estudiar este mazo',
       closeSummary: 'Cerrar',
       noCardsTitle: 'Aún no hay tarjetas',
       noCardsMessage: 'Abre Tarjetas para agregar la primera.',
@@ -907,7 +919,9 @@ const es: AppStrings = {
     correct: 'Correcta'
   },
   deckList: {
+    cardsCount: (count) => `${count} tarjetas`,
     studyableCards: (studyableCount, totalCount) => `${studyableCount} / ${totalCount} tarjetas estudiables`,
+    readyToStudy: (count) => `${count} listas para estudiar`,
     promptItems: (count) => `${count} prompts`
   },
   deckInsights: {
@@ -1085,27 +1099,32 @@ const en: AppStrings = {
   screens: {
     decks: {
       title: 'Decks',
-      subtitle: 'Create a deck and start adding cards.',
+      subtitle: 'Organize your material and move quickly into cards or study.',
+      collectionEyebrow: 'Library',
+      collectionTitle: 'Your active decks',
+      collectionSubtitle: 'Open a deck to check its status and move into the next action without losing context.',
+      readyDecksStat: 'Decks ready for study',
+      studyableCardsStat: 'Cards ready to study',
       newDeckEyebrow: 'New deck',
       newDeckTitle: 'Create a deck',
-      newDeckHelper: 'Pick a clear name.',
+      newDeckHelper: 'Use a short, clear name so it stays easy to scan later.',
       deckNameLabel: 'Deck name',
       deckNamePlaceholder: 'Spanish verbs',
       createDeck: 'Create deck',
       savingDeck: 'Saving deck...',
       savedDecksTitle: 'Saved decks',
-      savedDecksSubtitle: 'Open a deck to manage it.',
+      savedDecksSubtitle: 'Tap a deck to open a quick summary and keep moving.',
       noDecksTitle: 'No decks yet',
       noDecksMessage: 'Create a deck to get started.'
     },
     deckDetail: {
-      summaryEyebrow: 'Deck summary',
+      summaryEyebrow: 'Quick overview',
       backToDecks: 'Back to decks',
       cardsSectionTitle: 'Cards',
       cardsSectionText: 'Add or edit cards in the Cards tab.',
       createCards: 'Create cards',
       openCards: 'Open cards',
-      studyDeck: 'Study',
+      studyDeck: 'Study this deck',
       closeSummary: 'Close',
       noCardsTitle: 'No cards yet',
       noCardsMessage: 'Open Cards to add the first card.',
@@ -1426,7 +1445,9 @@ const en: AppStrings = {
     correct: 'Correct'
   },
   deckList: {
+    cardsCount: (count) => `${count} cards`,
     studyableCards: (studyableCount, totalCount) => `${studyableCount} / ${totalCount} studyable cards`,
+    readyToStudy: (count) => `${count} ready to study`,
     promptItems: (count) => `${count} prompt items`
   },
   deckInsights: {
