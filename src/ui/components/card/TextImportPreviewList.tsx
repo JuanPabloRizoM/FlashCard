@@ -10,6 +10,7 @@ type PreviewRow = {
   back: string | null;
   description: string | null;
   application: string | null;
+  imageUri?: string | null;
   isValid: boolean;
   error?: string | null;
 };
@@ -36,7 +37,14 @@ export function TextImportPreviewList({
       <Text style={styles.previewTitle}>{strings.common.preview}</Text>
       <View style={styles.previewList}>
         {visibleRows.map((row) => {
-          const validDetails = [row.back, row.description, row.application].filter(Boolean).join(' | ');
+          const validDetails = [
+            row.back,
+            row.description,
+            row.application,
+            row.imageUri != null && row.imageUri.length > 0 ? strings.preview.imageAttached : null
+          ]
+            .filter(Boolean)
+            .join(' | ');
 
           return (
             <View

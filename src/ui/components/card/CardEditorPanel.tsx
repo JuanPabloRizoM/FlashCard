@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { CardImageInput } from './CardImageInput';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
@@ -120,16 +121,9 @@ export function CardEditorPanel({
           textAlignVertical="top"
           value={draftApplication}
         />
-
-        <Text style={styles.label}>{strings.cardEditor.imageUrlLabel}</Text>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="url"
-          onChangeText={onDraftImageUriChange}
-          placeholder={strings.cardEditor.imageUrlPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          style={styles.input}
+        <CardImageInput
+          isDisabled={isSubmitting}
+          onChange={onDraftImageUriChange}
           value={draftImageUri}
         />
       </View>

@@ -231,7 +231,18 @@ export type AppStrings = {
     backLabel: string;
     descriptionLabel: string;
     applicationLabel: string;
-    imageUrlLabel: string;
+    imageLabel: string;
+    imageSupport: string;
+    uploadImage: string;
+    pasteImage: string;
+    useImageUrl: string;
+    removeImage: string;
+    imageSelected: string;
+    imagePasted: string;
+    imageUploadFailed: string;
+    imagePasteFailed: string;
+    noClipboardImage: string;
+    imagePermissionRequired: string;
     frontPlaceholder: string;
     backPlaceholder: string;
     descriptionPlaceholder: string;
@@ -263,6 +274,19 @@ export type AppStrings = {
     deckNameNotReady: string;
     frontBackOnly: string;
   };
+  csvImport: {
+    chooseFile: string;
+    replaceFile: string;
+    selectedFile: (fileName: string) => string;
+    mappingTitle: string;
+    mappingSupport: string;
+    notUsed: string;
+    imageLabel: string;
+    actionLabel: string;
+    importing: string;
+    validReady: (count: number) => string;
+    fixInvalidRows: string;
+  };
   deckExport: {
     title: string;
     support: string;
@@ -272,6 +296,7 @@ export type AppStrings = {
   };
   preview: {
     emptyValidDetail: string;
+    imageAttached: string;
   };
   studySetup: {
     techniqueTitle: string;
@@ -384,8 +409,10 @@ export type AppStrings = {
     cardUpdated: string;
     couldNotSaveCard: string;
     chooseDeckBeforeImportingCards: string;
+    chooseCsvFile: string;
     noValidCardLines: string;
     importedCards: (createdCount: number, invalidCount: number) => string;
+    couldNotReadCsvFile: string;
     couldNotImportCards: string;
     pasteExportedDeck: string;
     deckImportNotReady: string;
@@ -401,7 +428,13 @@ export type AppStrings = {
     useFormat: string;
     frontRequired: string;
     backRequired: string;
+    frontColumnRequired: string;
+    backColumnRequired: string;
     lineEmpty: string;
+    csvEmpty: string;
+    csvHeaderRequired: string;
+    csvDataRequired: string;
+    csvQuoteError: string;
     deckHeaderRequired: string;
     fixInvalidDeckLines: string;
     missingBack: string;
@@ -662,9 +695,9 @@ const es: AppStrings = {
     targetDeckMissing: 'Destino: elige un mazo',
     targetNewDeck: 'Destino: crear un mazo',
     fileTitle: 'Importar desde archivo',
-    fileSupport: 'CSV y XLSX llegarán aquí después.',
-    fileNotice: 'Aún no puedes importar archivos en esta versión.',
-    fileAction: 'Disponible próximamente'
+    fileSupport: 'Carga un CSV, asigna columnas y confirma antes de guardar.',
+    fileNotice: 'La importación por archivo estará disponible aquí.',
+    fileAction: 'Elegir archivo'
   },
   cardEditor: {
     newCardTitle: 'Nueva tarjeta',
@@ -675,7 +708,18 @@ const es: AppStrings = {
     backLabel: 'Reverso',
     descriptionLabel: 'Descripción (opcional)',
     applicationLabel: 'Aplicación / Notas (opcional)',
-    imageUrlLabel: 'URL de imagen (opcional)',
+    imageLabel: 'Imagen (opcional)',
+    imageSupport: 'Sube una imagen, pégala desde el portapapeles o usa una URL.',
+    uploadImage: 'Subir',
+    pasteImage: 'Pegar',
+    useImageUrl: 'URL',
+    removeImage: 'Quitar',
+    imageSelected: 'Imagen lista.',
+    imagePasted: 'Imagen pegada.',
+    imageUploadFailed: 'No se pudo cargar la imagen.',
+    imagePasteFailed: 'No se pudo pegar la imagen.',
+    noClipboardImage: 'No hay una imagen en el portapapeles.',
+    imagePermissionRequired: 'Activa el acceso a fotos para elegir una imagen.',
     frontPlaceholder: 'Pregunta o pista',
     backPlaceholder: 'Respuesta',
     descriptionPlaceholder: 'Agrega una descripción',
@@ -709,6 +753,19 @@ const es: AppStrings = {
     deckNameNotReady: 'Nombre del mazo no listo',
     frontBackOnly: 'Solo frente y reverso'
   },
+  csvImport: {
+    chooseFile: 'Elegir CSV',
+    replaceFile: 'Cambiar archivo',
+    selectedFile: (fileName) => `Archivo: ${fileName}`,
+    mappingTitle: 'Asignar columnas',
+    mappingSupport: 'Relaciona cada columna con el campo correcto antes de importar.',
+    notUsed: 'No usar',
+    imageLabel: 'Imagen (opcional)',
+    actionLabel: 'Importar CSV',
+    importing: 'Importando CSV...',
+    validReady: (count) => `${count} filas listas`,
+    fixInvalidRows: 'Corrige las filas o columnas inválidas para importar'
+  },
   deckExport: {
     title: 'Exportar mazo',
     support: 'Copia este mazo como texto.',
@@ -717,7 +774,8 @@ const es: AppStrings = {
     summaryText: 'Encabezado más una tarjeta por línea.'
   },
   preview: {
-    emptyValidDetail: 'Solo frente y reverso'
+    emptyValidDetail: 'Solo frente y reverso',
+    imageAttached: 'Imagen'
   },
   studySetup: {
     techniqueTitle: 'Elige una técnica',
@@ -814,7 +872,7 @@ const es: AppStrings = {
     invalidCardBack: 'Escribe el reverso de la tarjeta.',
     invalidCardDescription: 'La descripción es demasiado larga.',
     invalidCardApplication: 'La aplicación es demasiado larga.',
-    invalidCardImageUri: 'Escribe una URL de imagen válida.',
+    invalidCardImageUri: 'Escribe un valor de imagen válido.',
     invalidStudyProgressCard: 'El progreso requiere una tarjeta válida.',
     invalidStudyProgressDeck: 'El progreso requiere un mazo válido.',
     invalidStudyProgressPromptMode: 'El progreso requiere un modo de prompt válido.',
@@ -830,9 +888,11 @@ const es: AppStrings = {
     cardUpdated: 'Tarjeta actualizada',
     couldNotSaveCard: 'No se pudo guardar la tarjeta. Inténtalo de nuevo.',
     chooseDeckBeforeImportingCards: 'Elige un mazo antes de importar tarjetas.',
+    chooseCsvFile: 'Elige un archivo CSV antes de importarlo.',
     noValidCardLines: 'Todavía no hay líneas válidas listas para importar.',
     importedCards: (createdCount, invalidCount) =>
       `Se importaron ${createdCount} tarjeta${createdCount === 1 ? '' : 's'}. Se omitieron ${invalidCount} línea${invalidCount === 1 ? '' : 's'} inválida${invalidCount === 1 ? '' : 's'}.`,
+    couldNotReadCsvFile: 'No se pudo leer este archivo CSV.',
     couldNotImportCards: 'No se pudieron importar las tarjetas ahora mismo. Inténtalo de nuevo.',
     pasteExportedDeck: 'Pega un mazo exportado antes de importarlo.',
     deckImportNotReady: 'Esta importación de mazo aún no está lista.',
@@ -850,7 +910,13 @@ const es: AppStrings = {
       'Usa `frente | reverso`, con `descripción | aplicación` opcionales, manteniendo los campos vacíos en orden cuando haga falta.',
     frontRequired: 'El frente es obligatorio.',
     backRequired: 'El reverso es obligatorio.',
+    frontColumnRequired: 'Asigna una columna al frente.',
+    backColumnRequired: 'Asigna una columna al reverso.',
     lineEmpty: 'La línea está vacía.',
+    csvEmpty: 'El archivo CSV está vacío.',
+    csvHeaderRequired: 'El CSV necesita una fila de encabezados.',
+    csvDataRequired: 'El CSV necesita al menos una fila de datos.',
+    csvQuoteError: 'El CSV tiene comillas sin cerrar.',
     deckHeaderRequired: 'Empieza la importación con `# Deck: Nombre del mazo` en la primera línea con contenido.',
     fixInvalidDeckLines: 'Corrige las líneas inválidas o elimínalas antes de importar este mazo.',
     missingBack: 'Falta reverso',
@@ -1111,9 +1177,9 @@ const en: AppStrings = {
     targetDeckMissing: 'Target: choose a deck',
     targetNewDeck: 'Target: create a new deck',
     fileTitle: 'Import from file',
-    fileSupport: 'CSV and XLSX will land here next.',
-    fileNotice: 'File import is not available in this version yet.',
-    fileAction: 'Coming next'
+    fileSupport: 'Upload a CSV, map the columns, and confirm before saving.',
+    fileNotice: 'File import lives here.',
+    fileAction: 'Choose file'
   },
   cardEditor: {
     newCardTitle: 'New card',
@@ -1124,7 +1190,18 @@ const en: AppStrings = {
     backLabel: 'Back',
     descriptionLabel: 'Description (optional)',
     applicationLabel: 'Application / Notes (optional)',
-    imageUrlLabel: 'Image URL (optional)',
+    imageLabel: 'Image (optional)',
+    imageSupport: 'Upload an image, paste one from the clipboard, or use a URL.',
+    uploadImage: 'Upload',
+    pasteImage: 'Paste',
+    useImageUrl: 'URL',
+    removeImage: 'Remove',
+    imageSelected: 'Image ready.',
+    imagePasted: 'Image pasted.',
+    imageUploadFailed: 'Could not load the image.',
+    imagePasteFailed: 'Could not paste the image.',
+    noClipboardImage: 'There is no image in the clipboard.',
+    imagePermissionRequired: 'Allow photo access to choose an image.',
     frontPlaceholder: 'Question or prompt',
     backPlaceholder: 'Answer',
     descriptionPlaceholder: 'Add a description',
@@ -1156,6 +1233,19 @@ const en: AppStrings = {
     deckNameNotReady: 'Deck name not ready',
     frontBackOnly: 'Front and back only'
   },
+  csvImport: {
+    chooseFile: 'Choose CSV',
+    replaceFile: 'Replace file',
+    selectedFile: (fileName) => `File: ${fileName}`,
+    mappingTitle: 'Map columns',
+    mappingSupport: 'Match each column to the right field before importing.',
+    notUsed: 'Not used',
+    imageLabel: 'Image (optional)',
+    actionLabel: 'Import CSV',
+    importing: 'Importing CSV...',
+    validReady: (count) => `${count} rows ready`,
+    fixInvalidRows: 'Fix invalid rows or mappings to import'
+  },
   deckExport: {
     title: 'Export deck',
     support: 'Copy this deck as text.',
@@ -1164,7 +1254,8 @@ const en: AppStrings = {
     summaryText: 'Header plus one card per line.'
   },
   preview: {
-    emptyValidDetail: 'Front and back only'
+    emptyValidDetail: 'Front and back only',
+    imageAttached: 'Image'
   },
   studySetup: {
     techniqueTitle: 'Choose a technique',
@@ -1261,7 +1352,7 @@ const en: AppStrings = {
     invalidCardBack: 'Enter the back of the card.',
     invalidCardDescription: 'Description is too long.',
     invalidCardApplication: 'Application is too long.',
-    invalidCardImageUri: 'Enter a valid image URL.',
+    invalidCardImageUri: 'Enter a valid image value.',
     invalidStudyProgressCard: 'Study progress requires a valid card.',
     invalidStudyProgressDeck: 'Study progress requires a valid deck.',
     invalidStudyProgressPromptMode: 'Study progress requires a supported prompt mode.',
@@ -1277,9 +1368,11 @@ const en: AppStrings = {
     cardUpdated: 'Card updated',
     couldNotSaveCard: 'Could not save the card. Please try again.',
     chooseDeckBeforeImportingCards: 'Choose a deck before importing cards.',
+    chooseCsvFile: 'Choose a CSV file before importing.',
     noValidCardLines: 'No valid lines are ready to import yet.',
     importedCards: (createdCount, invalidCount) =>
       `Imported ${createdCount} card${createdCount === 1 ? '' : 's'}. Skipped ${invalidCount} invalid line${invalidCount === 1 ? '' : 's'}.`,
+    couldNotReadCsvFile: 'Could not read this CSV file.',
     couldNotImportCards: 'Could not import cards right now. Please try again.',
     pasteExportedDeck: 'Paste an exported deck before importing.',
     deckImportNotReady: 'This deck import is not ready yet.',
@@ -1297,7 +1390,13 @@ const en: AppStrings = {
       'Use `front | back`, with optional `description | application`, keeping empty fields in order when needed.',
     frontRequired: 'Front is required.',
     backRequired: 'Back is required.',
+    frontColumnRequired: 'Map a column to Front.',
+    backColumnRequired: 'Map a column to Back.',
     lineEmpty: 'Line is empty.',
+    csvEmpty: 'The CSV file is empty.',
+    csvHeaderRequired: 'The CSV file needs a header row.',
+    csvDataRequired: 'The CSV file needs at least one data row.',
+    csvQuoteError: 'The CSV file has an unclosed quoted value.',
     deckHeaderRequired: 'Start the import with `# Deck: Deck name` on the first non-empty line.',
     fixInvalidDeckLines: 'Fix invalid card lines or remove them before importing this deck.',
     missingBack: 'Missing back',

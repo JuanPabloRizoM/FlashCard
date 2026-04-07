@@ -1,4 +1,5 @@
 import type { CardImportPreview } from '../../../features/cards/cardImport';
+import type { CsvImportField, CsvImportMapping, CsvImportPreview } from '../../../features/cards/csvImport';
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
 import { CardEditorPanel } from './CardEditorPanel';
 import { ImportHubPanel, type ImportHubSource } from './ImportHubPanel';
@@ -21,10 +22,16 @@ type CardWorkspacePanelProps = {
   importText: string;
   importPreview: CardImportPreview;
   importResultMessage: string | null;
+  csvFileName: string | null;
+  csvHeaders: string[];
+  csvMapping: CsvImportMapping;
+  csvPreview: CsvImportPreview;
+  csvImportResultMessage: string | null;
   deckImportText: string;
   deckImportPreview: DeckImportPreview;
   deckImportResultMessage: string | null;
   isImportSubmitting: boolean;
+  isCsvImportSubmitting: boolean;
   isDeckImportSubmitting: boolean;
   defaultImportSource?: ImportHubSource;
   onDraftFrontChange: (value: string) => void;
@@ -37,6 +44,10 @@ type CardWorkspacePanelProps = {
   onImportTextChange: (value: string) => void;
   onImportCards: () => Promise<void>;
   onClearImport: () => void;
+  onPickCsvFile: () => Promise<void>;
+  onChangeCsvMapping: (field: CsvImportField, header: string | null) => void;
+  onImportCsv: () => Promise<void>;
+  onClearCsvImport: () => void;
   onDeckImportTextChange: (value: string) => void;
   onImportDeck: () => Promise<void>;
   onClearDeckImport: () => void;
@@ -59,10 +70,16 @@ export function CardWorkspacePanel({
   importText,
   importPreview,
   importResultMessage,
+  csvFileName,
+  csvHeaders,
+  csvMapping,
+  csvPreview,
+  csvImportResultMessage,
   deckImportText,
   deckImportPreview,
   deckImportResultMessage,
   isImportSubmitting,
+  isCsvImportSubmitting,
   isDeckImportSubmitting,
   defaultImportSource,
   onDraftFrontChange,
@@ -75,6 +92,10 @@ export function CardWorkspacePanel({
   onImportTextChange,
   onImportCards,
   onClearImport,
+  onPickCsvFile,
+  onChangeCsvMapping,
+  onImportCsv,
+  onClearCsvImport,
   onDeckImportTextChange,
   onImportDeck,
   onClearDeckImport
@@ -87,19 +108,29 @@ export function CardWorkspacePanel({
           cardImportPreview={importPreview}
           cardImportResultMessage={importResultMessage}
           cardImportText={importText}
+          csvFileName={csvFileName}
+          csvHeaders={csvHeaders}
+          csvImportResultMessage={csvImportResultMessage}
+          csvMapping={csvMapping}
+          csvPreview={csvPreview}
           deckImportPreview={deckImportPreview}
           deckImportResultMessage={deckImportResultMessage}
           deckImportText={deckImportText}
           defaultSource={defaultImportSource}
           isCardImportSubmitting={isImportSubmitting}
+          isCsvImportSubmitting={isCsvImportSubmitting}
           isDeckImportSubmitting={isDeckImportSubmitting}
+          onChangeCsvMapping={onChangeCsvMapping}
           isLocked={isImportLocked}
           onCardImportTextChange={onImportTextChange}
           onClearCardImport={onClearImport}
+          onClearCsvImport={onClearCsvImport}
           onClearDeckImport={onClearDeckImport}
           onDeckImportTextChange={onDeckImportTextChange}
           onImportCards={onImportCards}
+          onImportCsv={onImportCsv}
           onImportDeck={onImportDeck}
+          onPickCsvFile={onPickCsvFile}
           selectedDeckName={selectedDeckName}
         />
       );

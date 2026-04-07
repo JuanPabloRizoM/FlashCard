@@ -113,8 +113,8 @@ export function validateCreateCardInput(input: CreateCardInput): CardValidationE
       normalizedInput.imageUri != null &&
       normalizedInput.imageUri.length > MAX_CARD_IMAGE_URI_LENGTH
         ? strings.locale.startsWith('es')
-          ? `Las URL de imagen deben tener ${MAX_CARD_IMAGE_URI_LENGTH} caracteres o menos.`
-          : `Image URLs must be ${MAX_CARD_IMAGE_URI_LENGTH} characters or fewer.`
+          ? `Los valores de imagen deben tener ${MAX_CARD_IMAGE_URI_LENGTH} caracteres o menos.`
+          : `Image values must be ${MAX_CARD_IMAGE_URI_LENGTH} characters or fewer.`
         : null
   };
 }

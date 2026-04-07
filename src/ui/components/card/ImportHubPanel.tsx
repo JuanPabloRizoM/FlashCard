@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { CardImportPreview } from '../../../features/cards/cardImport';
+import type { CsvImportField, CsvImportMapping, CsvImportPreview } from '../../../features/cards/csvImport';
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
-import { ImportHubFilePlaceholder } from './ImportHubFilePlaceholder';
 import { ImportHubPreviewContent } from './ImportHubPreviewContent';
 import { ImportHubSourceSwitch } from './ImportHubSourceSwitch';
 import { TextImportWorkspace } from './TextImportWorkspace';
+import { CsvImportPanel } from './CsvImportPanel';
 
 export type ImportHubSource = 'paste_text' | 'import_deck' | 'file';
 
@@ -23,6 +24,16 @@ type ImportHubPanelProps = {
   onCardImportTextChange: (value: string) => void;
   onImportCards: () => Promise<void>;
   onClearCardImport: () => void;
+  csvFileName: string | null;
+  csvHeaders: string[];
+  csvMapping: CsvImportMapping;
+  csvPreview: CsvImportPreview;
+  csvImportResultMessage: string | null;
+  isCsvImportSubmitting: boolean;
+  onPickCsvFile: () => Promise<void>;
+  onChangeCsvMapping: (field: CsvImportField, header: string | null) => void;
+  onImportCsv: () => Promise<void>;
+  onClearCsvImport: () => void;
   deckImportText: string;
   deckImportPreview: DeckImportPreview;
   deckImportResultMessage: string | null;
@@ -44,6 +55,16 @@ export function ImportHubPanel({
   onCardImportTextChange,
   onImportCards,
   onClearCardImport,
+  csvFileName,
+  csvHeaders,
+  csvMapping,
+  csvPreview,
+  csvImportResultMessage,
+  isCsvImportSubmitting,
+  onPickCsvFile,
+  onChangeCsvMapping,
+  onImportCsv,
+  onClearCsvImport,
   deckImportText,
   deckImportPreview,
   deckImportResultMessage,
@@ -97,23 +118,7 @@ export function ImportHubPanel({
     return null;
   }
 
-  if (activeSource === 'file') {
-    return (
-      <View style={styles.panel}>
-        <View style={styles.headerBlock}>
-          <Text style={styles.panelTitle}>{strings.importHub.title}</Text>
-          <Text style={styles.panelSubtitle}>{strings.importHub.subtitle}</Text>
-        </View>
-        <ImportHubSourceSwitch
-          activeSource={activeSource}
-          isDisabled={isLocked}
-          onChangeSource={setActiveSource}
-        />
-        <ImportHubFilePlaceholder />
-      </View>
-    );
-  }
-
+  const isFileSource = activeSource === 'file';
   const isDeckSource = activeSource === 'import_deck';
   const importText = isDeckSource ? deckImportText : cardImportText;
   const isSubmitting = isDeckSource ? isDeckImportSubmitting : isCardImportSubmitting;
@@ -164,6 +169,41 @@ export function ImportHubPanel({
   const rows = isDeckSource ? deckImportPreview.cardPreview.rows : cardImportPreview.rows;
   const emptyValidDetailLabel = isDeckSource ? strings.deckImport.frontBackOnly : undefined;
   const statusText = isDeckSource ? getDeckStatusText() : getCardStatusText();
+  const topSlot = (
+    <>
+      <View style={styles.headerBlock}>
+        <Text style={styles.panelTitle}>{strings.importHub.title}</Text>
+        <Text style={styles.panelSubtitle}>{strings.importHub.subtitle}</Text>
+      </View>
+      <ImportHubSourceSwitch
+        activeSource={activeSource}
+        isDisabled={isLocked}
+        onChangeSource={setActiveSource}
+      />
+      <Text style={styles.targetLabel}>{helperTarget}</Text>
+    </>
+  );
+
+  if (isFileSource) {
+    return (
+      <View style={styles.panel}>
+        {topSlot}
+        <CsvImportPanel
+          fileName={csvFileName}
+          headers={csvHeaders}
+          importResultMessage={csvImportResultMessage}
+          isDisabled={isLocked || selectedDeckName == null}
+          isSubmitting={isCsvImportSubmitting}
+          mapping={csvMapping}
+          onChangeMapping={onChangeCsvMapping}
+          onClearFile={onClearCsvImport}
+          onImportCsv={onImportCsv}
+          onPickFile={onPickCsvFile}
+          preview={csvPreview}
+        />
+      </View>
+    );
+  }
 
   return (
     <TextImportWorkspace
@@ -184,20 +224,7 @@ export function ImportHubPanel({
       onImportTextChange={isDeckSource ? onDeckImportTextChange : onCardImportTextChange}
       subtitle={subtitle}
       title={title}
-      topSlot={
-        <>
-          <View style={styles.headerBlock}>
-            <Text style={styles.panelTitle}>{strings.importHub.title}</Text>
-            <Text style={styles.panelSubtitle}>{strings.importHub.subtitle}</Text>
-          </View>
-          <ImportHubSourceSwitch
-            activeSource={activeSource}
-            isDisabled={isLocked}
-            onChangeSource={setActiveSource}
-          />
-          <Text style={styles.targetLabel}>{helperTarget}</Text>
-        </>
-      }
+      topSlot={topSlot}
     >
       <ImportHubPreviewContent
         emptyValidDetailLabel={emptyValidDetailLabel}

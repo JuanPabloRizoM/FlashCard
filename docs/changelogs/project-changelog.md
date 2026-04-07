@@ -352,3 +352,12 @@
 - Files: package.json, app.json, src/core/types/auth.ts, src/features/auth/AuthProvider.tsx, src/ui/screens/auth/AuthLandingScreen.tsx, src/ui/screens/auth/SignInScreen.tsx, src/ui/screens/auth/CreateAccountScreen.tsx, src/ui/screens/auth/ForgotPasswordScreen.tsx, src/ui/strings/translations.ts, src/services/supabase/supabaseClient.ts, src/storage/supabaseAuthStorage.native.ts, src/storage/supabaseAuthStorage.web.ts, docs/features/auth.md, docs/flows/main-user-flows.md
 - Risk: Medium
 - Notes: Guest mode still works locally. Real Supabase environment variables and dashboard redirect/provider configuration are still required before production auth can succeed.
+
+---
+
+[2026-04-06]
+- Change: Replaced the URL-only card image field with a real optional image input area and turned Import Hub File into a real CSV import flow with shared preview, mapping, validation, and confirm behavior.
+- Reason: Card authoring and import were still too constrained for practical repeated use; the app needed real image attachment and a real file-based import path.
+- Files: app.json, package.json, package-lock.json, src/core/types/card.ts, src/services/validation/cardValidation.ts, src/features/cards/cardImport.ts, src/features/cards/csvImport.ts, src/features/cards/useCsvImport.ts, src/features/cards/useDeckCards.ts, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardImageInput.tsx, src/ui/components/card/CsvImportPanel.tsx, src/ui/components/card/CsvImportMappingField.tsx, src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/TextImportPreviewList.tsx, src/ui/components/card/CardWorkspacePanel.tsx, src/ui/components/card/CardWorkspaceNoDecks.tsx, src/ui/screens/CardsScreen.tsx, src/ui/strings/translations.ts
+- Risk: Medium
+- Notes: Images can now be uploaded from the device, pasted from the clipboard, previewed, replaced, or removed. File import now supports real CSV parsing with header mapping into front, back, description, application, and image fields, and it reuses the shared Import Hub review path.

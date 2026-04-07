@@ -53,11 +53,17 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     importText,
     importPreview,
     importResultMessage,
+    csvFileName,
+    csvHeaders,
+    csvMapping,
+    csvPreview,
+    csvImportResultMessage,
     formError,
     screenError,
     isLoading,
     isSubmitting,
     isImportSubmitting,
+    isCsvImportSubmitting,
     saveFeedbackMessage,
     canSubmit,
     onDraftFrontChange,
@@ -66,9 +72,13 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     onDraftApplicationChange,
     onDraftImageUriChange,
     onImportTextChange,
+    onPickCsvFile,
+    onChangeCsvMapping,
     onSaveCard,
     onImportCards,
+    onImportCsv,
     onClearImport,
+    onClearCsvImport,
     onEditCard,
     onCancelEditing
   } = useDeckCards(selectedDeckId);
@@ -95,9 +105,14 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
       setDeckScreenError(null);
     }
   });
-  const isEditorLocked = isSubmitting || isImportSubmitting || isDeckImportSubmitting;
+  const isEditorLocked =
+    isSubmitting || isImportSubmitting || isCsvImportSubmitting || isDeckImportSubmitting;
   const isImportLocked =
-    isSubmitting || isImportSubmitting || isDeckImportSubmitting || editingCardId != null;
+    isSubmitting ||
+    isImportSubmitting ||
+    isCsvImportSubmitting ||
+    isDeckImportSubmitting ||
+    editingCardId != null;
   useEffect(() => {
     if (routeSelectedDeckId == null) {
       return;
@@ -170,17 +185,27 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           cardImportPreview={importPreview}
           cardImportResultMessage={importResultMessage}
           cardImportText={importText}
+          csvFileName={csvFileName}
+          csvHeaders={csvHeaders}
+          csvImportResultMessage={csvImportResultMessage}
+          csvMapping={csvMapping}
+          csvPreview={csvPreview}
           deckImportPreview={deckImportPreview}
           deckImportResultMessage={deckImportResultMessage}
           deckImportText={deckImportText}
           isCardImportSubmitting={isImportSubmitting}
+          isCsvImportSubmitting={isCsvImportSubmitting}
           isDeckImportSubmitting={isDeckImportSubmitting}
+          onChangeCsvMapping={onChangeCsvMapping}
           onCardImportTextChange={onImportTextChange}
           onClearCardImport={onClearImport}
+          onClearCsvImport={onClearCsvImport}
           onClearDeckImport={onClearDeckImport}
           onDeckImportTextChange={onDeckImportTextChange}
           onImportCards={onImportCards}
+          onImportCsv={onImportCsv}
           onImportDeck={onImportDeck}
+          onPickCsvFile={onPickCsvFile}
         />
       </ScreenContainer>
     );
@@ -223,15 +248,23 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           importPreview={importPreview}
           importResultMessage={importResultMessage}
           importText={importText}
+          csvFileName={csvFileName}
+          csvHeaders={csvHeaders}
+          csvImportResultMessage={csvImportResultMessage}
+          csvMapping={csvMapping}
+          csvPreview={csvPreview}
           isDeckImportSubmitting={isDeckImportSubmitting}
           isEditorLocked={isEditorLocked}
           isImportLocked={isImportLocked}
           isImportSubmitting={isImportSubmitting}
+          isCsvImportSubmitting={isCsvImportSubmitting}
           mode={workspaceMode}
           defaultImportSource={selectedDeck != null ? 'paste_text' : 'import_deck'}
+          onChangeCsvMapping={onChangeCsvMapping}
           onCancelEditing={onCancelEditing}
           onClearDeckImport={onClearDeckImport}
           onClearImport={onClearImport}
+          onClearCsvImport={onClearCsvImport}
           onDeckImportTextChange={onDeckImportTextChange}
           onDraftApplicationChange={onDraftApplicationChange}
           onDraftDescriptionChange={onDraftDescriptionChange}
@@ -239,8 +272,10 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           onDraftFrontChange={onDraftFrontChange}
           onDraftBackChange={onDraftBackChange}
           onImportCards={onImportCards}
+          onImportCsv={onImportCsv}
           onImportDeck={onImportDeck}
           onImportTextChange={onImportTextChange}
+          onPickCsvFile={onPickCsvFile}
           onSaveCard={onSaveCard}
           saveFeedbackMessage={saveFeedbackMessage}
           selectedDeckName={selectedDeck?.name ?? null}

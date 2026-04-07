@@ -10,6 +10,8 @@ import { createCard, listCardsByDeck, updateCard } from '../../storage/repositor
 import { getRuntimeStrings } from '../../ui/strings';
 import { useCardImport } from './useCardImport';
 import type { CardImportPreview } from './cardImport';
+import { useCsvImport } from './useCsvImport';
+import type { CsvImportField, CsvImportMapping, CsvImportPreview } from './csvImport';
 
 type UseDeckCardsResult = {
   cards: Card[];
@@ -22,11 +24,17 @@ type UseDeckCardsResult = {
   importText: string;
   importPreview: CardImportPreview;
   importResultMessage: string | null;
+  csvFileName: string | null;
+  csvHeaders: string[];
+  csvMapping: CsvImportMapping;
+  csvPreview: CsvImportPreview;
+  csvImportResultMessage: string | null;
   formError: string | null;
   screenError: string | null;
   isLoading: boolean;
   isSubmitting: boolean;
   isImportSubmitting: boolean;
+  isCsvImportSubmitting: boolean;
   saveFeedbackMessage: string | null;
   canSubmit: boolean;
   onDraftFrontChange: (value: string) => void;
@@ -35,9 +43,13 @@ type UseDeckCardsResult = {
   onDraftApplicationChange: (value: string) => void;
   onDraftImageUriChange: (value: string) => void;
   onImportTextChange: (value: string) => void;
+  onPickCsvFile: () => Promise<void>;
+  onChangeCsvMapping: (field: CsvImportField, header: string | null) => void;
   onSaveCard: () => Promise<void>;
   onImportCards: () => Promise<void>;
+  onImportCsv: () => Promise<void>;
   onClearImport: () => void;
+  onClearCsvImport: () => void;
   onEditCard: (card: Card) => void;
   onCancelEditing: () => void;
 };
@@ -87,6 +99,22 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     onImportCards,
     onClearImport
   } = useCardImport({
+    deckId,
+    setCards,
+    setScreenError
+  });
+  const {
+    fileName: csvFileName,
+    headers: csvHeaders,
+    mapping: csvMapping,
+    preview: csvPreview,
+    importResultMessage: csvImportResultMessage,
+    isSubmitting: isCsvImportSubmitting,
+    onPickFile: onPickCsvFile,
+    onChangeMapping: onChangeCsvMapping,
+    onImportCsv,
+    onClearFile: onClearCsvImport
+  } = useCsvImport({
     deckId,
     setCards,
     setScreenError
@@ -230,11 +258,17 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
     importText,
     importPreview,
     importResultMessage,
+    csvFileName,
+    csvHeaders,
+    csvMapping,
+    csvPreview,
+    csvImportResultMessage,
     formError,
     screenError,
     isLoading,
     isSubmitting,
     isImportSubmitting,
+    isCsvImportSubmitting,
     saveFeedbackMessage,
     canSubmit:
       deckId != null &&
@@ -262,9 +296,13 @@ export function useDeckCards(deckId: number | null): UseDeckCardsResult {
       clearFormError();
     },
     onImportTextChange,
+    onPickCsvFile,
+    onChangeCsvMapping,
     onSaveCard,
     onImportCards,
+    onImportCsv,
     onClearImport,
+    onClearCsvImport,
     onEditCard: (card) => {
       setEditingCardId(card.id);
       setDraftFront(card.front);
