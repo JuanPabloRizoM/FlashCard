@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, Platform, StyleSheet, Text, View } from 'react-native';
 
 import type { StudyAnswer } from '../../../core/types/study';
 import { getRuntimeStrings } from '../../strings';
@@ -13,6 +13,8 @@ type StudySessionProgressProps = {
   isSubmittingAnswer: boolean;
   lastAnswer: StudyAnswer | null;
 };
+
+const SHOULD_USE_NATIVE_DRIVER = Platform.OS !== 'web';
 
 function getStageLabel(revealAnswer: boolean, isSubmittingAnswer: boolean): string {
   const strings = getRuntimeStrings();
@@ -80,7 +82,7 @@ export function StudySessionProgress({
     Animated.timing(feedbackOpacity, {
       duration: 180,
       toValue: lastAnswer != null && !revealAnswer && !isSubmittingAnswer ? 1 : 0,
-      useNativeDriver: true
+      useNativeDriver: SHOULD_USE_NATIVE_DRIVER
     }).start();
   }, [feedbackOpacity, isSubmittingAnswer, lastAnswer, revealAnswer]);
 

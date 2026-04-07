@@ -53,7 +53,6 @@ export function StudySessionRouteScreen({ navigation }: StudySessionRouteScreenP
       isSavingSessionStats={isSavingSessionStats}
       isStartingSession={isStartingSession}
       isSubmittingAnswer={isSubmittingAnswer}
-      lastAnswer={session?.lastAnswer ?? null}
       onContinueAfterSummary={handleLeaveSession}
       onLeaveSession={handleLeaveSession}
       onRevealAnswer={onRevealAnswer}
@@ -65,11 +64,8 @@ export function StudySessionRouteScreen({ navigation }: StudySessionRouteScreenP
           navigation.navigate('StudySessionStats', { sessionId: completedSessionDetail.session.id });
         }
       }}
-      remainingCount={(session?.items.length ?? 0) - (session?.answeredCount ?? 0)}
       revealAnswer={revealAnswer}
       screenError={screenError}
-      sessionMode={selectedSessionMode}
-      sessionSize={selectedSessionSize}
       sessionStartResult={sessionStartResult}
       sessionSummary={sessionSummary}
       techniqueLabel={STUDY_TECHNIQUE_LABELS[selectedTechniqueId]}

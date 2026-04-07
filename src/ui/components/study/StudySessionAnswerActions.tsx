@@ -63,20 +63,24 @@ const createStyles = (colors: ThemeColors) =>
   },
   answerButton: {
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: 18,
     flex: 1,
     paddingHorizontal: spacing.m,
-    paddingVertical: 14
+    paddingVertical: spacing.m
   },
   answerButtonMuted: {
-    backgroundColor: colors.warning
+    backgroundColor: colors.warningSoft,
+    borderColor: colors.warning,
+    borderWidth: 1
   },
   answerButtonSuccess: {
-    backgroundColor: colors.success
+    backgroundColor: colors.successSoft,
+    borderColor: colors.success,
+    borderWidth: 1
   },
   answerButtonLabel: {
-    color: colors.surface,
-    fontSize: typography.body,
+    color: colors.textPrimary,
+    fontSize: typography.bodySmall,
     fontWeight: '700'
   },
   buttonDisabled: {

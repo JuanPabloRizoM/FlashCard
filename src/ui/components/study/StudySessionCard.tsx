@@ -10,38 +10,27 @@ import {
   View
 } from 'react-native';
 
-import type { StudyAnswer } from '../../../core/types/study';
 import type { StudyQueueItem } from '../../../core/models/StudySession';
 import { getLocalizedStudyFieldLabel } from '../../../features/study/studySessionStats';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 import { StudySessionAnswerActions } from './StudySessionAnswerActions';
-import { StudySessionProgress } from './StudySessionProgress';
 
 type StudySessionCardProps = {
   currentItem: StudyQueueItem;
-  techniqueLabel: string;
-  answeredCount: number;
-  totalCount: number;
-  remainingCount: number;
   revealAnswer: boolean;
   isSubmittingAnswer: boolean;
-  lastAnswer: StudyAnswer | null;
   onRevealAnswer: () => void;
   onSubmitAnswer: (isCorrect: boolean) => void | Promise<void>;
 };
 
 const SWIPE_THRESHOLD = 72;
+const SHOULD_USE_NATIVE_DRIVER = Platform.OS !== 'web';
 
 export function StudySessionCard({
   currentItem,
-  techniqueLabel,
-  answeredCount,
-  totalCount,
-  remainingCount,
   revealAnswer,
   isSubmittingAnswer,
-  lastAnswer,
   onRevealAnswer,
   onSubmitAnswer
 }: StudySessionCardProps) {
@@ -61,7 +50,7 @@ export function StudySessionCard({
     Animated.timing(cardEnter, {
       duration: 220,
       toValue: 1,
-      useNativeDriver: true
+      useNativeDriver: SHOULD_USE_NATIVE_DRIVER
     }).start();
   }, [cardEnter, itemKey, swipeTranslateY]);
 
@@ -69,7 +58,7 @@ export function StudySessionCard({
     Animated.timing(answerReveal, {
       duration: 180,
       toValue: revealAnswer ? 1 : 0,
-      useNativeDriver: true
+      useNativeDriver: SHOULD_USE_NATIVE_DRIVER
     }).start();
   }, [answerReveal, revealAnswer]);
 
@@ -107,7 +96,7 @@ export function StudySessionCard({
             Animated.timing(swipeTranslateY, {
               duration: 120,
               toValue: -140,
-              useNativeDriver: true
+              useNativeDriver: SHOULD_USE_NATIVE_DRIVER
             }).start(() => {
               swipeTranslateY.setValue(0);
               void onSubmitAnswer(true);
@@ -119,7 +108,7 @@ export function StudySessionCard({
             Animated.timing(swipeTranslateY, {
               duration: 120,
               toValue: 140,
-              useNativeDriver: true
+              useNativeDriver: SHOULD_USE_NATIVE_DRIVER
             }).start(() => {
               swipeTranslateY.setValue(0);
               void onSubmitAnswer(false);
@@ -129,13 +118,13 @@ export function StudySessionCard({
 
           Animated.spring(swipeTranslateY, {
             toValue: 0,
-            useNativeDriver: true
+            useNativeDriver: SHOULD_USE_NATIVE_DRIVER
           }).start();
         },
         onPanResponderTerminate: () => {
           Animated.spring(swipeTranslateY, {
             toValue: 0,
-            useNativeDriver: true
+            useNativeDriver: SHOULD_USE_NATIVE_DRIVER
           }).start();
         }
       }),
@@ -144,17 +133,6 @@ export function StudySessionCard({
 
   return (
     <View style={styles.panel}>
-      <Text style={styles.sectionTitle}>{techniqueLabel}</Text>
-
-      <StudySessionProgress
-        answeredCount={answeredCount}
-        isSubmittingAnswer={isSubmittingAnswer}
-        lastAnswer={lastAnswer}
-        remainingCount={remainingCount}
-        revealAnswer={revealAnswer}
-        totalCount={totalCount}
-      />
-
       <Animated.View
         {...(revealAnswer ? panResponder.panHandlers : {})}
         style={[
@@ -175,12 +153,7 @@ export function StudySessionCard({
           }
         ]}
       >
-        <View style={styles.promptHeader}>
-          <Text style={styles.promptLabel}>{getLocalizedStudyFieldLabel(currentItem.prompt.label, strings.locale)}</Text>
-          <Text style={styles.promptMeta}>
-            {strings.studyProgress.promptOfTotal(Math.min(answeredCount + 1, totalCount), totalCount)}
-          </Text>
-        </View>
+        <Text style={styles.promptLabel}>{getLocalizedStudyFieldLabel(currentItem.prompt.label, strings.locale)}</Text>
 
         {!revealAnswer ? (
           <Pressable
@@ -196,8 +169,6 @@ export function StudySessionCard({
             ) : (
               <Text style={styles.promptValue}>{currentItem.prompt.value}</Text>
             )}
-            <Text style={styles.revealHint}>{strings.studyCard.tapToReveal}</Text>
-            {Platform.OS === 'web' ? <Text style={styles.secondaryHint}>{strings.studyCard.spaceToReveal}</Text> : null}
           </Pressable>
         ) : (
           <>
@@ -230,13 +201,6 @@ export function StudySessionCard({
                 {getLocalizedStudyFieldLabel(currentItem.response.label, strings.locale)}
               </Text>
               <Text style={styles.answerValue}>{currentItem.response.value}</Text>
-              <Text style={styles.answerHint}>
-                {isSubmittingAnswer ? strings.studyStats.savingSessionAnswer : strings.studyCard.answerHint}
-              </Text>
-              <View style={styles.swipeHintsRow}>
-                <Text style={styles.swipeHintMuted}>{strings.studyCard.swipeDownIncorrect}</Text>
-                <Text style={styles.swipeHintSuccess}>{strings.studyCard.swipeUpCorrect}</Text>
-              </View>
             </Animated.View>
           </>
         )}
@@ -255,29 +219,18 @@ export function StudySessionCard({
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     panel: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: 20,
-      borderWidth: 1,
-      gap: spacing.s,
-      padding: spacing.m
-    },
-    sectionTitle: {
-      color: colors.textPrimary,
-      fontSize: typography.body,
-      fontWeight: '700'
+      flex: 1,
+      gap: spacing.m
     },
     studyCard: {
-      backgroundColor: colors.background,
-      borderRadius: 20,
+      backgroundColor: colors.surface,
+      borderColor: colors.borderStrong,
+      borderRadius: 28,
+      borderWidth: 1,
+      flex: 1,
       gap: spacing.m,
-      padding: spacing.m
-    },
-    promptHeader: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      gap: spacing.s,
-      justifyContent: 'space-between'
+      minHeight: 0,
+      padding: spacing.l
     },
     promptLabel: {
       color: colors.textMuted,
@@ -285,40 +238,26 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: '700',
       textTransform: 'uppercase'
     },
-    promptMeta: {
-      color: colors.textMuted,
-      fontSize: 12,
-      fontWeight: '600'
-    },
     promptSurface: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: 16,
-      borderWidth: 1,
-      gap: spacing.s,
-      padding: spacing.m
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      paddingVertical: spacing.l
     },
     promptValue: {
       color: colors.textPrimary,
-      fontSize: typography.title,
+      fontSize: typography.hero,
       fontWeight: '700'
-    },
-    revealHint: {
-      color: colors.primary,
-      fontSize: typography.bodySmall,
-      fontWeight: '700'
-    },
-    secondaryHint: {
-      color: colors.textSecondary,
-      fontSize: typography.caption
     },
     imagePromptWrap: {
-      gap: spacing.s
+      alignItems: 'center',
+      gap: spacing.s,
+      width: '100%'
     },
     imagePrompt: {
       backgroundColor: colors.surfaceMuted,
-      borderRadius: 12,
-      height: 180,
+      borderRadius: 20,
+      height: 260,
       width: '100%'
     },
     imageHint: {
@@ -326,12 +265,10 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: typography.caption
     },
     answerWrap: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: 16,
-      borderWidth: 1,
+      borderTopColor: colors.border,
+      borderTopWidth: 1,
       gap: spacing.s,
-      padding: spacing.m
+      paddingTop: spacing.m
     },
     answerLabel: {
       color: colors.primary,
@@ -341,31 +278,8 @@ const createStyles = (colors: ThemeColors) =>
     },
     answerValue: {
       color: colors.textPrimary,
-      fontSize: typography.body,
-      lineHeight: 24
-    },
-    answerHint: {
-      color: colors.textSecondary,
-      fontSize: typography.caption,
-      lineHeight: 18
-    },
-    swipeHintsRow: {
-      flexDirection: 'row',
-      gap: spacing.s,
-      justifyContent: 'space-between'
-    },
-    swipeHintMuted: {
-      color: colors.warning,
-      flex: 1,
-      fontSize: typography.caption,
-      fontWeight: '700'
-    },
-    swipeHintSuccess: {
-      color: colors.success,
-      flex: 1,
-      fontSize: typography.caption,
-      fontWeight: '700',
-      textAlign: 'right'
+      fontSize: typography.subtitle,
+      lineHeight: 28
     },
     buttonDisabled: {
       opacity: 0.5
