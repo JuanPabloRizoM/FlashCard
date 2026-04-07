@@ -107,17 +107,15 @@
 - `components/deck/DeckStudyInsightCard.tsx`
 - `components/deck/DeckListItem.tsx`
 - `components/deck/DeckExportPanel.tsx`
-- `components/deck/DeckImportPanel.tsx`
 - `components/card/CardStudyFeedback.tsx`
 - `components/card/DeckCardListItem.tsx`
 - `components/card/CardEditorPanel.tsx`
 - `components/card/CardEditorStudyPreview.tsx`
-- `components/card/CardImportPanel.tsx`
+- `components/card/ImportHubPanel.tsx`
 - `components/card/CardWorkspaceFeedbackState.tsx`
 - `components/card/CardWorkspaceDeckSelector.tsx`
 - `components/card/CardWorkspaceCardList.tsx`
 - `screens/DecksScreen.tsx`
-- `screens/DeckDetailScreen.tsx`
 - `screens/CardsScreen.tsx`
 - `screens/StudyScreen.tsx`
 - `screens/SettingsScreen.tsx`
@@ -138,10 +136,9 @@
 - `strings/index.ts`
 - `strings/translations.ts`
 - `screens/DecksScreen.tsx` owns rendering only; deck persistence flows through feature + repository layers
-- `screens/DeckDetailScreen.tsx` is a deck overview and routing entry point into the Cards workspace
-- `screens/DeckDetailScreen.tsx` may expose reviewed deck-export UI, but export formatting must stay in the deck feature layer
+- `components/card/ImportHubPanel.tsx` owns the unified import workspace shell in Cards while parsing and writes still stay in feature/repository layers
 - `screens/CardsScreen.tsx` is the primary card creation/editing workspace and may accept route params for deck handoff
-- `screens/CardsScreen.tsx` may host reviewed bulk-import workflows, but parsing and validation must stay in the card feature layer
+- `screens/CardsScreen.tsx` may host reviewed bulk-import workflows, but parsing and validation must stay in the card/deck feature layers
 - `screens/CardsScreen.tsx` may host deck-import UI, but deck parsing and transactional write orchestration must stay in the deck feature + repository layers
 - `screens/StudyScreen.tsx` renders engine output and delegates all study logic to the feature + engine layers
 - `screens/SettingsScreen.tsx` owns app-level appearance controls and honest product information only; it must not expose fake toggles

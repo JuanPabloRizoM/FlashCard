@@ -5,6 +5,7 @@ import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
 type TextImportWorkspaceProps = {
+  topSlot?: ReactNode;
   title: string;
   subtitle: string;
   exampleText: string;
@@ -20,6 +21,7 @@ type TextImportWorkspaceProps = {
 };
 
 export function TextImportWorkspace({
+  topSlot,
   title,
   subtitle,
   exampleText,
@@ -40,6 +42,7 @@ export function TextImportWorkspace({
 
   return (
     <View style={styles.panel}>
+      {topSlot}
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>{title}</Text>

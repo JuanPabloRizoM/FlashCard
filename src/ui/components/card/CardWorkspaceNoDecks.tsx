@@ -1,29 +1,44 @@
 import { ScrollView, StyleSheet } from 'react-native';
 
+import type { CardImportPreview } from '../../../features/cards/cardImport';
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
-import { DeckImportPanel } from '../deck/DeckImportPanel';
 import { useAppStrings } from '../../strings';
 import { spacing } from '../../theme';
 import { CardWorkspaceFeedbackState } from './CardWorkspaceFeedbackState';
+import { ImportHubPanel } from './ImportHubPanel';
 
 type CardWorkspaceNoDecksProps = {
-  importText: string;
-  preview: DeckImportPreview;
-  importResultMessage: string | null;
-  isSubmitting: boolean;
-  onImportTextChange: (value: string) => void;
+  cardImportText: string;
+  cardImportPreview: CardImportPreview;
+  cardImportResultMessage: string | null;
+  isCardImportSubmitting: boolean;
+  onCardImportTextChange: (value: string) => void;
+  onImportCards: () => Promise<void>;
+  onClearCardImport: () => void;
+  deckImportText: string;
+  deckImportPreview: DeckImportPreview;
+  deckImportResultMessage: string | null;
+  isDeckImportSubmitting: boolean;
+  onDeckImportTextChange: (value: string) => void;
   onImportDeck: () => Promise<void>;
-  onClearImport: () => void;
+  onClearDeckImport: () => void;
 };
 
 export function CardWorkspaceNoDecks({
-  importText,
-  preview,
-  importResultMessage,
-  isSubmitting,
-  onImportTextChange,
+  cardImportText,
+  cardImportPreview,
+  cardImportResultMessage,
+  isCardImportSubmitting,
+  onCardImportTextChange,
+  onImportCards,
+  onClearCardImport,
+  deckImportText,
+  deckImportPreview,
+  deckImportResultMessage,
+  isDeckImportSubmitting,
+  onDeckImportTextChange,
   onImportDeck,
-  onClearImport
+  onClearDeckImport
 }: CardWorkspaceNoDecksProps) {
   const strings = useAppStrings();
   return (
@@ -32,15 +47,25 @@ export function CardWorkspaceNoDecks({
         message={strings.cardsWorkspace.importNoDecksMessage}
         title={strings.cardsWorkspace.importNoDecksTitle}
       />
-      <DeckImportPanel
-        importResultMessage={importResultMessage}
-        importText={importText}
-        isDisabled={isSubmitting}
-        isSubmitting={isSubmitting}
-        onClearImport={onClearImport}
+      <ImportHubPanel
+        canImportCards={false}
+        cardImportPreview={cardImportPreview}
+        cardImportResultMessage={cardImportResultMessage}
+        cardImportText={cardImportText}
+        deckImportPreview={deckImportPreview}
+        deckImportResultMessage={deckImportResultMessage}
+        deckImportText={deckImportText}
+        defaultSource="import_deck"
+        isCardImportSubmitting={isCardImportSubmitting}
+        isDeckImportSubmitting={isDeckImportSubmitting}
+        isLocked={isCardImportSubmitting || isDeckImportSubmitting}
+        onCardImportTextChange={onCardImportTextChange}
+        onClearCardImport={onClearCardImport}
+        onClearDeckImport={onClearDeckImport}
+        onDeckImportTextChange={onDeckImportTextChange}
+        onImportCards={onImportCards}
         onImportDeck={onImportDeck}
-        onImportTextChange={onImportTextChange}
-        preview={preview}
+        selectedDeckName={null}
       />
     </ScrollView>
   );

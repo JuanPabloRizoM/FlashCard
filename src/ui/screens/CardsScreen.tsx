@@ -22,12 +22,11 @@ import { getCardListEmptyState, matchesCardListFilter, type CardListFilter } fro
 import { resolveSelectedDeckId } from '../components/card/cardWorkspaceUtils';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useAppStrings } from '../strings';
-import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
+import { spacing, typography, useThemedStyles, type ThemeColors } from '../theme';
 
 type CardsScreenProps = BottomTabScreenProps<RootTabParamList, 'Cards'>;
 
 export function CardsScreen({ navigation, route }: CardsScreenProps) {
-  const colors = useThemeColors();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const routeSelectedDeckId = route.params?.selectedDeckId ?? null;
@@ -43,7 +42,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     () => decks.find((deck) => deck.id === selectedDeckId) ?? null,
     [decks, selectedDeckId]
   );
-
   const {
     cards,
     editingCardId,
@@ -79,7 +77,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     [cardListFilter, cards]
   );
   const emptyListState = useMemo(() => getCardListEmptyState(cardListFilter), [cardListFilter]);
-
   const {
     importText: deckImportText,
     importPreview: deckImportPreview,
@@ -98,11 +95,9 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
       setDeckScreenError(null);
     }
   });
-
   const isEditorLocked = isSubmitting || isImportSubmitting || isDeckImportSubmitting;
   const isImportLocked =
     isSubmitting || isImportSubmitting || isDeckImportSubmitting || editingCardId != null;
-
   useEffect(() => {
     if (routeSelectedDeckId == null) {
       return;
@@ -121,7 +116,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
   useEffect(() => {
     setCardListFilter('all');
   }, [selectedDeckId]);
-
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -154,9 +148,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           }
         }
       }
-
       void loadDeckCollection();
-
       return () => {
         isActive = false;
       };
@@ -175,13 +167,20 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
     return (
       <ScreenContainer title={strings.screens.cards.title} subtitle={strings.screens.cards.noDecksSubtitle}>
         <CardWorkspaceNoDecks
-          importResultMessage={deckImportResultMessage}
-          importText={deckImportText}
-          isSubmitting={isDeckImportSubmitting}
-          onClearImport={onClearDeckImport}
+          cardImportPreview={importPreview}
+          cardImportResultMessage={importResultMessage}
+          cardImportText={importText}
+          deckImportPreview={deckImportPreview}
+          deckImportResultMessage={deckImportResultMessage}
+          deckImportText={deckImportText}
+          isCardImportSubmitting={isImportSubmitting}
+          isDeckImportSubmitting={isDeckImportSubmitting}
+          onCardImportTextChange={onImportTextChange}
+          onClearCardImport={onClearImport}
+          onClearDeckImport={onClearDeckImport}
+          onDeckImportTextChange={onDeckImportTextChange}
+          onImportCards={onImportCards}
           onImportDeck={onImportDeck}
-          onImportTextChange={onDeckImportTextChange}
-          preview={deckImportPreview}
         />
       </ScreenContainer>
     );
@@ -198,20 +197,17 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           selectedDeckId={selectedDeckId}
           selectedDeckName={selectedDeck?.name ?? null}
         />
-
         <CardWorkspaceModeSwitch
           activeMode={workspaceMode}
           isDisabled={isEditorLocked || editingCardId != null}
           onChangeMode={setWorkspaceMode}
         />
-
         {deckScreenError != null || screenError != null ? (
           <View style={styles.workspaceHeader}>
             {deckScreenError != null ? <Text style={styles.errorText}>{deckScreenError}</Text> : null}
             {screenError != null ? <Text style={styles.errorText}>{screenError}</Text> : null}
           </View>
         ) : null}
-
         <CardWorkspacePanel
           canSubmit={canSubmit}
           deckImportPreview={deckImportPreview}
@@ -232,6 +228,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           isImportLocked={isImportLocked}
           isImportSubmitting={isImportSubmitting}
           mode={workspaceMode}
+          defaultImportSource={selectedDeck != null ? 'paste_text' : 'import_deck'}
           onCancelEditing={onCancelEditing}
           onClearDeckImport={onClearDeckImport}
           onClearImport={onClearImport}
@@ -248,7 +245,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           saveFeedbackMessage={saveFeedbackMessage}
           selectedDeckName={selectedDeck?.name ?? null}
         />
-
         <View style={styles.listHeader}>
           <Text style={styles.sectionTitle}>{strings.screens.cards.cardsSectionTitle}</Text>
           <Text style={styles.listCount}>
@@ -257,9 +253,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
               : strings.screens.cards.filteredCount(filteredCards.length, cards.length)}
           </Text>
         </View>
-
         <CardListFilterBar activeFilter={cardListFilter} onChangeFilter={setCardListFilter} />
-
         <CardWorkspaceCardList
           cards={filteredCards}
           emptyMessage={emptyListState.message}

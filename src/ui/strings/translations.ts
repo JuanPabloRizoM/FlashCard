@@ -195,8 +195,7 @@ export type AppStrings = {
     workspaceLabel: string;
     modeLabels: {
       create: string;
-      importCards: string;
-      importDeck: string;
+      import: string;
     };
     creatingIn: string;
     editingIn: string;
@@ -205,6 +204,23 @@ export type AppStrings = {
     editCardAction: string;
     listEmptyTitle: string;
     listEmptyMessage: string;
+  };
+  importHub: {
+    title: string;
+    subtitle: string;
+    sourceLabel: string;
+    sourceLabels: {
+      pasteText: string;
+      importDeck: string;
+      file: string;
+    };
+    targetDeck: (deckName: string) => string;
+    targetDeckMissing: string;
+    targetNewDeck: string;
+    fileTitle: string;
+    fileSupport: string;
+    fileNotice: string;
+    fileAction: string;
   };
   cardEditor: {
     newCardTitle: string;
@@ -623,8 +639,7 @@ const es: AppStrings = {
     workspaceLabel: 'Espacio de trabajo',
     modeLabels: {
       create: 'Crear tarjeta',
-      importCards: 'Importar tarjetas',
-      importDeck: 'Importar mazo'
+      import: 'Importar'
     },
     creatingIn: 'Creando en',
     editingIn: 'Editando en',
@@ -633,6 +648,23 @@ const es: AppStrings = {
     editCardAction: 'Editar tarjeta',
     listEmptyTitle: 'Aún no hay tarjetas',
     listEmptyMessage: 'Agrega una tarjeta o importa varias.'
+  },
+  importHub: {
+    title: 'Import Hub',
+    subtitle: 'Elige una fuente, revisa la vista previa y confirma antes de guardar.',
+    sourceLabel: 'Fuente',
+    sourceLabels: {
+      pasteText: 'Pegar texto',
+      importDeck: 'Importar mazo',
+      file: 'Archivo'
+    },
+    targetDeck: (deckName) => `Destino: ${deckName}`,
+    targetDeckMissing: 'Destino: elige un mazo',
+    targetNewDeck: 'Destino: crear un mazo',
+    fileTitle: 'Importar desde archivo',
+    fileSupport: 'CSV y XLSX llegarán aquí después.',
+    fileNotice: 'Aún no puedes importar archivos en esta versión.',
+    fileAction: 'Disponible próximamente'
   },
   cardEditor: {
     newCardTitle: 'Nueva tarjeta',
@@ -1056,8 +1088,7 @@ const en: AppStrings = {
     workspaceLabel: 'Workspace',
     modeLabels: {
       create: 'Create card',
-      importCards: 'Import cards',
-      importDeck: 'Import deck'
+      import: 'Import'
     },
     creatingIn: 'Creating in',
     editingIn: 'Editing in',
@@ -1066,6 +1097,23 @@ const en: AppStrings = {
     editCardAction: 'Edit card',
     listEmptyTitle: 'No cards yet',
     listEmptyMessage: 'Add a card or import a few.'
+  },
+  importHub: {
+    title: 'Import hub',
+    subtitle: 'Choose a source, review the preview, and confirm before saving.',
+    sourceLabel: 'Source',
+    sourceLabels: {
+      pasteText: 'Paste text',
+      importDeck: 'Import deck',
+      file: 'File'
+    },
+    targetDeck: (deckName) => `Target: ${deckName}`,
+    targetDeckMissing: 'Target: choose a deck',
+    targetNewDeck: 'Target: create a new deck',
+    fileTitle: 'Import from file',
+    fileSupport: 'CSV and XLSX will land here next.',
+    fileNotice: 'File import is not available in this version yet.',
+    fileAction: 'Coming next'
   },
   cardEditor: {
     newCardTitle: 'New card',

@@ -1,8 +1,7 @@
 import type { CardImportPreview } from '../../../features/cards/cardImport';
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
 import { CardEditorPanel } from './CardEditorPanel';
-import { CardImportPanel } from './CardImportPanel';
-import { DeckImportPanel } from '../deck/DeckImportPanel';
+import { ImportHubPanel, type ImportHubSource } from './ImportHubPanel';
 import type { CardWorkspaceMode } from './CardWorkspaceModeSwitch';
 
 type CardWorkspacePanelProps = {
@@ -27,6 +26,7 @@ type CardWorkspacePanelProps = {
   deckImportResultMessage: string | null;
   isImportSubmitting: boolean;
   isDeckImportSubmitting: boolean;
+  defaultImportSource?: ImportHubSource;
   onDraftFrontChange: (value: string) => void;
   onDraftBackChange: (value: string) => void;
   onDraftDescriptionChange: (value: string) => void;
@@ -64,6 +64,7 @@ export function CardWorkspacePanel({
   deckImportResultMessage,
   isImportSubmitting,
   isDeckImportSubmitting,
+  defaultImportSource,
   onDraftFrontChange,
   onDraftBackChange,
   onDraftDescriptionChange,
@@ -79,31 +80,27 @@ export function CardWorkspacePanel({
   onClearDeckImport
 }: CardWorkspacePanelProps) {
   switch (mode) {
-    case 'import_cards':
+    case 'import':
       return (
-        <CardImportPanel
-          importResultMessage={importResultMessage}
-          importText={importText}
-          isDisabled={selectedDeckName == null || isImportLocked}
-          isSubmitting={isImportSubmitting}
-          onClearImport={onClearImport}
+        <ImportHubPanel
+          canImportCards={selectedDeckName != null}
+          cardImportPreview={importPreview}
+          cardImportResultMessage={importResultMessage}
+          cardImportText={importText}
+          deckImportPreview={deckImportPreview}
+          deckImportResultMessage={deckImportResultMessage}
+          deckImportText={deckImportText}
+          defaultSource={defaultImportSource}
+          isCardImportSubmitting={isImportSubmitting}
+          isDeckImportSubmitting={isDeckImportSubmitting}
+          isLocked={isImportLocked}
+          onCardImportTextChange={onImportTextChange}
+          onClearCardImport={onClearImport}
+          onClearDeckImport={onClearDeckImport}
+          onDeckImportTextChange={onDeckImportTextChange}
           onImportCards={onImportCards}
-          onImportTextChange={onImportTextChange}
-          preview={importPreview}
-          selectedDeckName={selectedDeckName}
-        />
-      );
-    case 'import_deck':
-      return (
-        <DeckImportPanel
-          importResultMessage={deckImportResultMessage}
-          importText={deckImportText}
-          isDisabled={isImportLocked}
-          isSubmitting={isDeckImportSubmitting}
-          onClearImport={onClearDeckImport}
           onImportDeck={onImportDeck}
-          onImportTextChange={onDeckImportTextChange}
-          preview={deckImportPreview}
+          selectedDeckName={selectedDeckName}
         />
       );
     default:

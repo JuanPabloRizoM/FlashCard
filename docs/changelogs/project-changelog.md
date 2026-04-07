@@ -11,6 +11,15 @@
 
 ---
 
+[2026-04-06]
+- Change: Replaced the split card-import and deck-import panels in Cards with one Import Hub that shares one source selector, one preview-first flow, and one confirm-before-write import surface.
+- Reason: Import was already useful, but it was structurally fragmented and would have duplicated UX and validation logic as more sources were added.
+- Files: src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardWorkspaceModeSwitch.tsx, src/ui/components/card/CardWorkspacePanel.tsx, src/ui/components/card/CardWorkspaceNoDecks.tsx, src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/TextImportWorkspace.tsx, src/ui/strings/translations.ts, docs/features/cards.md, docs/flows/main-user-flows.md, docs/architecture/project-structure.md
+- Risk: Medium
+- Notes: Import Hub v1 exposes `Paste text`, `Import deck`, and an honest `File` placeholder only; existing card/deck parsing and repository write behavior stay intact.
+
+---
+
 [2026-03-30]
 - Change: Expanded Settings with real app language switching (`Español` default, `English` optional), added honest Account Settings and Billing placeholder sections, and routed app-wide UI copy through a lightweight centralized strings layer.
 - Reason: Settings needed one more real product-level control beyond appearance, while future account/billing space needed to be present without pretending those systems already exist.

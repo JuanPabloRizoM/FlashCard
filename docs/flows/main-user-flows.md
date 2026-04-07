@@ -61,12 +61,13 @@
 ## Import Cards In Bulk
 
 1. The user opens the `Cards` tab and selects a deck.
-2. The user pastes multiline text into the import panel.
-3. The app parses one line at a time using the supported `|`-separated format.
-4. The import preview marks each line as valid or invalid and shows a reason for invalid lines.
-5. Nothing is written until the user confirms import.
-6. On confirmation, only valid lines are sent to the repository batch-create path for the selected deck.
-7. Confirmed imports are created in one batch, the Cards workspace list updates immediately, and the pasted import draft is cleared.
+2. The user switches the workspace to `Import` and chooses `Paste text` inside the Import Hub.
+3. The user pastes multiline text into the shared input area.
+4. The app parses one line at a time using the supported `|`-separated format.
+5. The shared import preview marks each line as valid or invalid and shows a reason for invalid lines.
+6. Nothing is written until the user confirms import.
+7. On confirmation, only valid lines are sent to the repository batch-create path for the selected deck.
+8. Confirmed imports are created in one batch, the Cards workspace list updates immediately, and the pasted import draft is cleared.
 
 ---
 
@@ -83,12 +84,13 @@
 ## Import A Deck
 
 1. The user opens the `Cards` tab.
-2. If the app already has decks, the import panel appears above the card workspace. If the app has no decks yet, the import panel still remains available.
-3. The user pastes exported deck text beginning with `# Deck: Deck name`.
-4. The app validates the deck header and previews each following card line with the existing card import parser.
-5. Duplicate deck names and malformed card lines are surfaced before any write happens.
-6. When the user confirms import, the repository creates a new deck and its valid cards in one transaction.
-7. The newly imported deck becomes selected in the Cards workspace, and it appears in the Decks tab on the next focus refresh.
+2. The user switches the workspace to `Import` and chooses `Import deck` inside the Import Hub.
+3. If the app has no decks yet, the Import Hub still remains available.
+4. The user pastes exported deck text beginning with `# Deck: Deck name`.
+5. The app validates the deck header and previews each following card line with the existing card import parser.
+6. Duplicate deck names and malformed card lines are surfaced before any write happens.
+7. When the user confirms import, the repository creates a new deck and its valid cards in one transaction.
+8. The newly imported deck becomes selected in the Cards workspace, and it appears in the Decks tab on the next focus refresh.
 
 ---
 

@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
 
-export type CardWorkspaceMode = 'create' | 'import_cards' | 'import_deck';
+export type CardWorkspaceMode = 'create' | 'import';
 
 type CardWorkspaceModeSwitchProps = {
   activeMode: CardWorkspaceMode;
@@ -21,8 +21,7 @@ export function CardWorkspaceModeSwitch({
   const styles = useThemedStyles(createStyles);
   const workspaceModes: Array<{ mode: CardWorkspaceMode; label: string }> = [
     { mode: 'create', label: strings.cardsWorkspace.modeLabels.create },
-    { mode: 'import_cards', label: strings.cardsWorkspace.modeLabels.importCards },
-    { mode: 'import_deck', label: strings.cardsWorkspace.modeLabels.importDeck }
+    { mode: 'import', label: strings.cardsWorkspace.modeLabels.import }
   ];
   return (
     <View style={styles.wrap}>

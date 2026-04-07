@@ -7,9 +7,9 @@ The Cards feature introduces the core study entity that belongs to a deck.
 It currently supports:
 - creating a card inside a selected deck from the Cards tab workspace
 - editing a card inside a selected deck from the Cards tab workspace
-- importing multiple cards from pasted text with preview-before-save
+- importing multiple cards from one unified Import Hub with preview-before-save
 - exporting a full deck as structured text from deck detail
-- importing a full deck from pasted structured text with preview-before-save
+- importing a full deck from the same Import Hub with preview-before-save
 - listing cards for a single deck
 - loading persisted cards from SQLite
 
@@ -77,12 +77,14 @@ The Cards tab is now the primary card workspace:
 - the workspace selects a deck and loads cards for that deck only
 - the user can create a card with one unified editor using required `front` and `back` plus optional supporting fields
 - the user can edit an existing card without leaving the workspace
+- the user can switch the workspace between `Create` and `Import`
+- the Import Hub exposes `Paste text`, `Import deck`, and an honest `File` placeholder source
 - the user can paste structured multiline text and preview valid/invalid rows before importing
-- the user can paste a full exported deck into the Cards workspace, preview the parsed deck plus card lines, and confirm deck import
+- the user can paste a full exported deck into the same Import Hub, preview the parsed deck plus card lines, and confirm deck import
 - the editor keeps optional details secondary instead of splitting creation into separate modes
-- deck detail remains a read-only overview with a clear entry point into the Cards workspace
-- deck detail also exposes deck export text with copy-to-clipboard support
+- deck overview remains a lightweight summary with a clear entry point into the Cards workspace
 - empty and loading states render safely when a deck has no cards
+- the Import Hub keeps one shared preview, validation, and confirm pattern across supported sources
 
 Import v1 format:
 - one card per line
@@ -101,6 +103,19 @@ Deck Export/Import v1 format:
 - duplicate deck names are rejected before write
 - valid card lines are inserted into the new deck in the same confirmed import operation
 - invalid card lines stay visible in preview and are skipped until the user fixes or removes them
+
+Import Hub v1:
+- visible sources:
+  - `Paste text`
+  - `Import deck`
+  - `File`
+- `File` is a structural placeholder only in v1 and does not parse or upload anything yet
+- the shared import experience always follows:
+  - choose source
+  - provide input
+  - review preview
+  - fix invalid rows
+  - confirm import
 
 ---
 
