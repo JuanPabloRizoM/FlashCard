@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { NavigationContainer, type Theme as NavigationTheme } from '@react-navigation/native';
+import { NavigationContainer, getFocusedRouteNameFromRoute, type Theme as NavigationTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { useAppSettings } from '../features/settings/AppSettingsProvider';
@@ -7,9 +7,9 @@ import { TabBarIcon } from '../ui/components/navigation/TabBarIcon';
 import { CardsScreen } from '../ui/screens/CardsScreen';
 import { DecksScreen } from '../ui/screens/DecksScreen';
 import { SettingsScreen } from '../ui/screens/SettingsScreen';
-import { StudyScreen } from '../ui/screens/StudyScreen';
 import { useAppStrings } from '../ui/strings';
 import { spacing, typography, useThemeColors } from '../ui/theme';
+import { StudyNavigator } from './StudyNavigator';
 import type { RootTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -82,11 +82,25 @@ export function AppNavigator() {
         />
         <Tab.Screen
           name="Study"
-          component={StudyScreen}
-          options={{
-            title: strings.tabs.study,
-            tabBarLabel: strings.tabs.study,
-            tabBarIcon: ({ color, focused }) => <TabBarIcon color={color} focused={focused} name="study" />
+          component={StudyNavigator}
+          options={({ route }) => {
+            const focusedRouteName = getFocusedRouteNameFromRoute(route) ?? 'StudyDashboard';
+            const isDashboardRoute = focusedRouteName === 'StudyDashboard';
+
+            return {
+              headerShown: false,
+              title: strings.tabs.study,
+              tabBarLabel: strings.tabs.study,
+              tabBarIcon: ({ color, focused }) => <TabBarIcon color={color} focused={focused} name="study" />,
+              tabBarStyle: isDashboardRoute
+                ? {
+                    backgroundColor: colors.surface,
+                    borderTopColor: colors.border,
+                    height: 72,
+                    paddingTop: spacing.xs
+                  }
+                : { display: 'none' }
+            };
           }}
         />
         <Tab.Screen

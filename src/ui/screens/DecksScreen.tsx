@@ -170,7 +170,10 @@ export function DecksScreen() {
           }
 
           setSelectedDeck(null);
-          navigation.navigate('Study', { autoStart: true, selectedDeckId: selectedDeck.id });
+          navigation.navigate('Study', {
+            params: { autoStart: true, selectedDeckId: selectedDeck.id },
+            screen: 'StudyDashboard'
+          });
         }}
         visible={selectedDeck != null}
       />

@@ -20,6 +20,7 @@
 ### navigation/
 - `AppNavigator.tsx` (main app navigation container + bottom tabs)
 - `RootNavigator.tsx` (auth vs main-app boundary)
+- `StudyNavigator.tsx` (nested Study stack that separates dashboard, live session, and saved-session detail routes)
 - `AuthFlow.tsx` (local auth route shell for landing, sign-in, sign-up, and reset)
 - `types.ts` (typed route contracts)
 
@@ -93,6 +94,7 @@
 - `cards/cardImport.ts`
 - `settings/AppSettingsProvider.tsx`
 - `study/useStudySession.ts`
+- `study/StudyFlowProvider.tsx`
 - `study/studyInsights.ts`
 - `study/cardStudyPreview.ts`
 - `study/sessionConfiguration.ts`

@@ -446,3 +446,4 @@
 
 - Refined Settings account controls so the account section now shows real session context and a visible sign-out action for both guest and authenticated sessions.
 - Hardened auth sign-out to use Supabase local sign-out only for authenticated sessions, avoiding unnecessary remote auth calls from guest mode.
+- Refactored Study into a real nested stack so the Study dashboard only handles setup/history while live review runs in a dedicated full-screen Study Session route with the tab bar hidden.

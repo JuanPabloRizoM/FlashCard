@@ -105,7 +105,7 @@
 7. If the user chose `Weak Focus` or `Fresh Focus`, the feature layer narrows that valid queue before session start with safe fallback behavior that can still fill larger sessions when the preferred pool is small.
 8. The `StudyEngine` reorders the configured prompt items so recent failures and weaker prompt items appear before stronger ones, while fresh prompt items still remain represented.
 9. The engine shapes the ranked items into the requested session size, reduces same-card clustering when alternatives exist, and balances weak/fresh/strong composition.
-10. When the user starts study, the app opens a dedicated full-screen Study Session view instead of keeping the live review embedded in the dashboard.
+10. When the user starts study, the app navigates from the Study dashboard route into a dedicated full-screen Study Session route instead of keeping the live review embedded in the dashboard.
 11. Once session assembly starts, setup selectors stay locked until the session is idle again so the visible UI matches the active Study state.
 12. The session screen renders the current prompt together with an active session banner, animated progress indicators, remaining count, and stage feedback without hardcoded study logic.
 13. The user taps or clicks the card to reveal the answer, and on web can also press `Space`.
@@ -113,7 +113,7 @@
 15. The feature layer persists the answer result by `(cardId, promptMode)` before the session advances.
 16. The next prompt appears with updated progress state, fresh reveal state, and UI-only transition feedback derived from session state.
 17. The engine advances the session and tracks session counts until completion.
-18. If the user pauses or tries to leave early, the session screen shows a confirmation path before abandoning the unfinished session.
+18. If the user pauses or tries to leave early, the dedicated session route shows a confirmation path before abandoning the unfinished session.
 19. When the session completes, the app saves a session record plus answer snapshots for later review.
 20. The user sees a completion modal with summary metrics and can either return to the Study dashboard or open the detailed statistics view.
 21. The Study dashboard later shows recent saved sessions and high-level deck study metrics based on those persisted session records.

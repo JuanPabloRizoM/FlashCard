@@ -14,7 +14,7 @@ It currently supports:
 - adaptively ordering study items using persisted progress signals
 - shaping study sessions with a practical size cap and balanced item composition
 - showing a Study dashboard for deck selection, setup, and high-level readiness/history context
-- opening active study inside a dedicated full-screen Study Session surface
+- routing active study into a dedicated Study stack screen instead of rendering it inline inside the Study dashboard tab
 - revealing answers by tap/click and `Space` on web
 - grading revealed cards with swipe-up correct / swipe-down incorrect plus fallback buttons
 - showing session progress indicators and answer feedback inside that focused session surface
@@ -127,7 +127,7 @@ The Study feature hook:
 The Study UI now shows:
 - a dashboard surface for choosing a deck, technique, mode, and session size
 - a lightweight deck overview with readiness, studyable count, saved-answer count, and last-studied context
-- a focused Study Session screen after session start
+- a focused full-screen Study Session route after session start
 - a session banner with the current deck and technique inside that dedicated screen
 - a progress bar based on answered versus total prompts
 - a clear session count such as `5 / 12`
@@ -140,6 +140,7 @@ The Study UI now shows:
 - a completion modal with answered, correct, incorrect, accuracy, streak, and duration
 - a saved-session detail view with prompt distribution, failed cards, correct cards, and share support
 - a guarded leave flow so unfinished sessions are not discarded silently
+- a strict dashboard/session separation where the Study tab dashboard never renders the live review card inline
 
 Outside the Study screen, the app now also shows:
 - deck-level readiness indicators
