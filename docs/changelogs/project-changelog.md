@@ -12,6 +12,34 @@
 ---
 
 [2026-04-07]
+- Change: Polished Auth and Settings to better match the app’s premium product direction, with calmer auth hierarchy, cleaner form treatment, clearer settings sections, and a real sign-out surface.
+- Reason: Auth and Settings were functionally correct, but they still felt flatter and less product-like than Decks, Cards, Import, and Study.
+- Files: src/ui/components/auth/AuthScaffold.tsx, src/ui/screens/auth/AuthLandingScreen.tsx, src/ui/screens/auth/SignInScreen.tsx, src/ui/screens/auth/CreateAccountScreen.tsx, src/ui/screens/auth/ForgotPasswordScreen.tsx, src/ui/screens/SettingsScreen.tsx, src/ui/strings/translations.ts
+- Risk: Medium
+- Notes: Auth behavior, guest mode, and theme/language persistence were preserved; the only functional addition is a real sign-out section in Settings.
+
+[2026-04-07]
+- Change: Elevated NotebookLM, Notion, and Google Docs as featured knowledge sources inside the Import Hub, grouped technical paths separately, and strengthened source-specific guidance without adding fake integrations.
+- Reason: The guided import flow existed, but the source layer still did not make the app feel meaningfully differentiated around real study-material import.
+- Files: src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/ImportHubChoiceGrid.tsx, src/ui/components/card/ImportHubInfoCard.tsx, src/ui/components/card/ImportHubTextFlow.tsx, src/ui/components/card/importHubConfig.ts, src/ui/components/card/importHubSourceProfiles.tsx, src/ui/strings/translations.ts, docs/features/cards.md
+- Risk: Medium
+- Notes: NotebookLM, Notion, and document-style import remain honest copy/paste or export-driven paths that reuse the shared preview and validation pipeline.
+
+[2026-04-07]
+- Change: Reframed the Import Hub around user intent first, expanded the source language to feel more human, and unified text and CSV imports behind a shared review-before-import step.
+- Reason: Import worked, but it still felt too technical and parser-driven for a real product workflow.
+- Files: src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/ImportHubTextFlow.tsx, src/ui/components/card/CsvImportPanel.tsx, src/ui/components/card/TextImportWorkspace.tsx, src/ui/components/card/ImportHubReviewSection.tsx, src/ui/strings/translations.ts, docs/features/cards.md
+- Risk: Medium
+- Notes: Existing text import, deck import, and CSV parsing paths were preserved; the redesign changes how users move through the workflow, not the underlying import engines.
+
+[2026-04-07]
+- Change: Refined the card authoring surface into a cleaner single form, improved the deck context bar above it, and upgraded the optional image area into a more practical upload/paste/URL workflow with preview and replace/remove actions.
+- Reason: Card creation was already functional, but the editor still felt flatter and more utilitarian than the rest of the product, especially around optional media.
+- Files: src/ui/components/card/CardEditorPanel.tsx, src/ui/components/card/CardImageInput.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/strings/translations.ts, docs/features/cards.md
+- Risk: Low
+- Notes: Front and Back remain required, optional fields remain optional, and pasted clipboard images are now normalized into a previewable data URI instead of raw image data.
+
+[2026-04-07]
 - Change: Polished the Decks experience with a stronger collection overview, more intentional deck cards, and a lighter premium deck summary modal with a Study-first action hierarchy.
 - Reason: Deck browsing and inspection were functionally correct, but the visual hierarchy still felt flatter and less intentional than the rest of the product.
 - Files: src/ui/screens/DecksScreen.tsx, src/ui/components/deck/DeckCollectionOverview.tsx, src/ui/components/deck/DeckListItem.tsx, src/ui/components/deck/DeckSummaryModal.tsx, src/ui/components/deck/DeckSummaryPieces.tsx, src/ui/strings/translations.ts
@@ -395,3 +423,26 @@
 - Files: src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/ImportHubTextFlow.tsx, src/ui/components/card/ImportHubInfoCard.tsx, src/ui/components/card/TextImportWorkspace.tsx, src/ui/strings/translations.ts
 - Risk: Low
 - Notes: NotebookLM still uses the shared text or CSV import pipeline. There is no direct NotebookLM API integration and no Notion sync yet.
+- [2026-04-07] Import Hub NotebookLM source fix
+  - made `NotebookLM` the default visible live source inside Import Hub instead of leaving it diluted behind generic text paths
+  - removed fake-active `Notion` source selection and replaced it with an honest future note
+  - added lightweight NotebookLM normalization for `Q:`, `A:`, `Question:`, `Answer:`, simple `topic: explanation`, and heading-plus-bullets before the shared preview pipeline
+  - preserved the existing shared import flow for cards, new decks, and CSV import
+- [2026-04-07] Study session screen refactor
+  - split the `Study` tab into a preparation dashboard plus a dedicated full-screen `Study Session` surface
+  - moved active prompt review, progress feedback, and completion summary out of the dashboard and into the focused session screen
+  - added guarded leave behavior for unfinished sessions with `Continue studying` and `Leave session`
+  - updated deck-to-study handoff so the Decks modal can open Study with `autoStart` for the exact selected deck
+  - preserved the existing study engine, answer persistence flow, and retry/restart behavior
+- [2026-04-07] Interactive study session and saved statistics
+  - added tap/click reveal plus `Space` reveal on web inside the focused Study Session surface
+  - added swipe-up correct and swipe-down incorrect grading with button fallbacks
+  - added a dedicated pause surface plus guarded leave behavior for unfinished sessions
+  - replaced the inline completion surface with a saved-session summary modal that can return to Study or open detailed statistics
+  - added persistent `study_sessions` and `study_session_answers` storage across native SQLite and the web fallback store
+  - added recent-session history and saved-session overview metrics to the Study dashboard
+  - added a dedicated full-screen Study statistics view with prompt distribution, failed/correct card review, and share support
+# 2026-04-07
+
+- Refined Settings account controls so the account section now shows real session context and a visible sign-out action for both guest and authenticated sessions.
+- Hardened auth sign-out to use Supabase local sign-out only for authenticated sessions, avoiding unnecessary remote auth calls from guest mode.

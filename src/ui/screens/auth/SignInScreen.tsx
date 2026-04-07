@@ -3,9 +3,9 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useAuth } from '../../../features/auth/AuthProvider';
 import { isValidEmail, normalizeEmail } from '../../../features/auth/authValidation';
+import { AuthScaffold } from '../../components/auth/AuthScaffold';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
-import { AuthScaffold } from '../../components/auth/AuthScaffold';
 
 type SignInScreenProps = {
   onBack: () => void;
@@ -57,44 +57,46 @@ export function SignInScreen({ onBack, onOpenForgotPassword }: SignInScreenProps
       subtitle={strings.auth.signIn.subtitle}
       title={strings.auth.signIn.title}
     >
-      <View style={styles.fieldGroup}>
-        <View style={styles.fieldBlock}>
-          <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
-          <TextInput
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="email-address"
-            onChangeText={(value) => {
-              setEmail(value);
-              setFormError(null);
-            }}
-            placeholder={strings.auth.common.emailPlaceholder}
-            placeholderTextColor={colors.textMuted}
-            style={[styles.input, formError != null ? styles.inputError : null]}
-            value={email}
-          />
-        </View>
-
-        <View style={styles.fieldBlock}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label}>{strings.auth.common.passwordLabel}</Text>
-            <Pressable accessibilityRole="button" onPress={onOpenForgotPassword} style={styles.inlineLinkButton}>
-              <Text style={styles.inlineLinkLabel}>{strings.auth.signIn.forgotPassword}</Text>
-            </Pressable>
+      <View style={styles.fieldPanel}>
+        <View style={styles.fieldGroup}>
+          <View style={styles.fieldBlock}>
+            <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
+            <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+              onChangeText={(value) => {
+                setEmail(value);
+                setFormError(null);
+              }}
+              placeholder={strings.auth.common.emailPlaceholder}
+              placeholderTextColor={colors.textMuted}
+              style={[styles.input, formError != null ? styles.inputError : null]}
+              value={email}
+            />
           </View>
-          <TextInput
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={(value) => {
-              setPassword(value);
-              setFormError(null);
-            }}
-            placeholder={strings.auth.common.passwordPlaceholder}
-            placeholderTextColor={colors.textMuted}
-            secureTextEntry
-            style={[styles.input, formError != null ? styles.inputError : null]}
-            value={password}
-          />
+
+          <View style={styles.fieldBlock}>
+            <View style={styles.labelRow}>
+              <Text style={styles.label}>{strings.auth.common.passwordLabel}</Text>
+              <Pressable accessibilityRole="button" onPress={onOpenForgotPassword} style={styles.inlineLinkButton}>
+                <Text style={styles.inlineLinkLabel}>{strings.auth.signIn.forgotPassword}</Text>
+              </Pressable>
+            </View>
+            <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={(value) => {
+                setPassword(value);
+                setFormError(null);
+              }}
+              placeholder={strings.auth.common.passwordPlaceholder}
+              placeholderTextColor={colors.textMuted}
+              secureTextEntry
+              style={[styles.input, formError != null ? styles.inputError : null]}
+              value={password}
+            />
+          </View>
         </View>
       </View>
 
@@ -123,6 +125,13 @@ export function SignInScreen({ onBack, onOpenForgotPassword }: SignInScreenProps
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
+    fieldPanel: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 20,
+      borderWidth: 1,
+      padding: spacing.m
+    },
     fieldGroup: {
       gap: spacing.m
     },
@@ -140,7 +149,7 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: '600'
     },
     input: {
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderColor: colors.border,
       borderRadius: 16,
       borderWidth: 1,
@@ -181,7 +190,7 @@ const createStyles = (colors: ThemeColors) =>
     primaryButton: {
       alignItems: 'center',
       backgroundColor: colors.primary,
-      borderRadius: 16,
+      borderRadius: 18,
       paddingHorizontal: spacing.m,
       paddingVertical: 17
     },

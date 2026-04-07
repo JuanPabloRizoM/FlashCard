@@ -3,8 +3,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { CsvImportField, CsvImportMapping, CsvImportPreview } from '../../../features/cards/csvImport';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
-import { ImportHubPreviewContent } from './ImportHubPreviewContent';
 import { CsvImportMappingField } from './CsvImportMappingField';
+import { ImportHubInfoCard } from './ImportHubInfoCard';
+import { ImportHubReviewSection } from './ImportHubReviewSection';
 
 type CsvImportPanelProps = {
   isEmbedded?: boolean;
@@ -58,8 +59,8 @@ export function CsvImportPanel({
     <View style={[styles.panel, isEmbedded ? styles.panelEmbedded : null]}>
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
-          <Text style={styles.sectionTitle}>{strings.importHub.sourceLabels.file}</Text>
-          <Text style={styles.supportText}>{strings.importHub.sourceDescriptions.file}</Text>
+          <Text style={styles.sectionTitle}>{strings.importHub.sourceLabels.csvExcel}</Text>
+          <Text style={styles.supportText}>{strings.importHub.sourceDescriptions.csvExcelCards}</Text>
         </View>
         <View style={styles.actionRow}>
           <Pressable
@@ -87,10 +88,21 @@ export function CsvImportPanel({
 
       {fileName != null ? <Text style={styles.fileName}>{strings.csvImport.selectedFile(fileName)}</Text> : null}
 
+      <ImportHubInfoCard
+        bullets={[
+          strings.cardEditor.frontLabel,
+          strings.cardEditor.backLabel,
+          strings.cardEditor.descriptionLabel,
+          strings.cardEditor.applicationLabel
+        ]}
+        support={strings.csvImport.mappingSupport}
+        title={strings.csvImport.mappingTitle}
+      />
+
       {headers.length > 0 ? (
         <View style={styles.mappingCard}>
-          <Text style={styles.mappingTitle}>{strings.csvImport.mappingTitle}</Text>
-          <Text style={styles.supportText}>{strings.csvImport.mappingSupport}</Text>
+          <Text style={styles.mappingTitle}>{strings.importHub.reviewSupport}</Text>
+          <Text style={styles.supportText}>{strings.importHub.inputSupportFile}</Text>
           <CsvImportMappingField
             columns={headers}
             isRequired
@@ -144,34 +156,26 @@ export function CsvImportPanel({
         </View>
       ) : null}
 
-      <ImportHubPreviewContent
+      <ImportHubReviewSection
+        actionLabel={isSubmitting ? strings.csvImport.importing : strings.csvImport.actionLabel}
+        emptyValidDetailLabel={strings.preview.emptyValidDetail}
         errorMessages={[preview.parseError, ...preview.mappingErrors].filter((message): message is string => message != null)}
+        isActionDisabled={isDisabled || !preview.canImport || isSubmitting}
+        onAction={() => {
+          void onImportCsv();
+        }}
         resultMessage={importResultMessage}
         rows={preview.rows}
         statusText={getStatusText()}
+        stepEyebrow={strings.importHub.stepLabel(4)}
         summaryItems={
           preview.hasFile
             ? [strings.common.valid(preview.validCount), strings.common.invalid(preview.invalidCount), strings.common.total(preview.totalCount)]
             : []
         }
+        support={strings.importHub.reviewSupport}
+        title={strings.importHub.reviewTitle}
       />
-
-      <Pressable
-        accessibilityRole="button"
-        disabled={isDisabled || !preview.canImport || isSubmitting}
-        onPress={() => {
-          void onImportCsv();
-        }}
-        style={({ pressed }) => [
-          styles.submitButton,
-          isDisabled || !preview.canImport || isSubmitting ? styles.submitButtonDisabled : null,
-          pressed && !isDisabled && preview.canImport && !isSubmitting ? styles.submitButtonPressed : null
-        ]}
-      >
-        <Text style={styles.submitButtonLabel}>
-          {isSubmitting ? strings.csvImport.importing : strings.csvImport.actionLabel}
-        </Text>
-      </Pressable>
     </View>
   );
 }
@@ -266,24 +270,6 @@ const createStyles = (colors: ThemeColors) =>
     },
     mappingTitle: {
       color: colors.textPrimary,
-      fontSize: typography.body,
-      fontWeight: '700'
-    },
-    submitButton: {
-      alignItems: 'center',
-      backgroundColor: colors.primary,
-      borderRadius: 14,
-      paddingHorizontal: spacing.m,
-      paddingVertical: 14
-    },
-    submitButtonDisabled: {
-      backgroundColor: colors.borderStrong
-    },
-    submitButtonPressed: {
-      backgroundColor: colors.primaryPressed
-    },
-    submitButtonLabel: {
-      color: colors.surface,
       fontSize: typography.body,
       fontWeight: '700'
     }

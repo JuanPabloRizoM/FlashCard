@@ -18,9 +18,13 @@ import { ImportHubStepHeader } from './ImportHubStepHeader';
 import { CsvImportPanel } from './CsvImportPanel';
 import { ImportHubInfoCard } from './ImportHubInfoCard';
 import { ImportHubTextFlow } from './ImportHubTextFlow';
-
-export type ImportHubIntent = 'cards_into_deck' | 'new_deck';
-export type ImportHubSource = 'paste_text' | 'notebooklm' | 'file';
+import {
+  buildIntentOptions,
+  buildSourceOptions,
+  getInputSupport,
+  type ImportHubIntent,
+  type ImportHubSource
+} from './importHubConfig';
 
 type ImportHubPanelProps = {
   selectedDeckName: string | null;
@@ -86,7 +90,7 @@ export function ImportHubPanel({
   const [activeIntent, setActiveIntent] = useState<ImportHubIntent>(
     canImportCards ? 'cards_into_deck' : 'new_deck'
   );
-  const [activeSource, setActiveSource] = useState<ImportHubSource>('paste_text');
+  const [activeSource, setActiveSource] = useState<ImportHubSource>('notebooklm');
 
   useEffect(() => {
     if (!canImportCards && activeIntent !== 'new_deck') {
@@ -95,69 +99,28 @@ export function ImportHubPanel({
   }, [activeIntent, canImportCards]);
 
   useEffect(() => {
-    if (activeIntent === 'new_deck' && activeSource !== 'paste_text') {
-      setActiveSource('paste_text');
+    if (
+      activeIntent === 'new_deck' &&
+      activeSource === 'csv_excel'
+    ) {
+      setActiveSource('notebooklm');
     }
   }, [activeIntent, activeSource]);
 
-  const sourceOptions = useMemo<Array<ImportHubChoiceOption<ImportHubSource>>>(() => {
-    if (activeIntent === 'new_deck') {
-      return [
-        {
-          id: 'paste_text',
-          label: strings.importHub.sourceLabels.pasteText,
-          support: strings.importHub.sourceDescriptions.pasteTextDeck
-        },
-        {
-          id: 'notebooklm',
-          label: strings.importHub.sourceLabels.notebooklm,
-          support: strings.importHub.sourceDescriptions.notebookLmDeck
-        }
-      ];
-    }
-
-    return [
-      {
-        id: 'paste_text',
-        label: strings.importHub.sourceLabels.pasteText,
-        support: strings.importHub.sourceDescriptions.pasteTextCards
-      },
-      {
-        id: 'notebooklm',
-        label: strings.importHub.sourceLabels.notebooklm,
-        support: strings.importHub.sourceDescriptions.notebookLmCards
-      },
-      {
-        id: 'file',
-        label: strings.importHub.sourceLabels.file,
-        support: strings.importHub.sourceDescriptions.file
-      }
-    ];
-  }, [activeIntent, strings.importHub.sourceDescriptions, strings.importHub.sourceLabels]);
+  const sourceOptions = useMemo<Array<ImportHubChoiceOption<ImportHubSource>>>(
+    () => buildSourceOptions(strings, activeIntent),
+    [activeIntent, strings]
+  );
 
   const intentOptions = useMemo<Array<ImportHubChoiceOption<ImportHubIntent>>>(
-    () => [
-      {
-        id: 'cards_into_deck',
-        label: strings.importHub.intentLabels.cardsIntoDeck,
-        support:
-          canImportCards && selectedDeckName != null
-            ? strings.importHub.intentDescriptions.cardsIntoDeck(selectedDeckName)
-            : strings.importHub.intentDescriptions.cardsIntoDeckDisabled,
-        disabled: !canImportCards
-      },
-      {
-        id: 'new_deck',
-        label: strings.importHub.intentLabels.newDeck,
-        support: strings.importHub.intentDescriptions.newDeck
-      }
-    ],
-    [canImportCards, selectedDeckName, strings.importHub.intentDescriptions, strings.importHub.intentLabels]
+    () => buildIntentOptions(strings, canImportCards, selectedDeckName),
+    [canImportCards, selectedDeckName, strings]
   );
 
   const isDeckFlow = activeIntent === 'new_deck';
-  const isCsvFlow = activeIntent === 'cards_into_deck' && activeSource === 'file';
-  const isNotebookLmFlow = activeSource === 'notebooklm';
+  const isCsvFlow = activeIntent === 'cards_into_deck' && activeSource === 'csv_excel';
+  const textSource: Exclude<ImportHubSource, 'csv_excel'> =
+    activeSource === 'csv_excel' ? 'paste_notes' : activeSource;
 
   const helperTarget = isDeckFlow
     ? strings.importHub.targetNewDeck
@@ -193,26 +156,26 @@ export function ImportHubPanel({
         />
         <ImportHubChoiceGrid
           activeId={activeSource}
+          groupLabels={{
+            featured: strings.importHub.featuredSourcesTitle,
+            other: strings.importHub.otherSourcesTitle
+          }}
           onChange={setActiveSource}
           options={sourceOptions}
         />
-        <Text style={styles.targetLabel}>{helperTarget}</Text>
         <ImportHubInfoCard
-          support={strings.importHub.futureSourceNotionSupport}
-          title={strings.importHub.futureSourceNotionTitle}
+          support={strings.importHub.futureSourcesSupport}
+          title={strings.importHub.futureSourcesTitle}
+          bullets={[strings.importHub.notionFutureNote]}
+          variant="utility"
         />
+        <Text style={styles.targetLabel}>{helperTarget}</Text>
       </View>
 
       <View style={styles.stepSection}>
         <ImportHubStepHeader
           eyebrow={strings.importHub.stepLabel(3)}
-          support={
-            isCsvFlow
-              ? strings.importHub.inputSupportFile
-              : isNotebookLmFlow
-                ? strings.importHub.inputSupportNotebookLm
-                : strings.importHub.inputSupportText
-          }
+          support={getInputSupport(strings, activeSource)}
           title={strings.importHub.inputTitle}
         />
 
@@ -251,7 +214,7 @@ export function ImportHubPanel({
             onImportCards={onImportCards}
             onImportDeck={onImportDeck}
             selectedDeckName={selectedDeckName}
-            source={activeSource === 'notebooklm' ? 'notebooklm' : 'paste_text'}
+            source={textSource}
           />
         )}
       </View>

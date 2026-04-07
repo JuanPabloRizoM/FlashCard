@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { CardImageInput } from './CardImageInput';
 import { useAppStrings } from '../../strings';
@@ -46,19 +47,17 @@ export function CardEditorPanel({
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const isEditing = mode === 'edit';
+  const backInputRef = useRef<TextInput | null>(null);
 
   return (
     <View style={styles.formCard}>
+      <View style={styles.headerAccent} />
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>
             {isEditing ? strings.cardEditor.editCardTitle : strings.cardEditor.newCardTitle}
           </Text>
-          <Text style={styles.sectionText}>
-            {isEditing
-              ? strings.cardEditor.editCardSupport
-              : strings.cardEditor.newCardSupport}
-          </Text>
+          <Text style={styles.sectionText}>{isEditing ? strings.cardEditor.editCardSupport : strings.cardEditor.newCardSupport}</Text>
         </View>
         {isEditing && onCancelEditing != null ? (
           <Pressable
@@ -72,55 +71,67 @@ export function CardEditorPanel({
       </View>
 
       <View style={styles.fieldGroup}>
-        <Text style={styles.label}>{strings.cardEditor.frontLabel}</Text>
-        <TextInput
-          autoCapitalize="sentences"
-          autoCorrect={false}
-          onChangeText={onDraftFrontChange}
-          placeholder={strings.cardEditor.frontPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          returnKeyType="next"
-          style={[styles.input, formError != null ? styles.inputError : null]}
-          value={draftFront}
-        />
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{strings.cardEditor.frontLabel}</Text>
+          <TextInput
+            autoCapitalize="sentences"
+            autoCorrect={false}
+            blurOnSubmit={false}
+            onChangeText={onDraftFrontChange}
+            onSubmitEditing={() => backInputRef.current?.focus()}
+            placeholder={strings.cardEditor.frontPlaceholder}
+            placeholderTextColor={colors.textMuted}
+            returnKeyType="next"
+            style={[styles.input, styles.primaryInput, formError != null ? styles.inputError : null]}
+            value={draftFront}
+          />
+        </View>
 
-        <Text style={styles.label}>{strings.cardEditor.backLabel}</Text>
-        <TextInput
-          autoCapitalize="sentences"
-          autoCorrect={false}
-          onChangeText={onDraftBackChange}
-          placeholder={strings.cardEditor.backPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          returnKeyType="done"
-          style={[styles.input, formError != null ? styles.inputError : null]}
-          value={draftBack}
-        />
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{strings.cardEditor.backLabel}</Text>
+          <TextInput
+            autoCapitalize="sentences"
+            autoCorrect={false}
+            onChangeText={onDraftBackChange}
+            placeholder={strings.cardEditor.backPlaceholder}
+            placeholderTextColor={colors.textMuted}
+            ref={backInputRef}
+            returnKeyType="done"
+            style={[styles.input, styles.primaryInput, formError != null ? styles.inputError : null]}
+            value={draftBack}
+          />
+        </View>
 
-        <Text style={styles.label}>{strings.cardEditor.descriptionLabel}</Text>
-        <TextInput
-          autoCapitalize="sentences"
-          autoCorrect={false}
-          multiline
-          onChangeText={onDraftDescriptionChange}
-          placeholder={strings.cardEditor.descriptionPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          style={[styles.input, styles.multilineInput]}
-          textAlignVertical="top"
-          value={draftDescription}
-        />
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{strings.cardEditor.descriptionLabel}</Text>
+          <TextInput
+            autoCapitalize="sentences"
+            autoCorrect={false}
+            multiline
+            onChangeText={onDraftDescriptionChange}
+            placeholder={strings.cardEditor.descriptionPlaceholder}
+            placeholderTextColor={colors.textMuted}
+            style={[styles.input, styles.multilineInput]}
+            textAlignVertical="top"
+            value={draftDescription}
+          />
+        </View>
 
-        <Text style={styles.label}>{strings.cardEditor.applicationLabel}</Text>
-        <TextInput
-          autoCapitalize="sentences"
-          autoCorrect={false}
-          multiline
-          onChangeText={onDraftApplicationChange}
-          placeholder={strings.cardEditor.applicationPlaceholder}
-          placeholderTextColor={colors.textMuted}
-          style={[styles.input, styles.multilineInput]}
-          textAlignVertical="top"
-          value={draftApplication}
-        />
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{strings.cardEditor.applicationLabel}</Text>
+          <TextInput
+            autoCapitalize="sentences"
+            autoCorrect={false}
+            multiline
+            onChangeText={onDraftApplicationChange}
+            placeholder={strings.cardEditor.applicationPlaceholder}
+            placeholderTextColor={colors.textMuted}
+            style={[styles.input, styles.multilineInput]}
+            textAlignVertical="top"
+            value={draftApplication}
+          />
+        </View>
+
         <CardImageInput
           isDisabled={isSubmitting}
           onChange={onDraftImageUriChange}
@@ -128,9 +139,10 @@ export function CardEditorPanel({
         />
       </View>
 
-      {formError != null ? <Text style={styles.formError}>{formError}</Text> : null}
-      {formError == null && saveFeedbackMessage != null ? (
-        <Text style={styles.saveFeedback}>{saveFeedbackMessage}</Text>
+      {formError != null || saveFeedbackMessage != null ? (
+        <View style={[styles.feedbackCard, formError != null ? styles.feedbackCardError : styles.feedbackCardSuccess]}>
+          <Text style={formError != null ? styles.formError : styles.saveFeedback}>{formError ?? saveFeedbackMessage}</Text>
+        </View>
       ) : null}
       <Pressable
         accessibilityRole="button"
@@ -161,10 +173,22 @@ const createStyles = (colors: ThemeColors) =>
   formCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
     gap: spacing.m,
-    padding: spacing.l
+    overflow: 'hidden',
+    padding: spacing.l,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.18,
+    shadowRadius: 28
+  },
+  headerAccent: {
+    backgroundColor: colors.primary,
+    borderRadius: 999,
+    height: 4,
+    marginBottom: spacing.xs,
+    width: 64
   },
   headerRow: {
     alignItems: 'flex-start',
@@ -174,20 +198,23 @@ const createStyles = (colors: ThemeColors) =>
   },
   headerCopy: {
     flex: 1,
-    gap: spacing.xs
+    gap: spacing.s
   },
   fieldGroup: {
-    gap: spacing.s
+    gap: spacing.m
+  },
+  fieldBlock: {
+    gap: spacing.xs
   },
   sectionTitle: {
     color: colors.textPrimary,
-    fontSize: typography.subtitle,
+    fontSize: typography.title,
     fontWeight: '700'
   },
   sectionText: {
     color: colors.textSecondary,
-    fontSize: typography.caption,
-    lineHeight: 18
+    fontSize: typography.bodySmall,
+    lineHeight: 21
   },
   label: {
     color: colors.textPrimary,
@@ -204,15 +231,28 @@ const createStyles = (colors: ThemeColors) =>
     paddingHorizontal: spacing.m,
     paddingVertical: 14
   },
+  primaryInput: {
+    minHeight: 58
+  },
   inputError: {
     borderColor: colors.error
   },
   multilineInput: {
-    minHeight: 80
+    minHeight: 104
   },
+  feedbackCard: {
+    borderRadius: 16,
+    paddingHorizontal: spacing.m,
+    paddingVertical: spacing.s
+  },
+  feedbackCardError: {
+    backgroundColor: colors.errorSoft
+  },
+  feedbackCardSuccess: { backgroundColor: colors.successSoft },
   formError: {
     color: colors.error,
-    fontSize: typography.caption
+    fontSize: typography.caption,
+    fontWeight: '600'
   },
   saveFeedback: {
     color: colors.success,
@@ -222,9 +262,9 @@ const createStyles = (colors: ThemeColors) =>
   submitButton: {
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 14,
+    borderRadius: 16,
     paddingHorizontal: spacing.m,
-    paddingVertical: 14
+    paddingVertical: 15
   },
   submitButtonDisabled: {
     backgroundColor: colors.borderStrong

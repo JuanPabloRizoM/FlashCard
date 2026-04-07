@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAuth } from '../../../features/auth/AuthProvider';
+import { AuthScaffold } from '../../components/auth/AuthScaffold';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
-import { AuthScaffold } from '../../components/auth/AuthScaffold';
 
 type AuthLandingScreenProps = {
   onOpenSignIn: () => void;
@@ -34,6 +34,11 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
       subtitle={strings.auth.landing.subtitle}
       title={strings.auth.landing.title}
     >
+      <View style={styles.supportCard}>
+        <Text style={styles.supportTitle}>{strings.auth.landing.googleButton}</Text>
+        <Text style={styles.supportText}>{strings.auth.landing.googleSupport}</Text>
+      </View>
+
       <View style={styles.primaryGroup}>
         <Pressable accessibilityRole="button" onPress={() => void onGooglePress()} style={styles.googleButton}>
           <View style={styles.googleBadge}>
@@ -42,7 +47,11 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
           <Text style={styles.googleButtonLabel}>{strings.auth.landing.googleButton}</Text>
         </Pressable>
 
-        <Text style={styles.placeholderText}>{infoMessage ?? strings.auth.landing.googleSupport}</Text>
+        {infoMessage != null ? (
+          <View style={styles.infoBanner}>
+            <Text style={styles.infoText}>{infoMessage}</Text>
+          </View>
+        ) : null}
 
         <Pressable accessibilityRole="button" onPress={onOpenSignIn} style={styles.primaryButton}>
           <Text style={styles.primaryButtonLabel}>{strings.auth.landing.emailButton}</Text>
@@ -73,6 +82,24 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
+    supportCard: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 18,
+      borderWidth: 1,
+      gap: spacing.xs,
+      padding: spacing.m
+    },
+    supportTitle: {
+      color: colors.textPrimary,
+      fontSize: typography.bodySmall,
+      fontWeight: '700'
+    },
+    supportText: {
+      color: colors.textSecondary,
+      fontSize: typography.caption,
+      lineHeight: 18
+    },
     primaryGroup: {
       gap: spacing.s
     },
@@ -80,7 +107,7 @@ const createStyles = (colors: ThemeColors) =>
       gap: spacing.s
     },
     guestCard: {
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderColor: colors.border,
       borderRadius: 20,
       borderWidth: 1,
@@ -118,11 +145,18 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: typography.body,
       fontWeight: '700'
     },
-    placeholderText: {
-      color: colors.textSecondary,
+    infoBanner: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary,
+      borderRadius: 16,
+      borderWidth: 1,
+      paddingHorizontal: spacing.m,
+      paddingVertical: spacing.s
+    },
+    infoText: {
+      color: colors.primary,
       fontSize: typography.caption,
-      lineHeight: 19,
-      paddingHorizontal: spacing.s
+      lineHeight: 18
     },
     primaryButton: {
       alignItems: 'center',

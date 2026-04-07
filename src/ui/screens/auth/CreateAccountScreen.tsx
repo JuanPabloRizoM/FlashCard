@@ -3,9 +3,9 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useAuth } from '../../../features/auth/AuthProvider';
 import { isValidEmail, normalizeEmail, normalizeName } from '../../../features/auth/authValidation';
+import { AuthScaffold } from '../../components/auth/AuthScaffold';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
-import { AuthScaffold } from '../../components/auth/AuthScaffold';
 
 type CreateAccountScreenProps = {
   onBack: () => void;
@@ -73,37 +73,39 @@ export function CreateAccountScreen({ onBack }: CreateAccountScreenProps) {
       title={strings.auth.createAccount.title}
     >
       <View style={styles.fieldGroup}>
-        <View style={styles.fieldBlock}>
-          <Text style={styles.label}>{strings.auth.createAccount.nameLabel}</Text>
-          <TextInput
-            autoCapitalize="words"
-            autoCorrect={false}
-            onChangeText={(value) => {
-              setName(value);
-              setFormError(null);
-            }}
-            placeholder={strings.auth.createAccount.namePlaceholder}
-            placeholderTextColor={colors.textMuted}
-            style={styles.input}
-            value={name}
-          />
-        </View>
+        <View style={styles.fieldPanel}>
+          <View style={styles.fieldBlock}>
+            <Text style={styles.label}>{strings.auth.createAccount.nameLabel}</Text>
+            <TextInput
+              autoCapitalize="words"
+              autoCorrect={false}
+              onChangeText={(value) => {
+                setName(value);
+                setFormError(null);
+              }}
+              placeholder={strings.auth.createAccount.namePlaceholder}
+              placeholderTextColor={colors.textMuted}
+              style={styles.input}
+              value={name}
+            />
+          </View>
 
-        <View style={styles.fieldBlock}>
-          <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
-          <TextInput
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="email-address"
-            onChangeText={(value) => {
-              setEmail(value);
-              setFormError(null);
-            }}
-            placeholder={strings.auth.common.emailPlaceholder}
-            placeholderTextColor={colors.textMuted}
-            style={[styles.input, formError != null ? styles.inputError : null]}
-            value={email}
-          />
+          <View style={styles.fieldBlock}>
+            <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
+            <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+              onChangeText={(value) => {
+                setEmail(value);
+                setFormError(null);
+              }}
+              placeholder={strings.auth.common.emailPlaceholder}
+              placeholderTextColor={colors.textMuted}
+              style={[styles.input, formError != null ? styles.inputError : null]}
+              value={email}
+            />
+          </View>
         </View>
 
         <View style={styles.passwordCard}>
@@ -171,12 +173,20 @@ const createStyles = (colors: ThemeColors) =>
     fieldGroup: {
       gap: spacing.m
     },
+    fieldPanel: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 20,
+      borderWidth: 1,
+      gap: spacing.m,
+      padding: spacing.m
+    },
     fieldBlock: {
       gap: spacing.s
     },
     passwordCard: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      borderColor: colors.borderStrong,
       borderRadius: 20,
       borderWidth: 1,
       gap: spacing.m,
@@ -229,7 +239,7 @@ const createStyles = (colors: ThemeColors) =>
     primaryButton: {
       alignItems: 'center',
       backgroundColor: colors.primary,
-      borderRadius: 16,
+      borderRadius: 18,
       paddingHorizontal: spacing.m,
       paddingVertical: 17
     },

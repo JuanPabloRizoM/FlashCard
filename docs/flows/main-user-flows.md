@@ -97,7 +97,7 @@
 ## Start A Study Session
 
 1. The user opens the `Study` tab.
-2. Before studying, the user can review deck readiness and prompt coverage from the deck screens to spot missing fields or weak prompt support.
+2. The Study tab stays in dashboard mode, where the user selects a deck, reviews high-level readiness/history context, and adjusts technique, mode, and size.
 3. The app loads available decks from the repository.
 4. The user selects a deck, one of the supported techniques, a study mode, and a session size.
 5. The feature layer loads cards and persisted study progress for the selected deck.
@@ -105,13 +105,18 @@
 7. If the user chose `Weak Focus` or `Fresh Focus`, the feature layer narrows that valid queue before session start with safe fallback behavior that can still fill larger sessions when the preferred pool is small.
 8. The `StudyEngine` reorders the configured prompt items so recent failures and weaker prompt items appear before stronger ones, while fresh prompt items still remain represented.
 9. The engine shapes the ranked items into the requested session size, reduces same-card clustering when alternatives exist, and balances weak/fresh/strong composition.
-10. Once session assembly starts, setup selectors stay locked until the session is idle again so the visible UI matches the active Study state.
-11. The screen renders the current prompt together with an active session banner, animated progress indicators, remaining count, and stage feedback without hardcoded study logic.
-12. The user reveals the answer and marks it correct or needs review.
-13. The feature layer persists the answer result by `(cardId, promptMode)` before the session advances.
-14. The next prompt appears with updated progress state, fresh reveal state, and UI-only transition feedback derived from session state.
-15. The engine advances the session and tracks session counts until completion.
-16. When the session is complete, the user sees a summary and can restart the full session or retry only the incorrect prompts.
+10. When the user starts study, the app opens a dedicated full-screen Study Session view instead of keeping the live review embedded in the dashboard.
+11. Once session assembly starts, setup selectors stay locked until the session is idle again so the visible UI matches the active Study state.
+12. The session screen renders the current prompt together with an active session banner, animated progress indicators, remaining count, and stage feedback without hardcoded study logic.
+13. The user taps or clicks the card to reveal the answer, and on web can also press `Space`.
+14. After reveal, the user grades mainly through swipe gestures: up for correct, down for incorrect, with button fallbacks still available.
+15. The feature layer persists the answer result by `(cardId, promptMode)` before the session advances.
+16. The next prompt appears with updated progress state, fresh reveal state, and UI-only transition feedback derived from session state.
+17. The engine advances the session and tracks session counts until completion.
+18. If the user pauses or tries to leave early, the session screen shows a confirmation path before abandoning the unfinished session.
+19. When the session completes, the app saves a session record plus answer snapshots for later review.
+20. The user sees a completion modal with summary metrics and can either return to the Study dashboard or open the detailed statistics view.
+21. The Study dashboard later shows recent saved sessions and high-level deck study metrics based on those persisted session records.
 
 
 ---

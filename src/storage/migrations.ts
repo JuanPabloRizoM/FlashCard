@@ -15,7 +15,7 @@ import {
 } from '../core/types/card';
 import { STUDY_PROGRESS_RESULTS } from '../core/types/studyProgress';
 
-const DATABASE_VERSION = 5;
+const DATABASE_VERSION = 6;
 const DECK_COLOR_GLOB = '#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]';
 const DECK_TYPE_SQL = DECK_TYPES.map((type) => `'${type}'`).join(', ');
 const PROMPT_MODE_SQL = PROMPT_MODES.map((mode) => `'${mode}'`).join(', ');
@@ -96,6 +96,74 @@ function getCreateStudyProgressTableSql(): string {
 
 function getCreateStudyProgressCardPromptIndexSql(): string {
   return 'CREATE UNIQUE INDEX IF NOT EXISTS idx_study_progress_card_prompt ON study_progress (card_id, prompt_mode);';
+}
+
+function getCreateStudySessionsTableSql(): string {
+  return `
+    CREATE TABLE IF NOT EXISTS study_sessions (
+      id INTEGER PRIMARY KEY NOT NULL,
+      deck_id INTEGER NOT NULL,
+      deck_name TEXT NOT NULL,
+      technique_id TEXT NOT NULL
+        CHECK(technique_id IN ('basic_review', 'reverse_review', 'mixed_recall')),
+      session_mode TEXT NOT NULL
+        CHECK(session_mode IN ('mixed', 'weak_focus', 'fresh_focus')),
+      session_size TEXT NOT NULL
+        CHECK(session_size IN ('10', '20', 'all')),
+      answered_count INTEGER NOT NULL DEFAULT 0
+        CHECK(answered_count >= 0),
+      correct_count INTEGER NOT NULL DEFAULT 0
+        CHECK(correct_count >= 0),
+      incorrect_count INTEGER NOT NULL DEFAULT 0
+        CHECK(incorrect_count >= 0),
+      accuracy_percentage INTEGER NOT NULL DEFAULT 0
+        CHECK(accuracy_percentage >= 0 AND accuracy_percentage <= 100),
+      best_streak INTEGER NOT NULL DEFAULT 0
+        CHECK(best_streak >= 0),
+      duration_seconds INTEGER NOT NULL DEFAULT 0
+        CHECK(duration_seconds >= 0),
+      started_at TEXT NOT NULL,
+      completed_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (deck_id) REFERENCES decks(id) ON DELETE CASCADE
+    );
+  `;
+}
+
+function getCreateStudySessionsDeckCompletedIndexSql(): string {
+  return 'CREATE INDEX IF NOT EXISTS idx_study_sessions_deck_completed ON study_sessions (deck_id, completed_at DESC, id DESC);';
+}
+
+function getCreateStudySessionAnswersTableSql(): string {
+  return `
+    CREATE TABLE IF NOT EXISTS study_session_answers (
+      id INTEGER PRIMARY KEY NOT NULL,
+      session_id INTEGER NOT NULL,
+      card_id INTEGER NOT NULL,
+      card_front TEXT NOT NULL,
+      card_back TEXT NOT NULL,
+      prompt_mode TEXT NOT NULL
+        CHECK(prompt_mode IN (${PROMPT_MODE_SQL})),
+      prompt_kind TEXT NOT NULL
+        CHECK(prompt_kind IN ('text', 'image')),
+      prompt_label TEXT NOT NULL,
+      prompt_value TEXT NOT NULL,
+      response_label TEXT NOT NULL,
+      response_value TEXT NOT NULL,
+      result TEXT NOT NULL
+        CHECK(result IN (${STUDY_PROGRESS_RESULT_SQL})),
+      sequence_number INTEGER NOT NULL
+        CHECK(sequence_number > 0),
+      answered_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (session_id) REFERENCES study_sessions(id) ON DELETE CASCADE
+    );
+  `;
+}
+
+function getCreateStudySessionAnswersSessionSequenceIndexSql(): string {
+  return 'CREATE UNIQUE INDEX IF NOT EXISTS idx_study_session_answers_sequence ON study_session_answers (session_id, sequence_number);';
 }
 
 function getLegacyTimestampToIsoSql(columnName: string): string {
@@ -187,6 +255,10 @@ export async function migrateDatabaseIfNeeded(db: SQLiteDatabase): Promise<void>
       ${getCreateCardsDeckCreatedAtIndexSql()}
       ${getCreateStudyProgressTableSql()}
       ${getCreateStudyProgressCardPromptIndexSql()}
+      ${getCreateStudySessionsTableSql()}
+      ${getCreateStudySessionsDeckCompletedIndexSql()}
+      ${getCreateStudySessionAnswersTableSql()}
+      ${getCreateStudySessionAnswersSessionSequenceIndexSql()}
     `);
     currentVersion = DATABASE_VERSION;
   }
@@ -215,6 +287,16 @@ export async function migrateDatabaseIfNeeded(db: SQLiteDatabase): Promise<void>
   if (currentVersion === 4) {
     await migrateCardsV4ToV5(db);
     currentVersion = 5;
+  }
+
+  if (currentVersion === 5) {
+    await db.execAsync(`
+      ${getCreateStudySessionsTableSql()}
+      ${getCreateStudySessionsDeckCompletedIndexSql()}
+      ${getCreateStudySessionAnswersTableSql()}
+      ${getCreateStudySessionAnswersSessionSequenceIndexSql()}
+    `);
+    currentVersion = 6;
   }
 
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);

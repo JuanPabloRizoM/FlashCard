@@ -13,8 +13,15 @@ It currently supports:
 - persisting study progress per `(cardId, promptMode)`
 - adaptively ordering study items using persisted progress signals
 - shaping study sessions with a practical size cap and balanced item composition
-- showing session progress indicators and answer feedback in the Study UI
-- showing a completion summary with restart and retry actions
+- showing a Study dashboard for deck selection, setup, and high-level readiness/history context
+- opening active study inside a dedicated full-screen Study Session surface
+- revealing answers by tap/click and `Space` on web
+- grading revealed cards with swipe-up correct / swipe-down incorrect plus fallback buttons
+- showing session progress indicators and answer feedback inside that focused session surface
+- showing a completion summary modal with saved-session statistics and a route into detailed session analysis
+- persisting deck-scoped study session records and answer snapshots for later review
+- showing recent saved sessions and session-overview metrics on the Study dashboard
+- opening a dedicated full-screen statistics view for a saved session
 - showing deck readiness, prompt coverage, and card-level study feedback outside the Study screen
 
 ---
@@ -35,14 +42,15 @@ UI screens do not decide prompt modes or study behavior directly.
 
 The Study feature also includes:
 - `studyProgressRepository.ts` for persistence
+- `studySessionRepository.ts` for saved session history and detail persistence
 - `useStudySession.ts` for flow orchestration
 - `AppSettingsProvider.tsx` for app-level settings hydration and appearance
 - `appSettingsStorage.native.ts` and `appSettingsStorage.web.ts` for lightweight persisted settings storage
 - `studyInsights.ts` for lightweight readiness and coverage aggregation
 - `sessionConfiguration.ts` for pre-session mode and size configuration
-- `sessionSummary.ts` for session summary helpers
+- `studySessionStats.ts` for live-session summary, saved-session aggregation, and share helpers
 - `cardStudyPreview.ts` for draft-card support previews
-- `StudySessionBanner.tsx`, `StudySessionCard.tsx`, `StudySessionProgress.tsx`, `StudySessionAnswerActions.tsx`, and `StudySessionSummary.tsx` for lean screen rendering
+- `StudySessionBanner.tsx`, `StudySessionCard.tsx`, `StudySessionProgress.tsx`, `StudySessionAnswerActions.tsx`, `StudySessionCompleteModal.tsx`, `StudySessionStatsScreen.tsx`, and `StudySessionHistoryPanel.tsx` for session and post-session rendering
 
 Current boundary:
 - the feature layer owns session setup, focused-mode filtering, session-size choice, persistence writes, and retry/restart orchestration
@@ -117,14 +125,21 @@ The Study feature hook:
 - receives hydrated app settings only after the provider has loaded them, so setup defaults do not flicker on cold start
 
 The Study UI now shows:
-- an active session banner with the current deck and technique
-- mode and size selectors before the session starts
+- a dashboard surface for choosing a deck, technique, mode, and session size
+- a lightweight deck overview with readiness, studyable count, saved-answer count, and last-studied context
+- a focused Study Session screen after session start
+- a session banner with the current deck and technique inside that dedicated screen
 - a progress bar based on answered versus total prompts
 - a clear session count such as `5 / 12`
 - a remaining count
-- a current stage badge (`Question`, `Answer revealed`, `Saving answer`)
+- tap / click reveal plus `Space` reveal on web
+- swipe-up correct and swipe-down incorrect grading with fallback buttons
 - answer feedback after each saved result
 - animated prompt and summary transitions so the session advances more clearly
+- a pause surface plus guarded leave confirmation for unfinished sessions
+- a completion modal with answered, correct, incorrect, accuracy, streak, and duration
+- a saved-session detail view with prompt distribution, failed cards, correct cards, and share support
+- a guarded leave flow so unfinished sessions are not discarded silently
 
 Outside the Study screen, the app now also shows:
 - deck-level readiness indicators
@@ -142,6 +157,9 @@ Current answer processing tracks:
 - answered count
 - correct count
 - incorrect count
+- session answer history
+- best streak within the current session
+- session duration
 
 Persisted progress tracks:
 - `timesSeen`
@@ -152,6 +170,13 @@ Persisted progress tracks:
 - `lastStudiedAt`
 
 Progress is scoped to `(cardId, promptMode)`, so one card can build separate history for forward and reverse prompts.
+
+Persisted session history tracks:
+- deck snapshot and configuration
+- answered, correct, incorrect, and accuracy counts
+- best streak and duration
+- completed timestamp
+- per-answer prompt / response snapshots for later detailed review
 
 ---
 
@@ -242,7 +267,7 @@ Fallback behavior:
 
 ## Completion Behavior
 
-When a session finishes, the screen shows:
+When a session finishes, the Study Session screen shows:
 - deck name
 - technique name
 - answered count
@@ -253,6 +278,12 @@ When a session finishes, the screen shows:
 Available actions:
 - `Restart session`: reloads the selected deck and rebuilds the session through the engine
 - `Retry incorrect answers`: starts a new session from the exact incorrect prompt items in the completed run
+- `Back to study`: returns to the Study dashboard after the session is finished
+
+If the user tries to leave before finishing:
+- the full-screen session shell shows a confirmation dialog
+- `Continue studying` keeps the current session active
+- `Leave session` resets the local session view and returns to the Study dashboard
 
 The transition from active session to summary is still driven by session state, with no UI-owned study logic.
 The active card, answer reveal panel, progress fill, and summary now animate from state changes only; no additional study logic was introduced for presentation.

@@ -1,13 +1,15 @@
 import type { CardImportPreview } from '../../../features/cards/cardImport';
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
+import { normalizeNotebookLmImportText } from '../../../features/cards/notebookLmImport';
 import { useAppStrings } from '../../strings';
-import { ImportHubInfoCard } from './ImportHubInfoCard';
-import { ImportHubPreviewContent } from './ImportHubPreviewContent';
+import { ImportHubReviewSection } from './ImportHubReviewSection';
 import { TextImportWorkspace } from './TextImportWorkspace';
+import type { ImportHubSource } from './importHubConfig';
+import { getTextSourceProfile } from './importHubSourceProfiles';
 
 type ImportHubTextFlowProps = {
   isDeckFlow: boolean;
-  source: 'paste_text' | 'notebooklm';
+  source: Exclude<ImportHubSource, 'csv_excel'>;
   selectedDeckName: string | null;
   canImportCards: boolean;
   isLocked: boolean;
@@ -49,44 +51,22 @@ export function ImportHubTextFlow({
   onClearDeckImport
 }: ImportHubTextFlowProps) {
   const strings = useAppStrings();
-  const isNotebookLmSource = source === 'notebooklm';
+  const profile = getTextSourceProfile(strings, {
+    isDeckFlow,
+    selectedDeckName,
+    source
+  });
+  const importText = isDeckFlow ? deckImportText : cardImportText;
+  const onImportTextChange = isDeckFlow ? onDeckImportTextChange : onCardImportTextChange;
 
-  const title = isDeckFlow
-    ? isNotebookLmSource
-      ? strings.importHub.notebookLm.deckTitle
-      : strings.deckImport.title
-    : isNotebookLmSource
-      ? strings.importHub.notebookLm.cardsTitle
-      : strings.cardImport.title;
-  const subtitle = isDeckFlow
-    ? isNotebookLmSource
-      ? strings.importHub.notebookLm.deckSubtitle
-      : strings.deckImport.subtitle
-    : isNotebookLmSource
-      ? selectedDeckName != null
-        ? strings.importHub.notebookLm.cardsSubtitleForDeck(selectedDeckName)
-        : strings.cardImport.subtitleNoDeck
-      : selectedDeckName != null
-        ? strings.cardImport.subtitleForDeck(selectedDeckName)
-        : strings.cardImport.subtitleNoDeck;
-  const exampleText = isDeckFlow
-    ? isNotebookLmSource
-      ? strings.importHub.notebookLm.deckExample
-      : strings.deckImport.exampleText
-    : isNotebookLmSource
-      ? strings.importHub.notebookLm.cardsExample
-      : strings.cardImport.exampleText;
-  const introSlot = isNotebookLmSource ? (
-    <ImportHubInfoCard
-      bullets={[
-        strings.importHub.notebookLm.tipQa,
-        strings.importHub.notebookLm.tipNotes,
-        strings.importHub.notebookLm.tipCsv
-      ]}
-      support={isDeckFlow ? strings.importHub.notebookLm.deckSupport : strings.importHub.notebookLm.cardsSupport}
-      title={strings.importHub.notebookLm.guideTitle}
-    />
-  ) : undefined;
+  function handleImportTextChange(value: string) {
+    if (source === 'notebooklm') {
+      onImportTextChange(normalizeNotebookLmImportText(value));
+      return;
+    }
+
+    onImportTextChange(value);
+  }
 
   function getCardStatusText(): string | null {
     if (!cardImportPreview.hasContent) {
@@ -125,40 +105,32 @@ export function ImportHubTextFlow({
   }
 
   return (
-    <TextImportWorkspace
-      introSlot={introSlot}
-      actionLabel={
-        isDeckFlow
-          ? isDeckImportSubmitting
-            ? strings.deckImport.importing
-            : strings.deckImport.actionLabel
-          : isCardImportSubmitting
-            ? strings.cardImport.importing
-            : strings.cardImport.actionLabel
-      }
-      exampleText={exampleText}
-      importText={isDeckFlow ? deckImportText : cardImportText}
-      isActionDisabled={
-        isDeckFlow
-          ? isLocked || !deckImportPreview.canImport || isDeckImportSubmitting
-          : isLocked || !canImportCards || cardImportPreview.validCount === 0 || isCardImportSubmitting
-      }
-      isEmbedded
-      isSubmitting={isDeckFlow ? isDeckImportSubmitting : isCardImportSubmitting}
-      onAction={() => {
-        if (isDeckFlow) {
-          void onImportDeck();
-          return;
+    <>
+      <TextImportWorkspace
+        introSlot={profile.introSlot}
+        actionLabel=""
+        exampleText={profile.exampleText}
+        importText={importText}
+        isActionDisabled
+        isEmbedded
+        isSubmitting={isDeckFlow ? isDeckImportSubmitting : isCardImportSubmitting}
+        onAction={() => undefined}
+        onClearImport={isDeckFlow ? onClearDeckImport : onClearCardImport}
+        onImportTextChange={handleImportTextChange}
+        showActionButton={false}
+        subtitle={profile.subtitle}
+        title={profile.title}
+      />
+      <ImportHubReviewSection
+        actionLabel={
+          isDeckFlow
+            ? isDeckImportSubmitting
+              ? strings.deckImport.importing
+              : strings.deckImport.actionLabel
+            : isCardImportSubmitting
+              ? strings.cardImport.importing
+              : strings.cardImport.actionLabel
         }
-
-        void onImportCards();
-      }}
-      onClearImport={isDeckFlow ? onClearDeckImport : onClearCardImport}
-      onImportTextChange={isDeckFlow ? onDeckImportTextChange : onCardImportTextChange}
-      subtitle={subtitle}
-      title={title}
-    >
-      <ImportHubPreviewContent
         emptyValidDetailLabel={isDeckFlow ? strings.deckImport.frontBackOnly : undefined}
         errorMessages={
           isDeckFlow
@@ -170,6 +142,20 @@ export function ImportHubTextFlow({
         resultMessage={isDeckFlow ? deckImportResultMessage : cardImportResultMessage}
         rows={isDeckFlow ? deckImportPreview.cardPreview.rows : cardImportPreview.rows}
         statusText={isDeckFlow ? getDeckStatusText() : getCardStatusText()}
+        isActionDisabled={
+          isDeckFlow
+            ? isLocked || !deckImportPreview.canImport || isDeckImportSubmitting
+            : isLocked || !canImportCards || cardImportPreview.validCount === 0 || isCardImportSubmitting
+        }
+        onAction={() => {
+          if (isDeckFlow) {
+            void onImportDeck();
+            return;
+          }
+
+          void onImportCards();
+        }}
+        stepEyebrow={strings.importHub.stepLabel(4)}
         summaryItems={
           isDeckFlow
             ? [
@@ -187,7 +173,9 @@ export function ImportHubTextFlow({
                 ]
               : []
         }
+        support={strings.importHub.reviewSupport}
+        title={strings.importHub.reviewTitle}
       />
-    </TextImportWorkspace>
+    </>
   );
 }

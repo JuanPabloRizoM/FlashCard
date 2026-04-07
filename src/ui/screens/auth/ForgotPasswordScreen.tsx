@@ -3,9 +3,9 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useAuth } from '../../../features/auth/AuthProvider';
 import { isValidEmail, normalizeEmail } from '../../../features/auth/authValidation';
+import { AuthScaffold } from '../../components/auth/AuthScaffold';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
-import { AuthScaffold } from '../../components/auth/AuthScaffold';
 
 type ForgotPasswordScreenProps = {
   onBack: () => void;
@@ -69,22 +69,24 @@ export function ForgotPasswordScreen({ onBack }: ForgotPasswordScreenProps) {
         </View>
       ) : (
         <>
-          <View style={styles.fieldGroup}>
-            <View style={styles.fieldBlock}>
-              <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
-              <TextInput
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                onChangeText={(value) => {
-                  setEmail(value);
-                  setFormError(null);
-                }}
-                placeholder={strings.auth.common.emailPlaceholder}
-                placeholderTextColor={colors.textMuted}
-                style={[styles.input, formError != null ? styles.inputError : null]}
-                value={email}
-              />
+          <View style={styles.fieldPanel}>
+            <View style={styles.fieldGroup}>
+              <View style={styles.fieldBlock}>
+                <Text style={styles.label}>{strings.auth.common.emailLabel}</Text>
+                <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  onChangeText={(value) => {
+                    setEmail(value);
+                    setFormError(null);
+                  }}
+                  placeholder={strings.auth.common.emailPlaceholder}
+                  placeholderTextColor={colors.textMuted}
+                  style={[styles.input, formError != null ? styles.inputError : null]}
+                  value={email}
+                />
+              </View>
             </View>
           </View>
 
@@ -110,6 +112,13 @@ export function ForgotPasswordScreen({ onBack }: ForgotPasswordScreenProps) {
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
+    fieldPanel: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 20,
+      borderWidth: 1,
+      padding: spacing.m
+    },
     fieldGroup: {
       gap: spacing.m
     },
@@ -122,7 +131,7 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: '600'
     },
     input: {
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderColor: colors.border,
       borderRadius: 16,
       borderWidth: 1,
@@ -150,7 +159,7 @@ const createStyles = (colors: ThemeColors) =>
     primaryButton: {
       alignItems: 'center',
       backgroundColor: colors.primary,
-      borderRadius: 16,
+      borderRadius: 18,
       paddingHorizontal: spacing.m,
       paddingVertical: 17
     },

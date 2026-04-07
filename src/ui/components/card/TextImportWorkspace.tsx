@@ -18,6 +18,7 @@ type TextImportWorkspaceProps = {
   actionLabel: string;
   isActionDisabled: boolean;
   onAction: () => void;
+  showActionButton?: boolean;
   minInputHeight?: number;
   children?: ReactNode;
 };
@@ -36,6 +37,7 @@ export function TextImportWorkspace({
   actionLabel,
   isActionDisabled,
   onAction,
+  showActionButton = true,
   minInputHeight = 140,
   children
 }: TextImportWorkspaceProps) {
@@ -100,14 +102,16 @@ export function TextImportWorkspace({
 
       {children}
 
-      <Pressable
-        accessibilityRole="button"
-        disabled={isActionDisabled}
-        onPress={onAction}
-        style={[styles.primaryButton, isActionDisabled ? styles.primaryButtonDisabled : null]}
-      >
-        <Text style={styles.primaryButtonLabel}>{actionLabel}</Text>
-      </Pressable>
+      {showActionButton ? (
+        <Pressable
+          accessibilityRole="button"
+          disabled={isActionDisabled}
+          onPress={onAction}
+          style={[styles.primaryButton, isActionDisabled ? styles.primaryButtonDisabled : null]}
+        >
+          <Text style={styles.primaryButtonLabel}>{actionLabel}</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

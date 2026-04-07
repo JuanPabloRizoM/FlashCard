@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { APP_NAME } from '../../../core/types/settings';
-import { useThemedStyles, spacing, typography, type ThemeColors } from '../../theme';
+import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 
 type AuthScaffoldProps = {
   title: string;
@@ -29,8 +29,10 @@ export function AuthScaffold({
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.shell}>
           <View style={styles.heroCard}>
-            <View style={styles.heroBadge}>
-              <Text style={styles.heroBadgeLabel}>{APP_NAME}</Text>
+            <View style={styles.heroTopRow}>
+              <View style={styles.heroBadge}>
+                <Text style={styles.heroBadgeLabel}>{APP_NAME}</Text>
+              </View>
             </View>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>{subtitle}</Text>
@@ -60,13 +62,13 @@ const createStyles = (colors: ThemeColors) =>
     },
     content: {
       paddingHorizontal: spacing.l,
-      paddingTop: spacing.m,
+      paddingTop: spacing.l,
       paddingBottom: spacing.xl
     },
     shell: {
       alignSelf: 'center',
       gap: spacing.m,
-      maxWidth: 560,
+      maxWidth: 580,
       width: '100%'
     },
     heroCard: {
@@ -74,9 +76,14 @@ const createStyles = (colors: ThemeColors) =>
       borderColor: colors.border,
       borderRadius: 28,
       borderWidth: 1,
-      gap: spacing.m,
+      gap: spacing.s,
       paddingHorizontal: spacing.l,
       paddingVertical: spacing.xl
+    },
+    heroTopRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between'
     },
     heroBadge: {
       alignSelf: 'flex-start',
@@ -96,15 +103,15 @@ const createStyles = (colors: ThemeColors) =>
     },
     title: {
       color: colors.textPrimary,
-      fontSize: typography.hero,
+      fontSize: typography.title,
       fontWeight: '800',
       letterSpacing: -0.4
     },
     subtitle: {
       color: colors.textSecondary,
-      fontSize: typography.body,
-      lineHeight: 24,
-      maxWidth: 420
+      fontSize: typography.bodySmall,
+      lineHeight: 22,
+      maxWidth: 440
     },
     formCard: {
       backgroundColor: colors.surface,
@@ -112,7 +119,7 @@ const createStyles = (colors: ThemeColors) =>
       borderRadius: 24,
       borderWidth: 1,
       gap: spacing.m,
-      padding: spacing.l
+      padding: spacing.xl
     },
     backButton: {
       alignSelf: 'flex-start',

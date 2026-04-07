@@ -76,11 +76,14 @@ The Cards tab is now the primary card workspace:
 - the user opens the `Cards` tab directly or enters it from a deck overview
 - the workspace selects a deck and loads cards for that deck only
 - the user can create a card with one unified editor using required `front` and `back` plus optional supporting fields
+- the create-card editor keeps all fields in one continuous authoring surface and keeps the current deck context visible above the form
+- the optional image area supports upload from device, paste from clipboard, image preview, replace/remove, and manual image URL entry
 - the user can edit an existing card without leaving the workspace
 - the user can switch the workspace between `Create` and `Import`
-- the Import Hub exposes `Paste text`, `Import deck`, and an honest `File` placeholder source
+- the Import Hub starts from intent first: `add cards to this deck` or `create a new deck`
+- the source step now highlights knowledge sources first, especially `NotebookLM`, `Notion`, and `Google Docs / document`, while keeping lower-level routes like `CSV / Excel` and `Structured deck text` available without dominating the flow
 - the user can paste structured multiline text and preview valid/invalid rows before importing
-- the user can paste a full exported deck into the same Import Hub, preview the parsed deck plus card lines, and confirm deck import
+- the user can paste a full exported deck into the same Import Hub through the structured-deck/new-deck path, preview the parsed deck plus card lines, and confirm deck import
 - the editor keeps optional details secondary instead of splitting creation into separate modes
 - deck overview remains a lightweight summary with a clear entry point into the Cards workspace
 - empty and loading states render safely when a deck has no cards
@@ -135,7 +138,6 @@ Import Hub v1:
 
 Not included yet:
 - card deletion
-- file-picker import
 - deck export file download
 - OCR or image import
 - advanced card search/filtering

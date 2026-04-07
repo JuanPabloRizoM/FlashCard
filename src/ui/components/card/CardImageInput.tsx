@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
@@ -11,6 +11,10 @@ type CardImageInputProps = {
   isDisabled: boolean;
   onChange: (value: string) => void;
 };
+
+function isRemoteImageUrl(value: string): boolean {
+  return /^https?:\/\//i.test(value.trim());
+}
 
 function buildImageUriFromPickerAsset(asset: ImagePicker.ImagePickerAsset): string | null {
   if (asset.base64 != null) {
@@ -27,6 +31,15 @@ export function CardImageInput({ value, isDisabled, onChange }: CardImageInputPr
   const colors = useThemeColors();
   const styles = useThemedStyles(createStyles);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [showUrlField, setShowUrlField] = useState(isRemoteImageUrl(value));
+  const trimmedValue = value.trim();
+  const hasImage = trimmedValue.length > 0;
+  const shouldShowUrlField = showUrlField || isRemoteImageUrl(trimmedValue);
+  const previewMessage = feedbackMessage ?? strings.cardEditor.imageSelected;
+
+  useEffect(() => {
+    if (isRemoteImageUrl(trimmedValue)) setShowUrlField(true);
+  }, [trimmedValue]);
 
   async function onUploadImage() {
     try {
@@ -37,12 +50,7 @@ export function CardImageInput({ value, isDisabled, onChange }: CardImageInputPr
         return;
       }
 
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'images',
-        allowsEditing: false,
-        quality: 0.7,
-        base64: true
-      });
+      const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: 'images', allowsEditing: false, quality: 0.7, base64: true });
 
       if (result.canceled || result.assets.length === 0) {
         return;
@@ -63,6 +71,7 @@ export function CardImageInput({ value, isDisabled, onChange }: CardImageInputPr
       }
 
       onChange(imageUri);
+      setShowUrlField(false);
       setFeedbackMessage(strings.cardEditor.imageSelected);
     } catch {
       setFeedbackMessage(strings.cardEditor.imageUploadFailed);
@@ -85,7 +94,8 @@ export function CardImageInput({ value, isDisabled, onChange }: CardImageInputPr
         return;
       }
 
-      onChange(image.data);
+      onChange(`data:image/png;base64,${image.data}`);
+      setShowUrlField(false);
       setFeedbackMessage(strings.cardEditor.imagePasted);
     } catch {
       setFeedbackMessage(strings.cardEditor.imagePasteFailed);
@@ -94,24 +104,9 @@ export function CardImageInput({ value, isDisabled, onChange }: CardImageInputPr
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerRow}>
-        <View style={styles.headerCopy}>
-          <Text style={styles.label}>{strings.cardEditor.imageLabel}</Text>
-          <Text style={styles.supportText}>{strings.cardEditor.imageSupport}</Text>
-        </View>
-        {value.length > 0 ? (
-          <Pressable
-            accessibilityRole="button"
-            disabled={isDisabled}
-            onPress={() => {
-              onChange('');
-              setFeedbackMessage(null);
-            }}
-            style={({ pressed }) => [styles.removeButton, pressed ? styles.removeButtonPressed : null]}
-          >
-            <Text style={styles.removeButtonLabel}>{strings.cardEditor.removeImage}</Text>
-          </Pressable>
-        ) : null}
+      <View style={styles.headerCopy}>
+        <Text style={styles.label}>{strings.cardEditor.imageLabel}</Text>
+        <Text style={styles.supportText}>{strings.cardEditor.imageSupport}</Text>
       </View>
 
       <View style={styles.actionRow}>
@@ -147,7 +142,8 @@ export function CardImageInput({ value, isDisabled, onChange }: CardImageInputPr
           accessibilityRole="button"
           disabled={isDisabled}
           onPress={() => {
-            inputRef.current?.focus();
+            setShowUrlField(true);
+            requestAnimationFrame(() => inputRef.current?.focus());
           }}
           style={({ pressed }) => [
             styles.actionChip,
@@ -159,29 +155,46 @@ export function CardImageInput({ value, isDisabled, onChange }: CardImageInputPr
         </Pressable>
       </View>
 
-      {value.length > 0 ? (
+      {shouldShowUrlField ? (
+        <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          editable={!isDisabled}
+          keyboardType="url"
+          onChangeText={(nextValue) => {
+            onChange(nextValue);
+            setFeedbackMessage(null);
+          }}
+          placeholder={strings.cardEditor.imageUrlPlaceholder}
+          placeholderTextColor={colors.textMuted}
+          ref={inputRef}
+          style={styles.input}
+          value={value}
+        />
+      ) : null}
+
+      {hasImage ? (
         <View style={styles.previewCard}>
           <Image resizeMode="cover" source={{ uri: value }} style={styles.previewImage} />
+          <View style={styles.previewFooter}>
+            <Text style={styles.previewText}>{previewMessage}</Text>
+            <Pressable
+              accessibilityRole="button"
+              disabled={isDisabled}
+              onPress={() => {
+                onChange('');
+                setFeedbackMessage(null);
+                setShowUrlField(false);
+              }}
+              style={({ pressed }) => [styles.removeButton, pressed ? styles.removeButtonPressed : null]}
+            >
+              <Text style={styles.removeButtonLabel}>{strings.cardEditor.removeImage}</Text>
+            </Pressable>
+          </View>
         </View>
       ) : null}
 
-      <TextInput
-        autoCapitalize="none"
-        autoCorrect={false}
-        editable={!isDisabled}
-        keyboardType="url"
-        onChangeText={(nextValue) => {
-          onChange(nextValue);
-          setFeedbackMessage(null);
-        }}
-        placeholder={strings.cardEditor.imageUrlPlaceholder}
-        placeholderTextColor={colors.textMuted}
-        ref={inputRef}
-        style={styles.input}
-        value={value}
-      />
-
-      {feedbackMessage != null ? <Text style={styles.feedbackText}>{feedbackMessage}</Text> : null}
+      {feedbackMessage != null && !hasImage ? <Text style={styles.feedbackText}>{feedbackMessage}</Text> : null}
     </View>
   );
 }
@@ -189,18 +202,14 @@ export function CardImageInput({ value, isDisabled, onChange }: CardImageInputPr
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      gap: spacing.s
-    },
-    headerRow: {
-      alignItems: 'flex-start',
-      flexDirection: 'row',
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 20,
+      borderWidth: 1,
       gap: spacing.s,
-      justifyContent: 'space-between'
+      padding: spacing.m
     },
-    headerCopy: {
-      flex: 1,
-      gap: spacing.xs
-    },
+    headerCopy: { gap: spacing.xs },
     label: {
       color: colors.textPrimary,
       fontSize: typography.bodySmall,
@@ -217,17 +226,16 @@ const createStyles = (colors: ThemeColors) =>
       gap: spacing.s
     },
     actionChip: {
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderColor: colors.border,
       borderRadius: 999,
       borderWidth: 1,
       paddingHorizontal: spacing.m,
       paddingVertical: spacing.s
     },
-    actionChipDisabled: {
-      opacity: 0.5
-    },
+    actionChipDisabled: { opacity: 0.5 },
     actionChipPressed: {
+      backgroundColor: colors.primarySoft,
       borderColor: colors.primary
     },
     actionChipLabel: {
@@ -236,18 +244,28 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: '700'
     },
     previewCard: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      borderColor: colors.borderStrong,
       borderRadius: 16,
       borderWidth: 1,
       overflow: 'hidden'
     },
-    previewImage: {
-      aspectRatio: 16 / 9,
-      width: '100%'
+    previewImage: { aspectRatio: 16 / 9, width: '100%' },
+    previewFooter: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: spacing.s,
+      justifyContent: 'space-between',
+      padding: spacing.m
+    },
+    previewText: {
+      color: colors.textSecondary,
+      flex: 1,
+      fontSize: typography.caption,
+      fontWeight: '600'
     },
     input: {
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderColor: colors.border,
       borderRadius: 14,
       borderWidth: 1,
@@ -269,9 +287,7 @@ const createStyles = (colors: ThemeColors) =>
       paddingHorizontal: spacing.m,
       paddingVertical: spacing.s
     },
-    removeButtonPressed: {
-      opacity: 0.75
-    },
+    removeButtonPressed: { opacity: 0.75 },
     removeButtonLabel: {
       color: colors.textPrimary,
       fontSize: typography.caption,

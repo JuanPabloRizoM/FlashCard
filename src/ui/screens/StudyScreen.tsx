@@ -1,31 +1,44 @@
-import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 import { STUDY_TECHNIQUE_LABELS } from '../../core/types/study';
 import { useStudySession } from '../../features/study/useStudySession';
 import type { RootTabParamList } from '../../navigation/types';
-import { CardWorkspaceFeedbackState } from '../components/card/CardWorkspaceFeedbackState';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
-import { StudySessionBanner } from '../components/study/StudySessionBanner';
-import { StudySessionCard } from '../components/study/StudySessionCard';
-import { StudySessionSetupPanel } from '../components/study/StudySessionSetupPanel';
-import { StudySessionSummary } from '../components/study/StudySessionSummary';
+import { StudyDashboardPanel } from '../components/study/StudyDashboardPanel';
+import { StudySessionScreen } from '../components/study/StudySessionScreen';
+import { StudySessionStatsScreen } from '../components/study/StudySessionStatsScreen';
 import { useAppStrings } from '../strings';
-import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
+import { spacing, useThemeColors, useThemedStyles, type ThemeColors } from '../theme';
 
 type StudyScreenProps = BottomTabScreenProps<RootTabParamList, 'Study'>;
+type StudyView = 'dashboard' | 'session' | 'stats';
 
 export function StudyScreen({ navigation, route }: StudyScreenProps) {
   const colors = useThemeColors();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const routeSelectedDeckId = route.params?.selectedDeckId ?? null;
+  const routeAutoStart = route.params?.autoStart ?? false;
   const [handoffDeckId, setHandoffDeckId] = useState<number | null>(routeSelectedDeckId);
+  const [pendingAutoStart, setPendingAutoStart] = useState(routeAutoStart);
+  const [activeView, setActiveView] = useState<StudyView>('dashboard');
   const {
     decks,
     selectedDeck,
     selectedDeckId,
+    selectedDeckInsights,
+    selectedDeckReviewCount,
+    selectedDeckLastStudiedAt,
+    isLoadingSelectedDeckDetails,
+    recentSessions,
+    sessionOverview,
+    isLoadingRecentSessions,
+    selectedSessionDetail,
+    isLoadingSessionDetail,
+    completedSessionDetail,
+    isSavingSessionStats,
     selectedTechniqueId,
     selectedSessionMode,
     selectedSessionSize,
@@ -33,7 +46,6 @@ export function StudyScreen({ navigation, route }: StudyScreenProps) {
     sessionStartResult,
     currentItem,
     sessionSummary,
-    canRetryIncorrectAnswers,
     isLoadingDecks,
     isStartingSession,
     isSubmittingAnswer,
@@ -46,18 +58,26 @@ export function StudyScreen({ navigation, route }: StudyScreenProps) {
     onStartSession,
     onRevealAnswer,
     onSubmitAnswer,
-    onRestartSession,
-    onRetryIncorrectAnswers
-  } = useStudySession(handoffDeckId);
+    onOpenSessionDetail,
+    onCloseSessionDetail,
+    onResetSession
+  } = useStudySession({ requestedDeckId: handoffDeckId });
 
   useEffect(() => {
-    if (routeSelectedDeckId == null) {
+    if (routeSelectedDeckId == null && !routeAutoStart) {
       return;
     }
 
-    setHandoffDeckId(routeSelectedDeckId);
-    navigation.setParams({ selectedDeckId: undefined });
-  }, [navigation, routeSelectedDeckId]);
+    if (routeSelectedDeckId != null) {
+      setHandoffDeckId(routeSelectedDeckId);
+    }
+
+    if (routeAutoStart) {
+      setPendingAutoStart(true);
+    }
+
+    navigation.setParams({ autoStart: undefined, selectedDeckId: undefined });
+  }, [navigation, routeAutoStart, routeSelectedDeckId]);
 
   useEffect(() => {
     if (handoffDeckId == null) {
@@ -74,122 +94,139 @@ export function StudyScreen({ navigation, route }: StudyScreenProps) {
     }
   }, [decks, handoffDeckId, selectedDeckId]);
 
-  const hasStudyContent = currentItem != null || sessionSummary != null;
-  const isSessionActive = currentItem != null;
-  const isSetupLocked = isSubmittingAnswer || isStartingSession || isSessionActive;
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: activeView === 'dashboard',
+      tabBarStyle:
+        activeView === 'dashboard'
+          ? {
+              backgroundColor: colors.surface,
+              borderTopColor: colors.border,
+              height: 72,
+              paddingTop: spacing.xs
+            }
+          : { display: 'none' }
+    });
+  }, [activeView, colors.border, colors.surface, navigation]);
+
+  const handleLeaveSession = useCallback(() => {
+    onResetSession();
+    setPendingAutoStart(false);
+    setActiveView('dashboard');
+  }, [onResetSession]);
+
+  const handleStartSession = useCallback(async () => {
+    const result = await onStartSession();
+
+    if (result?.status === 'ready') {
+      setActiveView('session');
+      return;
+    }
+
+    setActiveView('dashboard');
+  }, [onStartSession]);
+
+  const handleOpenSessionStatistics = useCallback(
+    async (sessionId: number) => {
+      await onOpenSessionDetail(sessionId);
+      onResetSession();
+      setPendingAutoStart(false);
+      setActiveView('stats');
+    },
+    [onOpenSessionDetail, onResetSession]
+  );
+
+  useEffect(() => {
+    if (!pendingAutoStart || isLoadingDecks || isStartingSession || selectedDeckId == null) {
+      return;
+    }
+
+    if (handoffDeckId != null && selectedDeckId !== handoffDeckId) {
+      return;
+    }
+
+    setPendingAutoStart(false);
+    void handleStartSession();
+  }, [handleStartSession, handoffDeckId, isLoadingDecks, isStartingSession, pendingAutoStart, selectedDeckId]);
+
+  if (activeView === 'session') {
+    return (
+      <StudySessionScreen
+        answeredCount={session?.answeredCount ?? 0}
+        completedSessionDetail={completedSessionDetail}
+        currentItem={currentItem}
+        deckName={selectedDeck?.name ?? null}
+        isSavingSessionStats={isSavingSessionStats}
+        isStartingSession={isStartingSession}
+        isSubmittingAnswer={isSubmittingAnswer}
+        lastAnswer={session?.lastAnswer ?? null}
+        onContinueAfterSummary={handleLeaveSession}
+        onLeaveSession={handleLeaveSession}
+        onRevealAnswer={onRevealAnswer}
+        onSubmitAnswer={(isCorrect) => {
+          void onSubmitAnswer(isCorrect);
+        }}
+        onViewSessionStatistics={() => {
+          if (completedSessionDetail != null) {
+            void handleOpenSessionStatistics(completedSessionDetail.session.id);
+          }
+        }}
+        remainingCount={(session?.items.length ?? 0) - (session?.answeredCount ?? 0)}
+        revealAnswer={revealAnswer}
+        screenError={screenError}
+        sessionMode={selectedSessionMode}
+        sessionSize={selectedSessionSize}
+        sessionStartResult={sessionStartResult}
+        sessionSummary={sessionSummary}
+        techniqueLabel={STUDY_TECHNIQUE_LABELS[selectedTechniqueId]}
+        totalCount={session?.items.length ?? 0}
+      />
+    );
+  }
+
+  if (activeView === 'stats') {
+    return (
+      <StudySessionStatsScreen
+        detail={selectedSessionDetail}
+        isLoading={isLoadingSessionDetail}
+        onBack={() => {
+          onCloseSessionDetail();
+          setActiveView('dashboard');
+        }}
+      />
+    );
+  }
 
   return (
-    <ScreenContainer
-      title={strings.screens.study.title}
-      subtitle={strings.screens.study.subtitle}
-    >
+    <ScreenContainer title={strings.screens.study.title} subtitle={strings.screens.study.subtitle}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.panel}>
-          <Text style={styles.eyebrow}>{strings.screens.study.setupEyebrow}</Text>
-          <Text style={styles.sectionTitle}>{strings.screens.study.chooseDeckTitle}</Text>
-          <Text style={styles.supportText}>{strings.screens.study.chooseDeckSupport}</Text>
-
-          {isLoadingDecks ? (
-            <CardWorkspaceFeedbackState isLoading message={strings.common.loadingDecks} />
-          ) : decks.length === 0 ? (
-            <CardWorkspaceFeedbackState
-              message={strings.screens.study.noStudyMessage}
-              title={strings.screens.study.noStudyTitle}
-            />
-          ) : (
-            <View style={styles.choiceRow}>
-              {decks.map((deck) => (
-                <Pressable
-                  disabled={isSetupLocked}
-                  key={deck.id}
-                  onPress={() => {
-                    onSelectDeck(deck.id);
-                  }}
-                  style={[
-                    styles.choiceChip,
-                    deck.id === selectedDeckId ? styles.choiceChipActive : null,
-                    isSetupLocked ? styles.choiceChipDisabled : null
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.choiceLabel,
-                      deck.id === selectedDeckId ? styles.choiceLabelActive : null
-                    ]}
-                  >
-                    {deck.name}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-          )}
-        </View>
-
-        <StudySessionSetupPanel
-          canStartSession={selectedDeckId != null}
-          isDisabled={isSetupLocked}
-          isSessionActive={isSessionActive}
+        <StudyDashboardPanel
+          decks={decks}
+          isLoadingDecks={isLoadingDecks}
+          isLoadingRecentSessions={isLoadingRecentSessions}
+          isLoadingSelectedDeckDetails={isLoadingSelectedDeckDetails}
           isStartingSession={isStartingSession}
+          onOpenSessionDetail={(sessionId) => {
+            void handleOpenSessionStatistics(sessionId);
+          }}
+          onSelectDeck={onSelectDeck}
           onSelectSessionMode={onSelectSessionMode}
           onSelectSessionSize={onSelectSessionSize}
           onSelectTechnique={onSelectTechnique}
-          onStartSession={onStartSession}
+          onStartSession={handleStartSession}
+          recentSessions={recentSessions}
+          screenError={screenError}
+          selectedDeck={selectedDeck}
+          selectedDeckId={selectedDeckId}
+          selectedDeckInsights={selectedDeckInsights}
+          selectedDeckLastStudiedAt={selectedDeckLastStudiedAt}
+          selectedDeckReviewCount={selectedDeckReviewCount}
           selectedSessionMode={selectedSessionMode}
           selectedSessionSize={selectedSessionSize}
           selectedTechniqueId={selectedTechniqueId}
+          sessionOverview={sessionOverview}
+          sessionUnavailableReason={sessionStartResult?.status === 'empty' ? sessionStartResult.reason : null}
         />
-
-        {screenError != null ? <Text style={styles.errorText}>{screenError}</Text> : null}
-
-        {sessionStartResult?.status === 'empty' ? (
-          <CardWorkspaceFeedbackState
-            message={sessionStartResult.reason}
-            title={strings.screens.study.sessionUnavailable}
-          />
-        ) : null}
-
-        {hasStudyContent && selectedDeck != null ? (
-          <StudySessionBanner
-            deckName={selectedDeck.name}
-            sessionMode={selectedSessionMode}
-            sessionSize={selectedSessionSize}
-            techniqueLabel={STUDY_TECHNIQUE_LABELS[selectedTechniqueId]}
-          />
-        ) : null}
-
-        {currentItem != null ? (
-          <StudySessionCard
-            answeredCount={session?.answeredCount ?? 0}
-            currentItem={currentItem}
-            isSubmittingAnswer={isSubmittingAnswer}
-            lastAnswer={session?.lastAnswer ?? null}
-            onRevealAnswer={onRevealAnswer}
-            onSubmitAnswer={(isCorrect) => {
-              void onSubmitAnswer(isCorrect);
-            }}
-            remainingCount={(session?.items.length ?? 0) - (session?.answeredCount ?? 0)}
-            revealAnswer={revealAnswer}
-            techniqueLabel={STUDY_TECHNIQUE_LABELS[selectedTechniqueId]}
-            totalCount={session?.items.length ?? 0}
-          />
-        ) : null}
-
-        {sessionSummary != null && selectedDeck != null ? (
-          <StudySessionSummary
-            accuracyPercentage={sessionSummary.accuracyPercentage}
-            answeredCount={sessionSummary.answeredCount}
-            canRetryIncorrectAnswers={canRetryIncorrectAnswers}
-            correctCount={sessionSummary.correctCount}
-            deckName={selectedDeck.name}
-            incorrectCount={sessionSummary.incorrectCount}
-            isRestarting={isStartingSession}
-            onRestartSession={() => {
-              void onRestartSession();
-            }}
-            onRetryIncorrectAnswers={onRetryIncorrectAnswers}
-            techniqueLabel={STUDY_TECHNIQUE_LABELS[selectedTechniqueId]}
-          />
-        ) : null}
       </ScrollView>
     </ScreenContainer>
   );
@@ -197,65 +234,8 @@ export function StudyScreen({ navigation, route }: StudyScreenProps) {
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
-  content: {
-    gap: spacing.m,
-    paddingBottom: spacing.xl
-  },
-  panel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 20,
-    borderWidth: 1,
-    gap: spacing.s,
-    padding: spacing.l
-  },
-  eyebrow: {
-    color: colors.primary,
-    fontSize: typography.overline,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-    textTransform: 'uppercase'
-  },
-  sectionTitle: {
-    color: colors.textPrimary,
-    fontSize: typography.subtitle,
-    fontWeight: '700'
-  },
-  supportText: {
-    color: colors.textSecondary,
-    fontSize: typography.bodySmall,
-    lineHeight: 22
-  },
-  choiceRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.s
-  },
-  choiceChip: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: spacing.m,
-    paddingVertical: spacing.s
-  },
-  choiceChipActive: {
-    backgroundColor: colors.primarySoft,
-    borderColor: colors.primary
-  },
-  choiceChipDisabled: {
-    opacity: 0.5
-  },
-  choiceLabel: {
-    color: colors.textPrimary,
-    fontSize: typography.caption,
-    fontWeight: '600'
-  },
-  choiceLabelActive: {
-    color: colors.primary
-  },
-  errorText: {
-    color: colors.error,
-    fontSize: typography.caption
-  }
-});
+    content: {
+      gap: spacing.m,
+      paddingBottom: spacing.xl
+    }
+  });

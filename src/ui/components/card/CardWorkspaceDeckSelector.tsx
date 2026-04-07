@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Deck } from '../../../core/models/Deck';
 import { useAppStrings } from '../../strings';
-import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
+import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 
 type CardWorkspaceDeckSelectorProps = {
   decks: Deck[];
@@ -21,7 +21,6 @@ export function CardWorkspaceDeckSelector({
   isEditing,
   onSelectDeck
 }: CardWorkspaceDeckSelectorProps) {
-  const colors = useThemeColors();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   return (
@@ -74,20 +73,20 @@ const createStyles = (colors: ThemeColors) =>
   panel: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
-    gap: spacing.s,
-    padding: spacing.m
+    gap: spacing.m,
+    padding: spacing.l
   },
   headerRow: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: spacing.s
   },
   contextWrap: {
     flex: 1,
-    gap: spacing.xxs
+    gap: spacing.xs
   },
   contextLabel: {
     color: colors.textMuted,
@@ -98,12 +97,14 @@ const createStyles = (colors: ThemeColors) =>
   },
   contextValue: {
     color: colors.textPrimary,
-    fontSize: typography.bodySmall,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   statusBadge: {
     backgroundColor: colors.primarySoft,
+    borderColor: colors.primary,
     borderRadius: 999,
+    borderWidth: 1,
     paddingHorizontal: spacing.s,
     paddingVertical: spacing.xs
   },

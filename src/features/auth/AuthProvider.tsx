@@ -237,8 +237,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
       },
       signOut: async () => {
-        if (isSupabaseConfigured && supabase != null) {
-          await supabase.auth.signOut();
+        if (session.status === 'authenticated' && isSupabaseConfigured && supabase != null) {
+          const { error } = await supabase.auth.signOut({ scope: 'local' });
+
+          if (error != null) {
+            throw error;
+          }
         }
 
         applySession({

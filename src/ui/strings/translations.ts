@@ -101,6 +101,19 @@ export type AppStrings = {
       setupEyebrow: string;
       chooseDeckTitle: string;
       chooseDeckSupport: string;
+      overviewEyebrow: string;
+      overviewSupport: string;
+      studyableNow: string;
+      reviewCount: string;
+      lastStudied: string;
+      neverStudied: string;
+      sessionEyebrow: string;
+      pauseSession: string;
+      returnToStudy: string;
+      leaveSessionTitle: string;
+      leaveSessionSupport: string;
+      continueSession: string;
+      leaveSessionAction: string;
       noStudyTitle: string;
       noStudyMessage: string;
       sessionUnavailable: string;
@@ -117,9 +130,27 @@ export type AppStrings = {
       accountEyebrow: string;
       accountTitle: string;
       accountSupport: string;
+      accountSupportGuest: string;
+      accountSupportAuthenticated: string;
+      accountStatusLabel: string;
+      accountProviderLabel: string;
+      accountNameLabel: string;
+      accountEmailLabel: string;
+      accountStateSignedOut: string;
+      accountStateGuest: string;
+      accountStateAuthenticated: string;
       billingEyebrow: string;
       billingTitle: string;
       billingSupport: string;
+      unavailableBadge: string;
+      signOutEyebrow: string;
+      signOutTitle: string;
+      signOutSupportGuest: string;
+      signOutSupportAuthenticated: string;
+      signOutAction: string;
+      signOutActionGuest: string;
+      signingOutAction: string;
+      signOutError: string;
       aboutEyebrow: string;
       aboutTitle: string;
       appLabel: string;
@@ -133,6 +164,11 @@ export type AppStrings = {
         system: string;
         light: string;
         dark: string;
+      };
+      providerLabels: {
+        guest: string;
+        email: string;
+        google: string;
       };
     };
   };
@@ -228,27 +264,43 @@ export type AppStrings = {
     sourceTitle: string;
     sourceSupportCards: string;
     sourceSupportDeck: string;
+    featuredSourcesTitle: string;
+    otherSourcesTitle: string;
     sourceLabels: {
-      pasteText: string;
+      pasteNotes: string;
       notebooklm: string;
-      file: string;
+      csvExcel: string;
+      notion: string;
+      googleDocs: string;
+      structuredDeck: string;
     };
     sourceDescriptions: {
-      pasteTextCards: string;
-      pasteTextDeck: string;
+      pasteNotesCards: string;
+      pasteNotesDeck: string;
       notebookLmCards: string;
       notebookLmDeck: string;
-      file: string;
+      csvExcelCards: string;
+      notionCards: string;
+      notionDeck: string;
+      googleDocsCards: string;
+      googleDocsDeck: string;
+      structuredDeck: string;
     };
     inputTitle: string;
     inputSupportText: string;
     inputSupportNotebookLm: string;
     inputSupportFile: string;
+    inputSupportNotion: string;
+    inputSupportDocument: string;
+    inputSupportStructuredDeck: string;
+    reviewTitle: string;
+    reviewSupport: string;
+    futureSourcesTitle: string;
+    futureSourcesSupport: string;
+    notionFutureNote: string;
     targetDeck: (deckName: string) => string;
     targetDeckMissing: string;
     targetNewDeck: string;
-    futureSourceNotionTitle: string;
-    futureSourceNotionSupport: string;
     notebookLm: {
       guideTitle: string;
       cardsTitle: string;
@@ -262,6 +314,49 @@ export type AppStrings = {
       tipQa: string;
       tipNotes: string;
       tipCsv: string;
+    };
+    notion: {
+      guideTitle: string;
+      cardsTitle: string;
+      cardsSubtitleForDeck: (deckName: string) => string;
+      cardsSupport: string;
+      cardsExample: string;
+      deckTitle: string;
+      deckSubtitle: string;
+      deckSupport: string;
+      deckExample: string;
+      tipPaste: string;
+      tipCsv: string;
+    };
+    googleDocs: {
+      guideTitle: string;
+      cardsTitle: string;
+      cardsSubtitleForDeck: (deckName: string) => string;
+      cardsSupport: string;
+      cardsExample: string;
+      deckTitle: string;
+      deckSubtitle: string;
+      deckSupport: string;
+      deckExample: string;
+      tipStructure: string;
+      tipHeader: string;
+    };
+    pasteNotes: {
+      cardsTitle: string;
+      cardsSubtitleForDeck: (deckName: string) => string;
+      cardsSupport: string;
+      deckTitle: string;
+      deckSubtitle: string;
+      deckSupport: string;
+    };
+    structuredDeck: {
+      guideTitle: string;
+      title: string;
+      subtitle: string;
+      support: string;
+      example: string;
+      tipFormat: string;
+      tipPower: string;
     };
   };
   cardEditor: {
@@ -362,6 +457,10 @@ export type AppStrings = {
     revealAnswer: string;
     answerLabel: string;
     answerHint: string;
+    tapToReveal: string;
+    spaceToReveal: string;
+    swipeUpCorrect: string;
+    swipeDownIncorrect: string;
   };
   studyProgress: {
     remaining: (count: number) => string;
@@ -388,6 +487,41 @@ export type AppStrings = {
     restarting: string;
     retryMisses: string;
     noMissedPrompts: string;
+  };
+  studyStats: {
+    pauseTitle: string;
+    pauseSupport: string;
+    resumeSession: string;
+    stopSession: string;
+    savingSession: string;
+    savingSessionAnswer: string;
+    continueToStudy: string;
+    viewDetailedStatistics: string;
+    detailEyebrow: string;
+    detailTitle: string;
+    detailSupport: string;
+    shareAction: string;
+    shareTitle: string;
+    bestStreak: string;
+    sessionTime: string;
+    promptDistribution: string;
+    failedCards: string;
+    correctCards: string;
+    historyEyebrow: string;
+    historyTitle: string;
+    historySupport: string;
+    sessions: string;
+    totalReviewed: string;
+    emptyHistoryTitle: string;
+    emptyHistorySupport: string;
+    emptyDetailTitle: string;
+    emptyDetailSupport: string;
+    summaryReadySupport: string;
+    viewStatisticsShort: string;
+    sessionRowSupport: (answeredCount: number, accuracyPercentage: number, durationLabel: string) => string;
+    durationSeconds: (seconds: number) => string;
+    durationMinutes: (minutes: number) => string;
+    durationMinutesSeconds: (minutes: number, seconds: number) => string;
   };
   studyAnswers: {
     needsReview: string;
@@ -465,8 +599,11 @@ export type AppStrings = {
     couldNotLoadStudyDecks: string;
     createDeckBeforeStudy: string;
     couldNotSaveStudyProgress: string;
+    couldNotSaveStudySession: string;
+    couldNotLoadStudySessionDetail: string;
     noIncorrectAnswersToRetry: string;
     couldNotStartStudy: string;
+    couldNotStartStudySession: string;
   };
   importValidation: {
     useFormat: string;
@@ -621,25 +758,56 @@ const es: AppStrings = {
       setupEyebrow: 'Preparación',
       chooseDeckTitle: 'Elige un mazo',
       chooseDeckSupport: 'Ajusta modo, tamaño y técnica antes de empezar.',
+      overviewEyebrow: 'Resumen del mazo',
+      overviewSupport: 'Confirma qué tan listo está este mazo y entra a una sesión enfocada cuando quieras.',
+      studyableNow: 'Listas ahora',
+      reviewCount: 'Respuestas guardadas',
+      lastStudied: 'Último estudio',
+      neverStudied: 'Aún sin estudio',
+      sessionEyebrow: 'Sesión activa',
+      pauseSession: 'Pausar',
+      returnToStudy: 'Volver a estudiar',
+      leaveSessionTitle: '¿Salir de esta sesión?',
+      leaveSessionSupport: 'Si sales ahora, la sesión actual se cerrará aunque todavía no la hayas terminado.',
+      continueSession: 'Seguir estudiando',
+      leaveSessionAction: 'Salir de la sesión',
       noStudyTitle: 'Aún no hay nada para estudiar',
       noStudyMessage: 'Crea un mazo y tarjetas primero.',
       sessionUnavailable: 'Sesión no disponible'
     },
     settings: {
       title: 'Ajustes',
-      subtitle: 'Controla cómo se ve y se lee la app.',
+      subtitle: 'Ajusta la apariencia, el idioma y el acceso de tu cuenta desde un solo lugar.',
       appearanceEyebrow: 'Apariencia',
       appearanceTitle: 'Tema',
-      appearanceSupport: 'Guardado en este dispositivo.',
+      appearanceSupport: 'Elige cómo quieres ver FlashCards en este dispositivo.',
       languageEyebrow: 'Idioma',
       languageTitle: 'Idioma de la app',
-      languageSupport: 'Se aplica a toda la interfaz.',
+      languageSupport: 'Se aplica a toda la interfaz y cambia al momento.',
       accountEyebrow: 'Cuenta',
       accountTitle: 'Configuración de cuenta',
-      accountSupport: 'Las herramientas de cuenta aún no están disponibles.',
+      accountSupport: 'Consulta tu acceso actual. Las herramientas de cuenta llegarán más adelante.',
+      accountSupportGuest: 'Estás usando FlashCards como invitado. Puedes salir de este modo en cualquier momento.',
+      accountSupportAuthenticated: 'Esta sección muestra la sesión activa de FlashCards sin fingir controles que todavía no existen.',
+      accountStatusLabel: 'Acceso',
+      accountProviderLabel: 'Proveedor',
+      accountNameLabel: 'Nombre',
+      accountEmailLabel: 'Correo',
+      accountStateSignedOut: 'Sin sesión',
+      accountStateGuest: 'Modo invitado',
+      accountStateAuthenticated: 'Sesión activa',
       billingEyebrow: 'Facturación',
       billingTitle: 'Facturación',
-      billingSupport: 'La facturación aún no está disponible en esta versión.',
+      billingSupport: 'Cuando la facturación exista, aparecerá aquí con el mismo nivel de claridad.',
+      unavailableBadge: 'Aún no disponible',
+      signOutEyebrow: 'Acceso',
+      signOutTitle: 'Cerrar sesión',
+      signOutSupportGuest: 'Saldrás del modo invitado y volverás a la pantalla de acceso.',
+      signOutSupportAuthenticated: 'Cerraremos esta sesión y volverás a la pantalla de acceso.',
+      signOutAction: 'Cerrar sesión',
+      signOutActionGuest: 'Salir del modo invitado',
+      signingOutAction: 'Cerrando sesión...',
+      signOutError: 'No se pudo cerrar la sesión en este momento.',
       aboutEyebrow: 'Información',
       aboutTitle: 'Información de la app',
       appLabel: 'App',
@@ -653,15 +821,20 @@ const es: AppStrings = {
         system: 'Sistema',
         light: 'Claro',
         dark: 'Oscuro'
+      },
+      providerLabels: {
+        guest: 'Invitado',
+        email: 'Correo',
+        google: 'Google'
       }
     }
   },
   auth: {
     landing: {
-      title: 'Tu estudio, a tu ritmo',
-      subtitle: 'Crea mazos, repasa tarjetas y guarda tu avance local.',
+      title: 'Entra a tu espacio de estudio',
+      subtitle: 'Crea mazos, importa material y estudia sin perder el contexto.',
       googleButton: 'Continuar con Google',
-      googleSupport: 'Google llegará cuando conectemos el acceso.',
+      googleSupport: 'La forma más rápida de continuar.',
       googleRedirecting: 'Redirigiendo a Google...',
       googleCancelled: 'Se canceló el acceso con Google.',
       googleCallbackFailed: 'No se pudo completar el acceso con Google.',
@@ -669,8 +842,8 @@ const es: AppStrings = {
       emailButton: 'Iniciar sesión con correo',
       createAccount: 'Crear cuenta',
       guestButton: 'Continuar como invitado',
-      guestSupport: 'Empieza ahora y usa la app localmente.',
-      footer: 'Términos y privacidad aparecerán aquí cuando el acceso esté disponible.'
+      guestSupport: 'Empieza en local ahora y decide más tarde si quieres usar una cuenta.',
+      footer: 'Términos y privacidad aparecerán aquí cuando el acceso esté completamente disponible.'
     },
     common: {
       back: 'Volver',
@@ -683,7 +856,7 @@ const es: AppStrings = {
     },
     signIn: {
       title: 'Iniciar sesión',
-      subtitle: 'Entra con tu correo cuando el acceso esté listo.',
+      subtitle: 'Usa tu correo para volver a FlashCards sin fricción.',
       submit: 'Iniciar sesión',
       forgotPassword: 'Olvidé mi contraseña',
       invalidCredentials: 'Correo o contraseña incorrectos.',
@@ -691,7 +864,7 @@ const es: AppStrings = {
     },
     createAccount: {
       title: 'Crear cuenta',
-      subtitle: 'Deja tu cuenta lista para cuando la sincronización esté disponible.',
+      subtitle: 'Crea tu acceso en menos de un minuto.',
       nameLabel: 'Nombre (opcional)',
       namePlaceholder: 'Tu nombre',
       confirmPasswordLabel: 'Confirmar contraseña',
@@ -703,11 +876,11 @@ const es: AppStrings = {
     },
     forgotPassword: {
       title: 'Recuperar contraseña',
-      subtitle: 'Escribe tu correo y te mostraremos el siguiente paso.',
+      subtitle: 'Escribe tu correo y te enviaremos el siguiente paso.',
       submit: 'Enviar enlace',
-      confirmationTitle: 'Reinicio preparado',
+      confirmationTitle: 'Revisa tu correo',
       confirmationMessage: (email) =>
-        `Cuando el acceso esté listo, enviaremos el enlace a ${email}.`,
+        `Si existe una cuenta para ${email}, enviaremos ahí el enlace para restablecer la contraseña.`,
       sendAnother: 'Usar otro correo'
     },
     validation: {
@@ -732,8 +905,8 @@ const es: AppStrings = {
     listEmptyMessage: 'Agrega una tarjeta o importa varias.'
   },
   importHub: {
-    title: 'Importar contenido',
-    subtitle: 'Sigue estos pasos para revisar tu contenido antes de guardarlo.',
+    title: 'Trae tu contenido',
+    subtitle: 'Elige lo que quieres crear, dinos de dónde viene y revisa todo antes de importarlo.',
     stepLabel: (stepNumber) => `Paso ${stepNumber}`,
     intentTitle: '¿Qué quieres importar?',
     intentSupport: 'Empieza por el resultado que quieres obtener.',
@@ -747,68 +920,132 @@ const es: AppStrings = {
       newDeck: 'Crear un mazo nuevo a partir del contenido importado.'
     },
     sourceTitle: '¿De dónde viene?',
-    sourceSupportCards: 'Elige la fuente que mejor se adapte a tus tarjetas.',
-    sourceSupportDeck: 'Por ahora, los mazos nuevos se importan desde texto pegado.',
+    sourceSupportCards: 'Empieza por las fuentes de estudio que ya usas y deja las rutas más técnicas para cuando las necesites.',
+    sourceSupportDeck: 'Empieza por las fuentes que ya contienen tu material de estudio y usa las rutas avanzadas solo cuando convenga.',
+    featuredSourcesTitle: 'Fuentes destacadas',
+    otherSourcesTitle: 'Otras rutas',
     sourceLabels: {
-      pasteText: 'Pegar texto',
+      pasteNotes: 'Pegar notas',
       notebooklm: 'NotebookLM',
-      file: 'Archivo CSV'
+      csvExcel: 'CSV / Excel',
+      notion: 'Notion',
+      googleDocs: 'Google Docs / documento',
+      structuredDeck: 'Texto de mazo estructurado'
     },
     sourceDescriptions: {
-      pasteTextCards: 'Pega líneas como frente | reverso y revisa la vista previa.',
-      pasteTextDeck: 'Pega una exportación de mazo con su encabezado para crear uno nuevo.',
-      notebookLmCards: 'Pega preguntas, respuestas o notas generadas en NotebookLM y conviértelas en tarjetas.',
-      notebookLmDeck: 'Pega contenido de NotebookLM y crea un mazo nuevo con un encabezado simple.',
-      file: 'Carga un CSV, asigna columnas y revisa las filas antes de importar.'
+      pasteNotesCards: 'La forma más rápida para notas, preguntas o respuestas que ya puedes copiar y pegar.',
+      pasteNotesDeck: 'Pega notas estructuradas y crea un mazo nuevo con ellas.',
+      notebookLmCards: 'Ideal para Q&A, resúmenes y notas de estudio generadas en NotebookLM.',
+      notebookLmDeck: 'Convierte una sesión de NotebookLM en un mazo nuevo con una revisión rápida antes de importar.',
+      csvExcelCards: 'Úsalo para tablas, exportaciones y hojas donde quieras mapear columnas con precisión.',
+      notionCards: 'Trae notas de páginas o contenido exportado desde Notion sin depender de una integración directa.',
+      notionDeck: 'Convierte notas o contenido exportado desde Notion en un mazo nuevo.',
+      googleDocsCards: 'Perfecto para apuntes, guías y documentos de estudio que ya puedes copiar y pegar.',
+      googleDocsDeck: 'Usa notas o bloques de un documento para crear un mazo nuevo con contexto.',
+      structuredDeck: 'La ruta avanzada para exportaciones o texto que ya viene en formato de mazo.'
     },
     inputTitle: 'Agrega el contenido',
-    inputSupportText: 'Solo se mostrará la entrada necesaria para esta fuente.',
+    inputSupportText: 'Solo verás la entrada necesaria para esta fuente.',
     inputSupportNotebookLm: 'Pega la salida de NotebookLM con formato claro para obtener mejores resultados.',
-    inputSupportFile: 'Sube el archivo y ajusta las columnas si hace falta.',
+    inputSupportFile: 'Sube el archivo, revisa las columnas y deja listo lo que sí quieres importar.',
+    inputSupportNotion: 'Pega notas copiadas o usa un CSV exportado desde Notion si tienes una base de datos.',
+    inputSupportDocument: 'Pega el contenido más útil del documento y revísalo antes de importarlo.',
+    inputSupportStructuredDeck: 'Este formato funciona mejor cuando ya tienes el texto del mazo preparado.',
+    reviewTitle: 'Revisa antes de importar',
+    reviewSupport: 'Importaremos solo lo que esté listo y dejaremos visibles los elementos que necesiten ajustes.',
+    futureSourcesTitle: 'Próximamente',
+    futureSourcesSupport: 'Mostramos solo las fuentes que ya funcionan de verdad. Las siguientes aparecerán cuando el flujo sea útil y honesto.',
+    notionFutureNote: 'Notion llegará como una ruta guiada para pegar o importar contenido exportado, no como una integración falsa.',
     targetDeck: (deckName) => `Destino: ${deckName}`,
     targetDeckMissing: 'Destino: elige un mazo',
     targetNewDeck: 'Destino: crear un mazo nuevo',
-    futureSourceNotionTitle: 'Próximamente: Notion',
-    futureSourceNotionSupport: 'Cuando llegue, la vía recomendada será exportar una base de datos a CSV y revisarla aquí. No hay sincronización directa todavía.',
     notebookLm: {
       guideTitle: 'Guía rápida para NotebookLM',
       cardsTitle: 'Pega tu salida de NotebookLM',
       cardsSubtitleForDeck: (deckName) => `Pega preguntas y respuestas de NotebookLM para agregarlas a ${deckName}.`,
-      cardsSupport: 'Funciona mejor con pares claros de pregunta y respuesta o con notas ya separadas por `|`.',
+      cardsSupport: 'Pega Q:/A:, pregunta/respuesta o notas cortas. Convertiremos la estructura simple antes de mostrar la vista previa.',
       cardsExample:
         'What is photosynthesis? | Process plants use to turn light into energy\nCell membrane | Controls what enters and leaves the cell',
       deckTitle: 'Crea un mazo desde NotebookLM',
       deckSubtitle: 'Pega contenido de NotebookLM y empieza con `# Deck: Nombre del mazo`.',
-      deckSupport: 'Añade el encabezado del mazo primero y luego pega las líneas de pregunta y respuesta o notas estructuradas.',
+      deckSupport: 'Añade el encabezado del mazo primero y luego pega Q:/A:, pares claros o notas estructuradas. Normalizaremos lo simple antes de la vista previa.',
       deckExample:
         '# Deck: Biology Notes\nWhat is photosynthesis? | Process plants use to turn light into energy\nCell membrane | Controls what enters and leaves the cell',
       tipQa: 'Usa pares claros de pregunta | respuesta para una importación rápida.',
       tipNotes: 'Si NotebookLM te dio notas, conviértelas a `frente | reverso | descripción` antes de pegar.',
       tipCsv: 'Si preparaste una tabla con NotebookLM, usa la opción de CSV para mapear columnas.'
+    },
+    notion: {
+      guideTitle: 'Cómo traer contenido desde Notion',
+      cardsTitle: 'Pega notas desde Notion',
+      cardsSubtitleForDeck: (deckName) => `Copia contenido desde Notion para convertirlo en tarjetas dentro de ${deckName}.`,
+      cardsSupport: 'Funciona mejor con una idea por línea o con pares claros de frente y reverso.',
+      cardsExample:
+        'Mitosis | Cell division that creates two identical daughter cells\nDNA | Molecule that stores genetic information',
+      deckTitle: 'Crea un mazo desde Notion',
+      deckSubtitle: 'Empieza con `# Deck: Nombre del mazo` y luego pega las notas o pares clave.',
+      deckSupport: 'Si tu contenido viene de una base de datos, exportarlo a CSV suele ser el camino más limpio.',
+      deckExample:
+        '# Deck: Biology from Notion\nMitosis | Cell division that creates two identical daughter cells\nDNA | Molecule that stores genetic information',
+      tipPaste: 'Copia solo lo importante: una idea o una pregunta por línea da mejores resultados.',
+      tipCsv: 'Si exportaste una base de datos, usa CSV / Excel para mapear columnas con más control.'
+    },
+    googleDocs: {
+      guideTitle: 'Cómo traer notas desde un documento',
+      cardsTitle: 'Pega notas desde un documento',
+      cardsSubtitleForDeck: (deckName) => `Pega notas o preguntas desde tu documento para agregarlas a ${deckName}.`,
+      cardsSupport: 'Recorta primero el contenido menos útil. Una línea clara por tarjeta suele funcionar mejor.',
+      cardsExample:
+        'Main cause of the French Revolution | Social inequality and financial crisis\nPhotosynthesis | Process plants use to convert light into energy',
+      deckTitle: 'Crea un mazo desde un documento',
+      deckSubtitle: 'Pon primero `# Deck: Nombre del mazo` y luego pega las líneas que quieras convertir en tarjetas.',
+      deckSupport: 'Este camino sirve bien para apuntes limpios o resúmenes que ya puedes copiar y pegar.',
+      deckExample:
+        '# Deck: Lecture Notes\nMain cause of the French Revolution | Social inequality and financial crisis\nPhotosynthesis | Process plants use to convert light into energy',
+      tipStructure: 'Si puedes, conviértelo a `frente | reverso | descripción` antes de pegar.',
+      tipHeader: 'Para crear un mazo nuevo, añade el encabezado del mazo en la primera línea.'
+    },
+    pasteNotes: {
+      cardsTitle: 'Pega tus notas o preguntas',
+      cardsSubtitleForDeck: (deckName) => `Pega notas, conceptos o preguntas para sumarlas a ${deckName}.`,
+      cardsSupport: 'Lo más rápido es una línea por tarjeta. Si puedes, usa `frente | reverso`.',
+      deckTitle: 'Crea un mazo desde notas',
+      deckSubtitle: 'Empieza con `# Deck: Nombre del mazo` y después pega el contenido que quieres convertir.',
+      deckSupport: 'Puedes pegar preguntas, respuestas o notas breves. La vista previa te mostrará qué sí quedó listo.'
+    },
+    structuredDeck: {
+      guideTitle: 'Camino para texto estructurado',
+      title: 'Pega texto de mazo estructurado',
+      subtitle: 'Usa este camino si ya tienes una exportación o un bloque con formato de mazo.',
+      support: 'Es la ruta más directa para usuarios avanzados o para contenido ya preparado.',
+      example:
+        '# Deck: Spanish Basics\nhola | hello\nperro | dog | animal doméstico\ncorrer | run | moverse rápido | usado en deportes',
+      tipFormat: 'La primera línea debe empezar con `# Deck:` para nombrar el mazo.',
+      tipPower: 'Este formato es útil cuando ya vienes con el contenido listo y solo quieres revisarlo antes de importarlo.'
     }
   },
   cardEditor: {
     newCardTitle: 'Nueva tarjeta',
     editCardTitle: 'Editar tarjeta',
-    newCardSupport: 'Agrega un frente y un reverso. Completa los detalles solo si los necesitas.',
-    editCardSupport: 'Actualiza el frente, el reverso o los detalles opcionales.',
+    newCardSupport: 'Empieza con un frente y un reverso. Añade detalles solo cuando ayuden.',
+    editCardSupport: 'Ajusta el contenido principal o los detalles opcionales.',
     frontLabel: 'Frente',
     backLabel: 'Reverso',
     descriptionLabel: 'Descripción (opcional)',
     applicationLabel: 'Aplicación / Notas (opcional)',
     imageLabel: 'Imagen (opcional)',
-    imageSupport: 'Sube una imagen, pégala desde el portapapeles o usa una URL.',
+    imageSupport: 'Sube una imagen, pégala desde el portapapeles o usa una URL cuando la necesites.',
     uploadImage: 'Subir',
     pasteImage: 'Pegar',
     useImageUrl: 'URL',
     removeImage: 'Quitar',
-    imageSelected: 'Imagen lista.',
-    imagePasted: 'Imagen pegada.',
+    imageSelected: 'Imagen lista. Puedes subir o pegar otra para reemplazarla.',
+    imagePasted: 'Imagen pegada. Puedes subir o pegar otra para reemplazarla.',
     imageUploadFailed: 'No se pudo cargar la imagen.',
     imagePasteFailed: 'No se pudo pegar la imagen.',
     noClipboardImage: 'No hay una imagen en el portapapeles.',
     imagePermissionRequired: 'Activa el acceso a fotos para elegir una imagen.',
-    frontPlaceholder: 'Pregunta o pista',
+    frontPlaceholder: 'Pregunta, pista o prompt',
     backPlaceholder: 'Respuesta',
     descriptionPlaceholder: 'Agrega una descripción',
     applicationPlaceholder: 'Agrega notas o contexto',
@@ -886,7 +1123,11 @@ const es: AppStrings = {
     imagePrompt: 'Pista de imagen',
     revealAnswer: 'Mostrar respuesta',
     answerLabel: 'Respuesta',
-    answerHint: 'Marca si la recordaste o si necesitas repasarla.'
+    answerHint: 'Marca si la recordaste o si necesitas repasarla.',
+    tapToReveal: 'Toca para revelar la respuesta.',
+    spaceToReveal: 'Presiona Espacio para revelar.',
+    swipeUpCorrect: 'Desliza hacia arriba si la recordaste.',
+    swipeDownIncorrect: 'Desliza hacia abajo si fallaste.'
   },
   studyProgress: {
     remaining: (count) => `${count} restantes`,
@@ -913,6 +1154,42 @@ const es: AppStrings = {
     restarting: 'Reiniciando...',
     retryMisses: 'Repetir fallos',
     noMissedPrompts: 'No hay prompts fallados.'
+  },
+  studyStats: {
+    pauseTitle: 'Sesión en pausa',
+    pauseSupport: 'Puedes volver a esta sesión o salir sin perder el contexto de dónde te quedaste.',
+    resumeSession: 'Reanudar sesión',
+    stopSession: 'Salir de la sesión',
+    savingSession: 'Guardando el resumen de esta sesión...',
+    savingSessionAnswer: 'Guardando tu resultado y preparando la siguiente tarjeta...',
+    continueToStudy: 'Continuar',
+    viewDetailedStatistics: 'Ver estadísticas detalladas',
+    detailEyebrow: 'Estadísticas',
+    detailTitle: 'Detalle de la sesión',
+    detailSupport: 'Revisa qué salió bien y qué tarjetas necesitan más repaso.',
+    shareAction: 'Compartir',
+    shareTitle: 'Resumen de estudio',
+    bestStreak: 'Mejor racha',
+    sessionTime: 'Tiempo de sesión',
+    promptDistribution: 'Distribución de prompts',
+    failedCards: 'Tarjetas falladas',
+    correctCards: 'Tarjetas acertadas',
+    historyEyebrow: 'Historial',
+    historyTitle: 'Sesiones recientes',
+    historySupport: 'Mantén a la vista el rendimiento real de este mazo a lo largo del tiempo.',
+    sessions: 'Sesiones',
+    totalReviewed: 'Revisadas',
+    emptyHistoryTitle: 'Aún no hay sesiones guardadas',
+    emptyHistorySupport: 'Completa una sesión para empezar a ver el historial de este mazo.',
+    emptyDetailTitle: 'No se pudo abrir esta sesión',
+    emptyDetailSupport: 'Vuelve al panel de estudio e intenta abrir otra sesión guardada.',
+    summaryReadySupport: 'La sesión se guardó correctamente. Puedes volver al panel o abrir el detalle.',
+    viewStatisticsShort: 'Ver detalle',
+    sessionRowSupport: (answeredCount, accuracyPercentage, durationLabel) =>
+      `${answeredCount} revisadas · ${accuracyPercentage}% · ${durationLabel}`,
+    durationSeconds: (seconds) => `${seconds}s`,
+    durationMinutes: (minutes) => `${minutes} min`,
+    durationMinutesSeconds: (minutes, seconds) => `${minutes} min ${seconds}s`
   },
   studyAnswers: {
     needsReview: 'Necesita repaso',
@@ -992,8 +1269,11 @@ const es: AppStrings = {
     couldNotLoadStudyDecks: 'No se pudieron cargar los mazos para estudiar ahora mismo.',
     createDeckBeforeStudy: 'Crea un mazo antes de iniciar una sesión de estudio.',
     couldNotSaveStudyProgress: 'No se pudo guardar el progreso ahora mismo. Intenta responder de nuevo.',
+    couldNotSaveStudySession: 'No se pudo guardar el resumen de la sesión ahora mismo.',
+    couldNotLoadStudySessionDetail: 'No se pudo cargar el detalle de esta sesión.',
     noIncorrectAnswersToRetry: 'No hay respuestas incorrectas para repetir en esta sesión.',
-    couldNotStartStudy: 'No se pudo iniciar la sesión de estudio ahora mismo.'
+    couldNotStartStudy: 'No se pudo iniciar la sesión de estudio ahora mismo.',
+    couldNotStartStudySession: 'No se pudo iniciar la sesión de estudio ahora mismo.'
   },
   importValidation: {
     useFormat:
@@ -1149,25 +1429,57 @@ const en: AppStrings = {
       setupEyebrow: 'Setup',
       chooseDeckTitle: 'Choose a deck',
       chooseDeckSupport: 'Adjust mode, size, and technique before you start.',
+      overviewEyebrow: 'Deck overview',
+      overviewSupport: 'Check how ready this deck is, then move into a focused session when you are ready.',
+      studyableNow: 'Ready now',
+      reviewCount: 'Saved answers',
+      lastStudied: 'Last studied',
+      neverStudied: 'Not studied yet',
+      sessionEyebrow: 'Active session',
+      pauseSession: 'Pause',
+      returnToStudy: 'Back to study',
+      leaveSessionTitle: 'Leave this session?',
+      leaveSessionSupport: 'Leaving now will close the current session even if you have not finished it yet.',
+      continueSession: 'Continue studying',
+      leaveSessionAction: 'Leave session',
       noStudyTitle: 'Nothing to study yet',
       noStudyMessage: 'Create a deck and cards first.',
       sessionUnavailable: 'Session unavailable'
     },
     settings: {
       title: 'Settings',
-      subtitle: 'Control how the app looks and reads.',
+      subtitle: 'Adjust appearance, language, and account access from one place.',
       appearanceEyebrow: 'Appearance',
       appearanceTitle: 'Theme',
-      appearanceSupport: 'Saved on this device.',
+      appearanceSupport: 'Choose how FlashCards should look on this device.',
       languageEyebrow: 'Language',
       languageTitle: 'App language',
-      languageSupport: 'Applies across the interface.',
+      languageSupport: 'Applies across the interface and updates right away.',
       accountEyebrow: 'Account',
       accountTitle: 'Account settings',
-      accountSupport: 'Account tools are not available yet.',
+      accountSupport: 'See your current access state here. Full account tools can arrive later.',
+      accountSupportGuest: 'You are using FlashCards in guest mode. You can leave this mode at any time.',
+      accountSupportAuthenticated:
+        'This section shows the current FlashCards session without pretending full account controls already exist.',
+      accountStatusLabel: 'Access',
+      accountProviderLabel: 'Provider',
+      accountNameLabel: 'Name',
+      accountEmailLabel: 'Email',
+      accountStateSignedOut: 'Signed out',
+      accountStateGuest: 'Guest mode',
+      accountStateAuthenticated: 'Signed in',
       billingEyebrow: 'Billing',
       billingTitle: 'Billing',
-      billingSupport: 'Billing is not available in this build yet.',
+      billingSupport: 'When billing exists, it should appear here with the same level of clarity.',
+      unavailableBadge: 'Not available yet',
+      signOutEyebrow: 'Access',
+      signOutTitle: 'Sign out',
+      signOutSupportGuest: 'Leave guest mode and return to the sign-in screen.',
+      signOutSupportAuthenticated: 'End this session and return to the sign-in screen.',
+      signOutAction: 'Sign out',
+      signOutActionGuest: 'Leave guest mode',
+      signingOutAction: 'Signing out...',
+      signOutError: 'Could not sign out right now.',
       aboutEyebrow: 'About',
       aboutTitle: 'App information',
       appLabel: 'App',
@@ -1181,15 +1493,20 @@ const en: AppStrings = {
         system: 'System',
         light: 'Light',
         dark: 'Dark'
+      },
+      providerLabels: {
+        guest: 'Guest',
+        email: 'Email',
+        google: 'Google'
       }
     }
   },
   auth: {
     landing: {
-      title: 'Study at your pace',
-      subtitle: 'Build decks, review cards, and keep your progress local.',
+      title: 'Step back into your study flow',
+      subtitle: 'Build decks, import material, and study without losing context.',
       googleButton: 'Continue with Google',
-      googleSupport: 'Google will appear once sign-in is connected.',
+      googleSupport: 'The fastest way to continue.',
       googleRedirecting: 'Redirecting to Google...',
       googleCancelled: 'Google sign-in was cancelled.',
       googleCallbackFailed: 'Could not complete Google sign-in.',
@@ -1197,8 +1514,8 @@ const en: AppStrings = {
       emailButton: 'Sign in with email',
       createAccount: 'Create account',
       guestButton: 'Continue as guest',
-      guestSupport: 'Start now and keep everything on this device.',
-      footer: 'Terms and Privacy will appear here once account access is available.'
+      guestSupport: 'Start locally now and decide later whether you want to use an account.',
+      footer: 'Terms and Privacy will appear here once account access is fully available.'
     },
     common: {
       back: 'Back',
@@ -1211,7 +1528,7 @@ const en: AppStrings = {
     },
     signIn: {
       title: 'Sign in',
-      subtitle: 'Use your email once sign-in is ready.',
+      subtitle: 'Use your email to get back into FlashCards quickly.',
       submit: 'Sign in',
       forgotPassword: 'Forgot password',
       invalidCredentials: 'Email or password is incorrect.',
@@ -1219,7 +1536,7 @@ const en: AppStrings = {
     },
     createAccount: {
       title: 'Create account',
-      subtitle: 'Get your account ready for when sync is available.',
+      subtitle: 'Create your access in under a minute.',
       nameLabel: 'Name (optional)',
       namePlaceholder: 'Your name',
       confirmPasswordLabel: 'Confirm password',
@@ -1231,11 +1548,11 @@ const en: AppStrings = {
     },
     forgotPassword: {
       title: 'Reset password',
-      subtitle: 'Enter your email and we’ll show the next step.',
+      subtitle: 'Enter your email and we’ll send the next step.',
       submit: 'Send reset link',
-      confirmationTitle: 'Reset prepared',
+      confirmationTitle: 'Check your email',
       confirmationMessage: (email) =>
-        `Once sign-in is ready, the reset link will be sent to ${email}.`,
+        `If an account exists for ${email}, we’ll send the reset link there.`,
       sendAnother: 'Use another email'
     },
     validation: {
@@ -1260,8 +1577,8 @@ const en: AppStrings = {
     listEmptyMessage: 'Add a card or import a few.'
   },
   importHub: {
-    title: 'Import content',
-    subtitle: 'Follow these steps to review everything before you save it.',
+    title: 'Bring in your content',
+    subtitle: 'Choose what you want to create, tell us where the content comes from, and review it before importing.',
     stepLabel: (stepNumber) => `Step ${stepNumber}`,
     intentTitle: 'What do you want to import?',
     intentSupport: 'Start with the result you want.',
@@ -1275,68 +1592,132 @@ const en: AppStrings = {
       newDeck: 'Create a new deck from the imported content.'
     },
     sourceTitle: 'Where is it coming from?',
-    sourceSupportCards: 'Pick the source that matches your cards.',
-    sourceSupportDeck: 'For now, new decks are imported from pasted text.',
+    sourceSupportCards: 'Start with the study sources you already use, then fall back to the more technical paths only when you need them.',
+    sourceSupportDeck: 'Start with the sources that already hold your study material, then use advanced paths only when they fit better.',
+    featuredSourcesTitle: 'Featured sources',
+    otherSourcesTitle: 'Other paths',
     sourceLabels: {
-      pasteText: 'Paste text',
+      pasteNotes: 'Paste notes',
       notebooklm: 'NotebookLM',
-      file: 'CSV file'
+      csvExcel: 'CSV / Excel',
+      notion: 'Notion',
+      googleDocs: 'Google Docs / document',
+      structuredDeck: 'Structured deck text'
     },
     sourceDescriptions: {
-      pasteTextCards: 'Paste front | back lines and review the preview before importing.',
-      pasteTextDeck: 'Paste a deck export with its header to create a new deck.',
-      notebookLmCards: 'Paste NotebookLM-generated questions, answers, or notes and turn them into cards.',
-      notebookLmDeck: 'Paste NotebookLM content and create a new deck with a simple header.',
-      file: 'Upload a CSV, map the columns, and review the rows before importing.'
+      pasteNotesCards: 'The fastest path for notes, prompts, or Q&A you can already copy and paste.',
+      pasteNotesDeck: 'Paste structured notes and turn them into a new deck.',
+      notebookLmCards: 'Best for Q&A, summaries, and study notes generated in NotebookLM.',
+      notebookLmDeck: 'Turn a NotebookLM session into a new deck with one guided review before import.',
+      csvExcelCards: 'Use this for tables, exports, and spreadsheets when you want precise column mapping.',
+      notionCards: 'Bring in pasted page notes or exported content from Notion without pretending there is direct sync.',
+      notionDeck: 'Turn Notion notes or exported content into a new deck.',
+      googleDocsCards: 'Ideal for lecture notes, study guides, and pasted document content.',
+      googleDocsDeck: 'Use document notes or copied sections to create a new deck.',
+      structuredDeck: 'The advanced path for exports or text that is already in FlashCards deck format.'
     },
     inputTitle: 'Add the content',
     inputSupportText: 'Only the input needed for this source is shown here.',
     inputSupportNotebookLm: 'Paste NotebookLM output in a clear structure for the best results.',
-    inputSupportFile: 'Upload the file and adjust the columns if needed.',
+    inputSupportFile: 'Upload the file, review the columns, and keep only what you want to import.',
+    inputSupportNotion: 'Paste copied notes or use a CSV export from Notion if you have a database.',
+    inputSupportDocument: 'Paste the most useful part of the document and review it before importing.',
+    inputSupportStructuredDeck: 'This path works best when your deck text is already prepared.',
+    reviewTitle: 'Review before importing',
+    reviewSupport: 'We’ll import only what is ready and keep anything that needs fixing visible here.',
+    futureSourcesTitle: 'Coming next',
+    futureSourcesSupport: 'Only sources that already work well stay live here. The next ones should arrive as honest workflows, not fake integrations.',
+    notionFutureNote: 'Notion will arrive as a guided paste or export path, not as pretend direct sync.',
     targetDeck: (deckName) => `Target: ${deckName}`,
     targetDeckMissing: 'Target: choose a deck',
     targetNewDeck: 'Target: create a new deck',
-    futureSourceNotionTitle: 'Coming next: Notion',
-    futureSourceNotionSupport: 'When it arrives, the recommended path will be exporting a Notion database to CSV and reviewing it here. There is no direct sync yet.',
     notebookLm: {
       guideTitle: 'NotebookLM quick guide',
       cardsTitle: 'Paste your NotebookLM output',
       cardsSubtitleForDeck: (deckName) => `Paste NotebookLM questions and answers to add them to ${deckName}.`,
-      cardsSupport: 'This works best with clear question-and-answer pairs or notes already separated with `|`.',
+      cardsSupport: 'Paste Q:/A:, question/answer pairs, or short notes. We will normalize the simple structure before preview.',
       cardsExample:
         'What is photosynthesis? | Process plants use to turn light into energy\nCell membrane | Controls what enters and leaves the cell',
       deckTitle: 'Create a deck from NotebookLM',
       deckSubtitle: 'Paste NotebookLM content and start with `# Deck: Deck name`.',
-      deckSupport: 'Add the deck header first, then paste structured question-and-answer lines or notes.',
+      deckSupport: 'Add the deck header first, then paste Q:/A:, clear pairs, or short notes. We will normalize the simple structure before preview.',
       deckExample:
         '# Deck: Biology Notes\nWhat is photosynthesis? | Process plants use to turn light into energy\nCell membrane | Controls what enters and leaves the cell',
       tipQa: 'Use clear question | answer pairs for the fastest import.',
       tipNotes: 'If NotebookLM gave you notes, reshape them into `front | back | description` before pasting.',
       tipCsv: 'If you prepared a table from NotebookLM, use the CSV option to map columns.'
+    },
+    notion: {
+      guideTitle: 'Bringing content from Notion',
+      cardsTitle: 'Paste notes from Notion',
+      cardsSubtitleForDeck: (deckName) => `Copy content from Notion to turn it into cards in ${deckName}.`,
+      cardsSupport: 'This works best with one idea per line or with clear front-and-back pairs.',
+      cardsExample:
+        'Mitosis | Cell division that creates two identical daughter cells\nDNA | Molecule that stores genetic information',
+      deckTitle: 'Create a deck from Notion',
+      deckSubtitle: 'Start with `# Deck: Deck name`, then paste the notes or key pairs you want to import.',
+      deckSupport: 'If your content comes from a database, exporting it to CSV is usually the cleanest path.',
+      deckExample:
+        '# Deck: Biology from Notion\nMitosis | Cell division that creates two identical daughter cells\nDNA | Molecule that stores genetic information',
+      tipPaste: 'Copy only the useful lines. One idea or question per line leads to better previews.',
+      tipCsv: 'If you exported a database, use CSV / Excel for cleaner column mapping.'
+    },
+    googleDocs: {
+      guideTitle: 'Bringing notes from a document',
+      cardsTitle: 'Paste notes from a document',
+      cardsSubtitleForDeck: (deckName) => `Paste notes or questions from your document to add them to ${deckName}.`,
+      cardsSupport: 'Trim the less useful text first. One clear line per card usually works best.',
+      cardsExample:
+        'Main cause of the French Revolution | Social inequality and financial crisis\nPhotosynthesis | Process plants use to convert light into energy',
+      deckTitle: 'Create a deck from a document',
+      deckSubtitle: 'Start with `# Deck: Deck name`, then paste the lines you want to turn into cards.',
+      deckSupport: 'This path works well for clean notes or summaries you can already copy and paste.',
+      deckExample:
+        '# Deck: Lecture Notes\nMain cause of the French Revolution | Social inequality and financial crisis\nPhotosynthesis | Process plants use to convert light into energy',
+      tipStructure: 'If you can, reshape the content into `front | back | description` before pasting.',
+      tipHeader: 'To create a new deck, add the deck header on the first line.'
+    },
+    pasteNotes: {
+      cardsTitle: 'Paste your notes or Q&A',
+      cardsSubtitleForDeck: (deckName) => `Paste notes, concepts, or questions to add them to ${deckName}.`,
+      cardsSupport: 'The fastest path is one line per card. If you can, use `front | back`.',
+      deckTitle: 'Create a deck from notes',
+      deckSubtitle: 'Start with `# Deck: Deck name`, then paste the content you want to convert.',
+      deckSupport: 'You can paste questions, answers, or short notes. The preview will show what is ready.'
+    },
+    structuredDeck: {
+      guideTitle: 'Path for structured deck text',
+      title: 'Paste structured deck text',
+      subtitle: 'Use this when you already have a deck export or a block prepared in deck format.',
+      support: 'This is the most direct path for power users or already-structured content.',
+      example:
+        '# Deck: Spanish Basics\nhola | hello\nperro | dog | domestic animal\ncorrer | run | move quickly | used in sports',
+      tipFormat: 'The first line must start with `# Deck:` to name the deck.',
+      tipPower: 'Use this when the content is already ready and you mainly want to review it before importing.'
     }
   },
   cardEditor: {
     newCardTitle: 'New card',
     editCardTitle: 'Edit card',
-    newCardSupport: 'Add a front and back. Fill in details only if you need them.',
-    editCardSupport: 'Update the front, back, or optional details.',
+    newCardSupport: 'Start with a front and back. Add details only when they help.',
+    editCardSupport: 'Adjust the main content or any optional details.',
     frontLabel: 'Front',
     backLabel: 'Back',
     descriptionLabel: 'Description (optional)',
     applicationLabel: 'Application / Notes (optional)',
     imageLabel: 'Image (optional)',
-    imageSupport: 'Upload an image, paste one from the clipboard, or use a URL.',
+    imageSupport: 'Upload an image, paste one from the clipboard, or use a URL when you need it.',
     uploadImage: 'Upload',
     pasteImage: 'Paste',
     useImageUrl: 'URL',
     removeImage: 'Remove',
-    imageSelected: 'Image ready.',
-    imagePasted: 'Image pasted.',
+    imageSelected: 'Image ready. Upload or paste again to replace it.',
+    imagePasted: 'Image pasted. Upload or paste again to replace it.',
     imageUploadFailed: 'Could not load the image.',
     imagePasteFailed: 'Could not paste the image.',
     noClipboardImage: 'There is no image in the clipboard.',
     imagePermissionRequired: 'Allow photo access to choose an image.',
-    frontPlaceholder: 'Question or prompt',
+    frontPlaceholder: 'Question, cue, or prompt',
     backPlaceholder: 'Answer',
     descriptionPlaceholder: 'Add a description',
     applicationPlaceholder: 'Add notes or context',
@@ -1412,7 +1793,11 @@ const en: AppStrings = {
     imagePrompt: 'Image prompt',
     revealAnswer: 'Reveal answer',
     answerLabel: 'Answer',
-    answerHint: 'Mark whether you recalled it or need to review it again.'
+    answerHint: 'Mark whether you recalled it or need to review it again.',
+    tapToReveal: 'Tap to reveal the answer.',
+    spaceToReveal: 'Press Space to reveal.',
+    swipeUpCorrect: 'Swipe up if you got it right.',
+    swipeDownIncorrect: 'Swipe down if you missed it.'
   },
   studyProgress: {
     remaining: (count) => `${count} remaining`,
@@ -1439,6 +1824,42 @@ const en: AppStrings = {
     restarting: 'Restarting...',
     retryMisses: 'Retry misses',
     noMissedPrompts: 'No missed prompts.'
+  },
+  studyStats: {
+    pauseTitle: 'Session paused',
+    pauseSupport: 'Take a moment. You can resume this session or leave it from here.',
+    resumeSession: 'Resume session',
+    stopSession: 'Leave session',
+    savingSession: 'Saving this session summary...',
+    savingSessionAnswer: 'Saving your answer and loading the next card...',
+    continueToStudy: 'Continue',
+    viewDetailedStatistics: 'View detailed statistics',
+    detailEyebrow: 'Statistics',
+    detailTitle: 'Session detail',
+    detailSupport: 'Review what went well and which cards still need attention.',
+    shareAction: 'Share',
+    shareTitle: 'Study summary',
+    bestStreak: 'Best streak',
+    sessionTime: 'Session time',
+    promptDistribution: 'Prompt distribution',
+    failedCards: 'Missed cards',
+    correctCards: 'Correct cards',
+    historyEyebrow: 'History',
+    historyTitle: 'Recent sessions',
+    historySupport: 'Keep real study performance in view for this deck.',
+    sessions: 'Sessions',
+    totalReviewed: 'Reviewed',
+    emptyHistoryTitle: 'No saved sessions yet',
+    emptyHistorySupport: 'Complete a session to start building study history for this deck.',
+    emptyDetailTitle: 'Could not open this session',
+    emptyDetailSupport: 'Go back to Study and try another saved session.',
+    summaryReadySupport: 'This session is saved. You can head back or open the full detail view.',
+    viewStatisticsShort: 'View detail',
+    sessionRowSupport: (answeredCount, accuracyPercentage, durationLabel) =>
+      `${answeredCount} reviewed · ${accuracyPercentage}% · ${durationLabel}`,
+    durationSeconds: (seconds) => `${seconds}s`,
+    durationMinutes: (minutes) => `${minutes} min`,
+    durationMinutesSeconds: (minutes, seconds) => `${minutes} min ${seconds}s`
   },
   studyAnswers: {
     needsReview: 'Needs review',
@@ -1518,8 +1939,11 @@ const en: AppStrings = {
     couldNotLoadStudyDecks: 'Could not load decks for study right now.',
     createDeckBeforeStudy: 'Create a deck before starting a study session.',
     couldNotSaveStudyProgress: 'Could not save study progress right now. Try that answer again.',
+    couldNotSaveStudySession: 'Could not save the session summary right now.',
+    couldNotLoadStudySessionDetail: 'Could not load this saved session.',
     noIncorrectAnswersToRetry: 'There are no incorrect answers to retry in this session.',
-    couldNotStartStudy: 'Could not start the study session right now.'
+    couldNotStartStudy: 'Could not start the study session right now.',
+    couldNotStartStudySession: 'Could not start the study session right now.'
   },
   importValidation: {
     useFormat:

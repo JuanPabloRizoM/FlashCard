@@ -6,17 +6,25 @@ type ImportHubInfoCardProps = {
   title: string;
   support: string;
   bullets?: string[];
+  variant?: 'default' | 'feature' | 'utility';
 };
 
 export function ImportHubInfoCard({
   title,
   support,
-  bullets = []
+  bullets = [],
+  variant = 'default'
 }: ImportHubInfoCardProps) {
   const styles = useThemedStyles(createStyles);
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        variant === 'feature' ? styles.cardFeature : null,
+        variant === 'utility' ? styles.cardUtility : null
+      ]}
+    >
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.support}>{support}</Text>
       {bullets.length > 0 ? (
@@ -41,6 +49,13 @@ const createStyles = (colors: ThemeColors) =>
       borderWidth: 1,
       gap: spacing.xs,
       padding: spacing.m
+    },
+    cardFeature: {
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.primary
+    },
+    cardUtility: {
+      backgroundColor: colors.surface
     },
     title: {
       color: colors.textPrimary,
