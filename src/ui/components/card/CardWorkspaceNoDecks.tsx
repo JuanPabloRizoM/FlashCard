@@ -81,7 +81,6 @@ export function CardWorkspaceNoDecks({
         deckImportPreview={deckImportPreview}
         deckImportResultMessage={deckImportResultMessage}
         deckImportText={deckImportText}
-        defaultSource="import_deck"
         isCardImportSubmitting={isCardImportSubmitting}
         isCsvImportSubmitting={isCsvImportSubmitting}
         isDeckImportSubmitting={isDeckImportSubmitting}

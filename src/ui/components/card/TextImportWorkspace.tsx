@@ -6,6 +6,8 @@ import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors 
 
 type TextImportWorkspaceProps = {
   topSlot?: ReactNode;
+  introSlot?: ReactNode;
+  isEmbedded?: boolean;
   title: string;
   subtitle: string;
   exampleText: string;
@@ -22,6 +24,8 @@ type TextImportWorkspaceProps = {
 
 export function TextImportWorkspace({
   topSlot,
+  introSlot,
+  isEmbedded = false,
   title,
   subtitle,
   exampleText,
@@ -41,8 +45,9 @@ export function TextImportWorkspace({
   const [isExampleVisible, setIsExampleVisible] = useState(false);
 
   return (
-    <View style={styles.panel}>
+    <View style={[styles.panel, isEmbedded ? styles.panelEmbedded : null]}>
       {topSlot}
+      {introSlot}
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>{title}</Text>
@@ -116,6 +121,12 @@ const createStyles = (colors: ThemeColors) =>
     borderWidth: 1,
     gap: spacing.m,
     padding: spacing.l
+  },
+  panelEmbedded: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    borderRadius: 0,
+    padding: 0
   },
   headerRow: {
     alignItems: 'flex-start',

@@ -1,17 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { CardImportPreview } from '../../../features/cards/cardImport';
-import type { CsvImportField, CsvImportMapping, CsvImportPreview } from '../../../features/cards/csvImport';
+import type {
+  CsvImportField,
+  CsvImportMapping,
+  CsvImportPreview
+} from '../../../features/cards/csvImport';
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
-import { ImportHubPreviewContent } from './ImportHubPreviewContent';
-import { ImportHubSourceSwitch } from './ImportHubSourceSwitch';
-import { TextImportWorkspace } from './TextImportWorkspace';
+import {
+  ImportHubChoiceGrid,
+  type ImportHubChoiceOption
+} from './ImportHubChoiceGrid';
+import { ImportHubStepHeader } from './ImportHubStepHeader';
 import { CsvImportPanel } from './CsvImportPanel';
+import { ImportHubInfoCard } from './ImportHubInfoCard';
+import { ImportHubTextFlow } from './ImportHubTextFlow';
 
-export type ImportHubSource = 'paste_text' | 'import_deck' | 'file';
+export type ImportHubIntent = 'cards_into_deck' | 'new_deck';
+export type ImportHubSource = 'paste_text' | 'notebooklm' | 'file';
 
 type ImportHubPanelProps = {
   selectedDeckName: string | null;
@@ -41,7 +50,6 @@ type ImportHubPanelProps = {
   onDeckImportTextChange: (value: string) => void;
   onImportDeck: () => Promise<void>;
   onClearDeckImport: () => void;
-  defaultSource?: ImportHubSource;
 };
 
 export function ImportHubPanel({
@@ -71,170 +79,183 @@ export function ImportHubPanel({
   isDeckImportSubmitting,
   onDeckImportTextChange,
   onImportDeck,
-  onClearDeckImport,
-  defaultSource = 'paste_text'
+  onClearDeckImport
 }: ImportHubPanelProps) {
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
-  const [activeSource, setActiveSource] = useState<ImportHubSource>(defaultSource);
+  const [activeIntent, setActiveIntent] = useState<ImportHubIntent>(
+    canImportCards ? 'cards_into_deck' : 'new_deck'
+  );
+  const [activeSource, setActiveSource] = useState<ImportHubSource>('paste_text');
 
   useEffect(() => {
-    setActiveSource(defaultSource);
-  }, [defaultSource]);
+    if (!canImportCards && activeIntent !== 'new_deck') {
+      setActiveIntent('new_deck');
+    }
+  }, [activeIntent, canImportCards]);
 
-  function getCardStatusText(): string | null {
-    if (!cardImportPreview.hasContent) {
-      return null;
+  useEffect(() => {
+    if (activeIntent === 'new_deck' && activeSource !== 'paste_text') {
+      setActiveSource('paste_text');
+    }
+  }, [activeIntent, activeSource]);
+
+  const sourceOptions = useMemo<Array<ImportHubChoiceOption<ImportHubSource>>>(() => {
+    if (activeIntent === 'new_deck') {
+      return [
+        {
+          id: 'paste_text',
+          label: strings.importHub.sourceLabels.pasteText,
+          support: strings.importHub.sourceDescriptions.pasteTextDeck
+        },
+        {
+          id: 'notebooklm',
+          label: strings.importHub.sourceLabels.notebooklm,
+          support: strings.importHub.sourceDescriptions.notebookLmDeck
+        }
+      ];
     }
 
-    if (cardImportPreview.validCount > 0) {
-      return strings.cardImport.validReady(cardImportPreview.validCount);
-    }
-
-    if (cardImportPreview.invalidCount > 0) {
-      return strings.cardImport.fixInvalidLines;
-    }
-
-    return null;
-  }
-
-  function getDeckStatusText(): string | null {
-    if (!deckImportPreview.hasContent) {
-      return null;
-    }
-
-    if (deckImportPreview.canImport) {
-      if (deckImportPreview.cardPreview.validCount > 0) {
-        return strings.deckImport.cardsReady(deckImportPreview.cardPreview.validCount);
+    return [
+      {
+        id: 'paste_text',
+        label: strings.importHub.sourceLabels.pasteText,
+        support: strings.importHub.sourceDescriptions.pasteTextCards
+      },
+      {
+        id: 'notebooklm',
+        label: strings.importHub.sourceLabels.notebooklm,
+        support: strings.importHub.sourceDescriptions.notebookLmCards
+      },
+      {
+        id: 'file',
+        label: strings.importHub.sourceLabels.file,
+        support: strings.importHub.sourceDescriptions.file
       }
+    ];
+  }, [activeIntent, strings.importHub.sourceDescriptions, strings.importHub.sourceLabels]);
 
-      return strings.deckImport.deckReady;
-    }
+  const intentOptions = useMemo<Array<ImportHubChoiceOption<ImportHubIntent>>>(
+    () => [
+      {
+        id: 'cards_into_deck',
+        label: strings.importHub.intentLabels.cardsIntoDeck,
+        support:
+          canImportCards && selectedDeckName != null
+            ? strings.importHub.intentDescriptions.cardsIntoDeck(selectedDeckName)
+            : strings.importHub.intentDescriptions.cardsIntoDeckDisabled,
+        disabled: !canImportCards
+      },
+      {
+        id: 'new_deck',
+        label: strings.importHub.intentLabels.newDeck,
+        support: strings.importHub.intentDescriptions.newDeck
+      }
+    ],
+    [canImportCards, selectedDeckName, strings.importHub.intentDescriptions, strings.importHub.intentLabels]
+  );
 
-    if (deckImportPreview.cardPreview.invalidCount > 0) {
-      return strings.deckImport.fixInvalidLines;
-    }
+  const isDeckFlow = activeIntent === 'new_deck';
+  const isCsvFlow = activeIntent === 'cards_into_deck' && activeSource === 'file';
+  const isNotebookLmFlow = activeSource === 'notebooklm';
 
-    return null;
-  }
-
-  const isFileSource = activeSource === 'file';
-  const isDeckSource = activeSource === 'import_deck';
-  const importText = isDeckSource ? deckImportText : cardImportText;
-  const isSubmitting = isDeckSource ? isDeckImportSubmitting : isCardImportSubmitting;
-  const actionLabel = isDeckSource
-    ? isDeckImportSubmitting
-      ? strings.deckImport.importing
-      : strings.deckImport.actionLabel
-    : isCardImportSubmitting
-      ? strings.cardImport.importing
-      : strings.cardImport.actionLabel;
-  const title = isDeckSource ? strings.deckImport.title : strings.cardImport.title;
-  const subtitle = isDeckSource
-    ? strings.deckImport.subtitle
-    : selectedDeckName != null
-      ? strings.cardImport.subtitleForDeck(selectedDeckName)
-      : strings.cardImport.subtitleNoDeck;
-  const helperTarget = isDeckSource
+  const helperTarget = isDeckFlow
     ? strings.importHub.targetNewDeck
     : selectedDeckName != null
       ? strings.importHub.targetDeck(selectedDeckName)
       : strings.importHub.targetDeckMissing;
-  const exampleText = isDeckSource ? strings.deckImport.exampleText : strings.cardImport.exampleText;
-  const isActionDisabled = isDeckSource
-    ? isLocked || !deckImportPreview.canImport || isDeckImportSubmitting
-    : isLocked || !canImportCards || cardImportPreview.validCount === 0 || isCardImportSubmitting;
 
-  const summaryItems = isDeckSource
-    ? [
-        deckImportPreview.deckName.length > 0
-          ? deckImportPreview.deckName
-          : strings.deckImport.deckNameNotReady,
-        strings.common.valid(deckImportPreview.cardPreview.validCount),
-        strings.common.invalid(deckImportPreview.cardPreview.invalidCount)
-      ]
-    : cardImportPreview.hasContent
-      ? [
-          strings.common.valid(cardImportPreview.validCount),
-          strings.common.invalid(cardImportPreview.invalidCount),
-          strings.common.total(cardImportPreview.totalCount)
-        ]
-      : [];
-  const errorMessages = isDeckSource
-    ? [deckImportPreview.blockingError, deckImportPreview.headerError].filter(
-        (message): message is string => message != null
-      )
-    : [];
-  const resultMessage = isDeckSource ? deckImportResultMessage : cardImportResultMessage;
-  const rows = isDeckSource ? deckImportPreview.cardPreview.rows : cardImportPreview.rows;
-  const emptyValidDetailLabel = isDeckSource ? strings.deckImport.frontBackOnly : undefined;
-  const statusText = isDeckSource ? getDeckStatusText() : getCardStatusText();
-  const topSlot = (
-    <>
+  return (
+    <View style={styles.panel}>
       <View style={styles.headerBlock}>
         <Text style={styles.panelTitle}>{strings.importHub.title}</Text>
         <Text style={styles.panelSubtitle}>{strings.importHub.subtitle}</Text>
       </View>
-      <ImportHubSourceSwitch
-        activeSource={activeSource}
-        isDisabled={isLocked}
-        onChangeSource={setActiveSource}
-      />
-      <Text style={styles.targetLabel}>{helperTarget}</Text>
-    </>
-  );
 
-  if (isFileSource) {
-    return (
-      <View style={styles.panel}>
-        {topSlot}
-        <CsvImportPanel
-          fileName={csvFileName}
-          headers={csvHeaders}
-          importResultMessage={csvImportResultMessage}
-          isDisabled={isLocked || selectedDeckName == null}
-          isSubmitting={isCsvImportSubmitting}
-          mapping={csvMapping}
-          onChangeMapping={onChangeCsvMapping}
-          onClearFile={onClearCsvImport}
-          onImportCsv={onImportCsv}
-          onPickFile={onPickCsvFile}
-          preview={csvPreview}
+      <View style={styles.stepSection}>
+        <ImportHubStepHeader
+          eyebrow={strings.importHub.stepLabel(1)}
+          support={strings.importHub.intentSupport}
+          title={strings.importHub.intentTitle}
+        />
+        <ImportHubChoiceGrid
+          activeId={activeIntent}
+          onChange={setActiveIntent}
+          options={intentOptions}
         />
       </View>
-    );
-  }
 
-  return (
-    <TextImportWorkspace
-      actionLabel={actionLabel}
-      exampleText={exampleText}
-      importText={importText}
-      isActionDisabled={isActionDisabled}
-      isSubmitting={isSubmitting}
-      onAction={() => {
-        if (isDeckSource) {
-          void onImportDeck();
-          return;
-        }
+      <View style={styles.stepSection}>
+        <ImportHubStepHeader
+          eyebrow={strings.importHub.stepLabel(2)}
+          support={isDeckFlow ? strings.importHub.sourceSupportDeck : strings.importHub.sourceSupportCards}
+          title={strings.importHub.sourceTitle}
+        />
+        <ImportHubChoiceGrid
+          activeId={activeSource}
+          onChange={setActiveSource}
+          options={sourceOptions}
+        />
+        <Text style={styles.targetLabel}>{helperTarget}</Text>
+        <ImportHubInfoCard
+          support={strings.importHub.futureSourceNotionSupport}
+          title={strings.importHub.futureSourceNotionTitle}
+        />
+      </View>
 
-        void onImportCards();
-      }}
-      onClearImport={isDeckSource ? onClearDeckImport : onClearCardImport}
-      onImportTextChange={isDeckSource ? onDeckImportTextChange : onCardImportTextChange}
-      subtitle={subtitle}
-      title={title}
-      topSlot={topSlot}
-    >
-      <ImportHubPreviewContent
-        emptyValidDetailLabel={emptyValidDetailLabel}
-        errorMessages={errorMessages}
-        resultMessage={resultMessage}
-        rows={rows}
-        statusText={statusText}
-        summaryItems={summaryItems}
-      />
-    </TextImportWorkspace>
+      <View style={styles.stepSection}>
+        <ImportHubStepHeader
+          eyebrow={strings.importHub.stepLabel(3)}
+          support={
+            isCsvFlow
+              ? strings.importHub.inputSupportFile
+              : isNotebookLmFlow
+                ? strings.importHub.inputSupportNotebookLm
+                : strings.importHub.inputSupportText
+          }
+          title={strings.importHub.inputTitle}
+        />
+
+        {isCsvFlow ? (
+          <CsvImportPanel
+            fileName={csvFileName}
+            headers={csvHeaders}
+            importResultMessage={csvImportResultMessage}
+            isDisabled={isLocked || selectedDeckName == null}
+            isEmbedded
+            isSubmitting={isCsvImportSubmitting}
+            mapping={csvMapping}
+            onChangeMapping={onChangeCsvMapping}
+            onClearFile={onClearCsvImport}
+            onImportCsv={onImportCsv}
+            onPickFile={onPickCsvFile}
+            preview={csvPreview}
+          />
+        ) : (
+          <ImportHubTextFlow
+            canImportCards={canImportCards}
+            cardImportPreview={cardImportPreview}
+            cardImportResultMessage={cardImportResultMessage}
+            cardImportText={cardImportText}
+            deckImportPreview={deckImportPreview}
+            deckImportResultMessage={deckImportResultMessage}
+            deckImportText={deckImportText}
+            isCardImportSubmitting={isCardImportSubmitting}
+            isDeckFlow={isDeckFlow}
+            isDeckImportSubmitting={isDeckImportSubmitting}
+            isLocked={isLocked}
+            onCardImportTextChange={onCardImportTextChange}
+            onClearCardImport={onClearCardImport}
+            onClearDeckImport={onClearDeckImport}
+            onDeckImportTextChange={onDeckImportTextChange}
+            onImportCards={onImportCards}
+            onImportDeck={onImportDeck}
+            selectedDeckName={selectedDeckName}
+            source={activeSource === 'notebooklm' ? 'notebooklm' : 'paste_text'}
+          />
+        )}
+      </View>
+    </View>
   );
 }
 
@@ -245,7 +266,7 @@ const createStyles = (colors: ThemeColors) =>
       borderColor: colors.border,
       borderRadius: 20,
       borderWidth: 1,
-      gap: spacing.m,
+      gap: spacing.l,
       padding: spacing.l
     },
     headerBlock: {
@@ -260,6 +281,9 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.textSecondary,
       fontSize: typography.caption,
       lineHeight: 18
+    },
+    stepSection: {
+      gap: spacing.s
     },
     targetLabel: {
       color: colors.textSecondary,

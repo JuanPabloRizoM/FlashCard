@@ -2,7 +2,7 @@ import type { CardImportPreview } from '../../../features/cards/cardImport';
 import type { CsvImportField, CsvImportMapping, CsvImportPreview } from '../../../features/cards/csvImport';
 import type { DeckImportPreview } from '../../../features/decks/deckPortability';
 import { CardEditorPanel } from './CardEditorPanel';
-import { ImportHubPanel, type ImportHubSource } from './ImportHubPanel';
+import { ImportHubPanel } from './ImportHubPanel';
 import type { CardWorkspaceMode } from './CardWorkspaceModeSwitch';
 
 type CardWorkspacePanelProps = {
@@ -33,7 +33,6 @@ type CardWorkspacePanelProps = {
   isImportSubmitting: boolean;
   isCsvImportSubmitting: boolean;
   isDeckImportSubmitting: boolean;
-  defaultImportSource?: ImportHubSource;
   onDraftFrontChange: (value: string) => void;
   onDraftBackChange: (value: string) => void;
   onDraftDescriptionChange: (value: string) => void;
@@ -81,7 +80,6 @@ export function CardWorkspacePanel({
   isImportSubmitting,
   isCsvImportSubmitting,
   isDeckImportSubmitting,
-  defaultImportSource,
   onDraftFrontChange,
   onDraftBackChange,
   onDraftDescriptionChange,
@@ -116,7 +114,6 @@ export function CardWorkspacePanel({
           deckImportPreview={deckImportPreview}
           deckImportResultMessage={deckImportResultMessage}
           deckImportText={deckImportText}
-          defaultSource={defaultImportSource}
           isCardImportSubmitting={isImportSubmitting}
           isCsvImportSubmitting={isCsvImportSubmitting}
           isDeckImportSubmitting={isDeckImportSubmitting}

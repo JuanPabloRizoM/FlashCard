@@ -370,3 +370,21 @@
 - Files: src/navigation/types.ts, src/ui/screens/DecksScreen.tsx, src/features/study/useStudySession.ts, src/ui/screens/StudyScreen.tsx
 - Risk: Low
 - Notes: Study now consumes an optional `selectedDeckId` route param once, honors it when valid, and preserves the normal first-deck fallback only when no intentional handoff exists.
+
+---
+
+[2026-04-07]
+- Change: Refactored the Cards Import Hub from a source-first panel into a short guided flow that starts with import intent, then source, then input, preview, and confirm.
+- Reason: The existing Import Hub worked technically, but it still felt too much like a tooling panel instead of a clear import path for normal users.
+- Files: src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/ImportHubTextFlow.tsx, src/ui/components/card/ImportHubChoiceGrid.tsx, src/ui/components/card/ImportHubStepHeader.tsx, src/ui/components/card/CsvImportPanel.tsx, src/ui/components/card/TextImportWorkspace.tsx, src/ui/components/card/CardWorkspacePanel.tsx, src/ui/components/card/CardWorkspaceNoDecks.tsx, src/ui/screens/CardsScreen.tsx, src/ui/strings/translations.ts
+- Risk: Low
+- Notes: Working import behavior for pasted card text, deck text, and CSV files is unchanged. The refactor only changes the user path and presentation, with the shared preview, validation, and confirm logic preserved underneath.
+
+---
+
+[2026-04-07]
+- Change: Added NotebookLM as a first-class Import Hub source profile with source-specific guidance and examples, and added an honest Notion future path note without fake integration behavior.
+- Reason: The app needed a more memorable external-knowledge workflow, and the most practical near-term differentiator is helping users move NotebookLM output into cards with low friction.
+- Files: src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/ImportHubTextFlow.tsx, src/ui/components/card/ImportHubInfoCard.tsx, src/ui/components/card/TextImportWorkspace.tsx, src/ui/strings/translations.ts
+- Risk: Low
+- Notes: NotebookLM still uses the shared text or CSV import pipeline. There is no direct NotebookLM API integration and no Notion sync yet.

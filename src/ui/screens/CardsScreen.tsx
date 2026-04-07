@@ -259,7 +259,6 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
           isImportSubmitting={isImportSubmitting}
           isCsvImportSubmitting={isCsvImportSubmitting}
           mode={workspaceMode}
-          defaultImportSource={selectedDeck != null ? 'paste_text' : 'import_deck'}
           onChangeCsvMapping={onChangeCsvMapping}
           onCancelEditing={onCancelEditing}
           onClearDeckImport={onClearDeckImport}

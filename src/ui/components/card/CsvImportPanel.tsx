@@ -7,6 +7,7 @@ import { ImportHubPreviewContent } from './ImportHubPreviewContent';
 import { CsvImportMappingField } from './CsvImportMappingField';
 
 type CsvImportPanelProps = {
+  isEmbedded?: boolean;
   fileName: string | null;
   headers: string[];
   mapping: CsvImportMapping;
@@ -21,6 +22,7 @@ type CsvImportPanelProps = {
 };
 
 export function CsvImportPanel({
+  isEmbedded = false,
   fileName,
   headers,
   mapping,
@@ -53,11 +55,11 @@ export function CsvImportPanel({
   }
 
   return (
-    <View style={styles.panel}>
+    <View style={[styles.panel, isEmbedded ? styles.panelEmbedded : null]}>
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
-          <Text style={styles.sectionTitle}>{strings.importHub.fileTitle}</Text>
-          <Text style={styles.supportText}>{strings.importHub.fileSupport}</Text>
+          <Text style={styles.sectionTitle}>{strings.importHub.sourceLabels.file}</Text>
+          <Text style={styles.supportText}>{strings.importHub.sourceDescriptions.file}</Text>
         </View>
         <View style={styles.actionRow}>
           <Pressable
@@ -183,6 +185,12 @@ const createStyles = (colors: ThemeColors) =>
       borderWidth: 1,
       gap: spacing.m,
       padding: spacing.l
+    },
+    panelEmbedded: {
+      backgroundColor: 'transparent',
+      borderWidth: 0,
+      borderRadius: 0,
+      padding: 0
     },
     headerRow: {
       alignItems: 'flex-start',

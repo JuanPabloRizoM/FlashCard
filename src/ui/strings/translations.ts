@@ -208,19 +208,56 @@ export type AppStrings = {
   importHub: {
     title: string;
     subtitle: string;
-    sourceLabel: string;
+    stepLabel: (stepNumber: number) => string;
+    intentTitle: string;
+    intentSupport: string;
+    intentLabels: {
+      cardsIntoDeck: string;
+      newDeck: string;
+    };
+    intentDescriptions: {
+      cardsIntoDeck: (deckName: string) => string;
+      cardsIntoDeckDisabled: string;
+      newDeck: string;
+    };
+    sourceTitle: string;
+    sourceSupportCards: string;
+    sourceSupportDeck: string;
     sourceLabels: {
       pasteText: string;
-      importDeck: string;
+      notebooklm: string;
       file: string;
     };
+    sourceDescriptions: {
+      pasteTextCards: string;
+      pasteTextDeck: string;
+      notebookLmCards: string;
+      notebookLmDeck: string;
+      file: string;
+    };
+    inputTitle: string;
+    inputSupportText: string;
+    inputSupportNotebookLm: string;
+    inputSupportFile: string;
     targetDeck: (deckName: string) => string;
     targetDeckMissing: string;
     targetNewDeck: string;
-    fileTitle: string;
-    fileSupport: string;
-    fileNotice: string;
-    fileAction: string;
+    futureSourceNotionTitle: string;
+    futureSourceNotionSupport: string;
+    notebookLm: {
+      guideTitle: string;
+      cardsTitle: string;
+      cardsSubtitleForDeck: (deckName: string) => string;
+      cardsSupport: string;
+      cardsExample: string;
+      deckTitle: string;
+      deckSubtitle: string;
+      deckSupport: string;
+      deckExample: string;
+      tipQa: string;
+      tipNotes: string;
+      tipCsv: string;
+    };
   };
   cardEditor: {
     newCardTitle: string;
@@ -683,21 +720,60 @@ const es: AppStrings = {
     listEmptyMessage: 'Agrega una tarjeta o importa varias.'
   },
   importHub: {
-    title: 'Import Hub',
-    subtitle: 'Elige una fuente, revisa la vista previa y confirma antes de guardar.',
-    sourceLabel: 'Fuente',
+    title: 'Importar contenido',
+    subtitle: 'Sigue estos pasos para revisar tu contenido antes de guardarlo.',
+    stepLabel: (stepNumber) => `Paso ${stepNumber}`,
+    intentTitle: '¿Qué quieres importar?',
+    intentSupport: 'Empieza por el resultado que quieres obtener.',
+    intentLabels: {
+      cardsIntoDeck: 'Tarjetas en este mazo',
+      newDeck: 'Un mazo nuevo'
+    },
+    intentDescriptions: {
+      cardsIntoDeck: (deckName) => `Agregar tarjetas nuevas a ${deckName}.`,
+      cardsIntoDeckDisabled: 'Elige o crea un mazo antes de importar tarjetas.',
+      newDeck: 'Crear un mazo nuevo a partir del contenido importado.'
+    },
+    sourceTitle: '¿De dónde viene?',
+    sourceSupportCards: 'Elige la fuente que mejor se adapte a tus tarjetas.',
+    sourceSupportDeck: 'Por ahora, los mazos nuevos se importan desde texto pegado.',
     sourceLabels: {
       pasteText: 'Pegar texto',
-      importDeck: 'Importar mazo',
-      file: 'Archivo'
+      notebooklm: 'NotebookLM',
+      file: 'Archivo CSV'
     },
+    sourceDescriptions: {
+      pasteTextCards: 'Pega líneas como frente | reverso y revisa la vista previa.',
+      pasteTextDeck: 'Pega una exportación de mazo con su encabezado para crear uno nuevo.',
+      notebookLmCards: 'Pega preguntas, respuestas o notas generadas en NotebookLM y conviértelas en tarjetas.',
+      notebookLmDeck: 'Pega contenido de NotebookLM y crea un mazo nuevo con un encabezado simple.',
+      file: 'Carga un CSV, asigna columnas y revisa las filas antes de importar.'
+    },
+    inputTitle: 'Agrega el contenido',
+    inputSupportText: 'Solo se mostrará la entrada necesaria para esta fuente.',
+    inputSupportNotebookLm: 'Pega la salida de NotebookLM con formato claro para obtener mejores resultados.',
+    inputSupportFile: 'Sube el archivo y ajusta las columnas si hace falta.',
     targetDeck: (deckName) => `Destino: ${deckName}`,
     targetDeckMissing: 'Destino: elige un mazo',
-    targetNewDeck: 'Destino: crear un mazo',
-    fileTitle: 'Importar desde archivo',
-    fileSupport: 'Carga un CSV, asigna columnas y confirma antes de guardar.',
-    fileNotice: 'La importación por archivo estará disponible aquí.',
-    fileAction: 'Elegir archivo'
+    targetNewDeck: 'Destino: crear un mazo nuevo',
+    futureSourceNotionTitle: 'Próximamente: Notion',
+    futureSourceNotionSupport: 'Cuando llegue, la vía recomendada será exportar una base de datos a CSV y revisarla aquí. No hay sincronización directa todavía.',
+    notebookLm: {
+      guideTitle: 'Guía rápida para NotebookLM',
+      cardsTitle: 'Pega tu salida de NotebookLM',
+      cardsSubtitleForDeck: (deckName) => `Pega preguntas y respuestas de NotebookLM para agregarlas a ${deckName}.`,
+      cardsSupport: 'Funciona mejor con pares claros de pregunta y respuesta o con notas ya separadas por `|`.',
+      cardsExample:
+        'What is photosynthesis? | Process plants use to turn light into energy\nCell membrane | Controls what enters and leaves the cell',
+      deckTitle: 'Crea un mazo desde NotebookLM',
+      deckSubtitle: 'Pega contenido de NotebookLM y empieza con `# Deck: Nombre del mazo`.',
+      deckSupport: 'Añade el encabezado del mazo primero y luego pega las líneas de pregunta y respuesta o notas estructuradas.',
+      deckExample:
+        '# Deck: Biology Notes\nWhat is photosynthesis? | Process plants use to turn light into energy\nCell membrane | Controls what enters and leaves the cell',
+      tipQa: 'Usa pares claros de pregunta | respuesta para una importación rápida.',
+      tipNotes: 'Si NotebookLM te dio notas, conviértelas a `frente | reverso | descripción` antes de pegar.',
+      tipCsv: 'Si preparaste una tabla con NotebookLM, usa la opción de CSV para mapear columnas.'
+    }
   },
   cardEditor: {
     newCardTitle: 'Nueva tarjeta',
@@ -730,8 +806,8 @@ const es: AppStrings = {
     saveChanges: 'Guardar cambios'
   },
   cardImport: {
-    title: 'Importar tarjetas',
-    subtitleForDeck: (deckName) => `Pega líneas frente | reverso para ${deckName}.`,
+    title: 'Pega tus tarjetas',
+    subtitleForDeck: (deckName) => `Pega líneas frente | reverso para agregarlas a ${deckName}.`,
     subtitleNoDeck: 'Elige un mazo primero.',
     exampleText:
       'hola | hello\nperro | dog | animal doméstico\ncorrer | run | moverse rápido | usado en deportes',
@@ -741,8 +817,8 @@ const es: AppStrings = {
     fixInvalidLines: 'Corrige las líneas inválidas para importar'
   },
   deckImport: {
-    title: 'Importar mazo',
-    subtitle: 'Pega una exportación de mazo.',
+    title: 'Pega el texto del mazo',
+    subtitle: 'Pega una exportación con el encabezado del mazo en la primera línea.',
     exampleText:
       '# Deck: Spanish Basics\nhola | hello\nperro | dog | animal doméstico\ncorrer | run | moverse rápido | usado en deportes',
     importing: 'Importando...',
@@ -758,7 +834,7 @@ const es: AppStrings = {
     replaceFile: 'Cambiar archivo',
     selectedFile: (fileName) => `Archivo: ${fileName}`,
     mappingTitle: 'Asignar columnas',
-    mappingSupport: 'Relaciona cada columna con el campo correcto antes de importar.',
+    mappingSupport: 'Relaciona cada columna con el campo correcto y luego revisa las filas.',
     notUsed: 'No usar',
     imageLabel: 'Imagen (opcional)',
     actionLabel: 'Importar CSV',
@@ -1165,21 +1241,60 @@ const en: AppStrings = {
     listEmptyMessage: 'Add a card or import a few.'
   },
   importHub: {
-    title: 'Import hub',
-    subtitle: 'Choose a source, review the preview, and confirm before saving.',
-    sourceLabel: 'Source',
+    title: 'Import content',
+    subtitle: 'Follow these steps to review everything before you save it.',
+    stepLabel: (stepNumber) => `Step ${stepNumber}`,
+    intentTitle: 'What do you want to import?',
+    intentSupport: 'Start with the result you want.',
+    intentLabels: {
+      cardsIntoDeck: 'Cards into this deck',
+      newDeck: 'A new deck'
+    },
+    intentDescriptions: {
+      cardsIntoDeck: (deckName) => `Add new cards to ${deckName}.`,
+      cardsIntoDeckDisabled: 'Choose or create a deck before importing cards.',
+      newDeck: 'Create a new deck from the imported content.'
+    },
+    sourceTitle: 'Where is it coming from?',
+    sourceSupportCards: 'Pick the source that matches your cards.',
+    sourceSupportDeck: 'For now, new decks are imported from pasted text.',
     sourceLabels: {
       pasteText: 'Paste text',
-      importDeck: 'Import deck',
-      file: 'File'
+      notebooklm: 'NotebookLM',
+      file: 'CSV file'
     },
+    sourceDescriptions: {
+      pasteTextCards: 'Paste front | back lines and review the preview before importing.',
+      pasteTextDeck: 'Paste a deck export with its header to create a new deck.',
+      notebookLmCards: 'Paste NotebookLM-generated questions, answers, or notes and turn them into cards.',
+      notebookLmDeck: 'Paste NotebookLM content and create a new deck with a simple header.',
+      file: 'Upload a CSV, map the columns, and review the rows before importing.'
+    },
+    inputTitle: 'Add the content',
+    inputSupportText: 'Only the input needed for this source is shown here.',
+    inputSupportNotebookLm: 'Paste NotebookLM output in a clear structure for the best results.',
+    inputSupportFile: 'Upload the file and adjust the columns if needed.',
     targetDeck: (deckName) => `Target: ${deckName}`,
     targetDeckMissing: 'Target: choose a deck',
     targetNewDeck: 'Target: create a new deck',
-    fileTitle: 'Import from file',
-    fileSupport: 'Upload a CSV, map the columns, and confirm before saving.',
-    fileNotice: 'File import lives here.',
-    fileAction: 'Choose file'
+    futureSourceNotionTitle: 'Coming next: Notion',
+    futureSourceNotionSupport: 'When it arrives, the recommended path will be exporting a Notion database to CSV and reviewing it here. There is no direct sync yet.',
+    notebookLm: {
+      guideTitle: 'NotebookLM quick guide',
+      cardsTitle: 'Paste your NotebookLM output',
+      cardsSubtitleForDeck: (deckName) => `Paste NotebookLM questions and answers to add them to ${deckName}.`,
+      cardsSupport: 'This works best with clear question-and-answer pairs or notes already separated with `|`.',
+      cardsExample:
+        'What is photosynthesis? | Process plants use to turn light into energy\nCell membrane | Controls what enters and leaves the cell',
+      deckTitle: 'Create a deck from NotebookLM',
+      deckSubtitle: 'Paste NotebookLM content and start with `# Deck: Deck name`.',
+      deckSupport: 'Add the deck header first, then paste structured question-and-answer lines or notes.',
+      deckExample:
+        '# Deck: Biology Notes\nWhat is photosynthesis? | Process plants use to turn light into energy\nCell membrane | Controls what enters and leaves the cell',
+      tipQa: 'Use clear question | answer pairs for the fastest import.',
+      tipNotes: 'If NotebookLM gave you notes, reshape them into `front | back | description` before pasting.',
+      tipCsv: 'If you prepared a table from NotebookLM, use the CSV option to map columns.'
+    }
   },
   cardEditor: {
     newCardTitle: 'New card',
@@ -1212,8 +1327,8 @@ const en: AppStrings = {
     saveChanges: 'Save changes'
   },
   cardImport: {
-    title: 'Import cards',
-    subtitleForDeck: (deckName) => `Paste front | back lines for ${deckName}.`,
+    title: 'Paste your cards',
+    subtitleForDeck: (deckName) => `Paste front | back lines to add them to ${deckName}.`,
     subtitleNoDeck: 'Choose a deck first.',
     exampleText: 'hola | hello\nperro | dog | domestic animal\ncorrer | run | move quickly | used in sports',
     actionLabel: 'Import cards',
@@ -1222,8 +1337,8 @@ const en: AppStrings = {
     fixInvalidLines: 'Fix invalid lines to import'
   },
   deckImport: {
-    title: 'Import deck',
-    subtitle: 'Paste a deck export.',
+    title: 'Paste the deck text',
+    subtitle: 'Paste a deck export with the deck header on the first line.',
     exampleText: '# Deck: Spanish Basics\nhola | hello\nperro | dog | domestic animal\ncorrer | run | move quickly | used in sports',
     importing: 'Importing...',
     actionLabel: 'Import deck',
@@ -1238,7 +1353,7 @@ const en: AppStrings = {
     replaceFile: 'Replace file',
     selectedFile: (fileName) => `File: ${fileName}`,
     mappingTitle: 'Map columns',
-    mappingSupport: 'Match each column to the right field before importing.',
+    mappingSupport: 'Match each column to the right field, then review the rows.',
     notUsed: 'Not used',
     imageLabel: 'Image (optional)',
     actionLabel: 'Import CSV',
