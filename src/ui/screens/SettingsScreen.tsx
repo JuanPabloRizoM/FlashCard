@@ -1,13 +1,6 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import {
-  APP_LANGUAGES,
-  APP_NAME,
-  APP_THEME_PREFERENCES,
-  APP_VERSION_LABEL,
-  type AppLanguage,
-  type AppThemePreference
-} from '../../core/types/settings';
+import { APP_LANGUAGES, APP_THEME_PREFERENCES, type AppLanguage, type AppThemePreference } from '../../core/types/settings';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { useAppSettings } from '../../features/settings/AppSettingsProvider';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
@@ -51,6 +44,8 @@ export function SettingsScreen() {
           />
         </View>
 
+        <View style={styles.sectionDivider} />
+
         <View style={styles.section}>
           <Text style={styles.eyebrow}>{strings.screens.settings.languageEyebrow}</Text>
           <Text style={styles.sectionTitle}>{strings.screens.settings.languageTitle}</Text>
@@ -65,37 +60,9 @@ export function SettingsScreen() {
           />
         </View>
 
+        <View style={styles.sectionDivider} />
+
         <SettingsAccountSection session={session} />
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeaderRow}>
-            <View style={styles.sectionHeaderCopy}>
-              <Text style={styles.eyebrow}>{strings.screens.settings.billingEyebrow}</Text>
-              <Text style={styles.sectionTitle}>{strings.screens.settings.billingTitle}</Text>
-            </View>
-            <View style={styles.mutedBadge}>
-              <Text style={styles.mutedBadgeLabel}>{strings.screens.settings.unavailableBadge}</Text>
-            </View>
-          </View>
-          <Text style={styles.supportText}>{strings.screens.settings.billingSupport}</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.eyebrow}>{strings.screens.settings.aboutEyebrow}</Text>
-          <Text style={styles.sectionTitle}>{strings.screens.settings.aboutTitle}</Text>
-          <View style={styles.infoList}>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>{strings.screens.settings.appLabel}</Text>
-              <Text style={styles.infoValue}>{APP_NAME}</Text>
-            </View>
-            <View style={styles.infoDivider} />
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>{strings.screens.settings.versionLabel}</Text>
-              <Text style={styles.infoValue}>{APP_VERSION_LABEL}</Text>
-            </View>
-          </View>
-          <Text style={styles.supportText}>{strings.common.appInfoScope}</Text>
-        </View>
       </ScrollView>
     </ScreenContainer>
   );
@@ -110,15 +77,9 @@ const createStyles = (colors: ThemeColors) =>
     section: {
       gap: spacing.s
     },
-    sectionHeaderRow: {
-      alignItems: 'flex-start',
-      flexDirection: 'row',
-      gap: spacing.m,
-      justifyContent: 'space-between'
-    },
-    sectionHeaderCopy: {
-      flex: 1,
-      gap: spacing.xs
+    sectionDivider: {
+      backgroundColor: colors.border,
+      height: 1
     },
     eyebrow: {
       color: colors.primary,
@@ -140,43 +101,5 @@ const createStyles = (colors: ThemeColors) =>
     errorText: {
       color: colors.error,
       fontSize: typography.caption
-    },
-    mutedBadge: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.border,
-      borderRadius: 999,
-      borderWidth: 1,
-      paddingHorizontal: spacing.s,
-      paddingVertical: spacing.xs
-    },
-    mutedBadgeLabel: {
-      color: colors.textSecondary,
-      fontSize: typography.caption,
-      fontWeight: '700'
-    },
-    infoList: {
-      gap: spacing.s,
-      paddingTop: spacing.xs
-    },
-    infoRow: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      justifyContent: 'space-between'
-    },
-    infoDivider: {
-      backgroundColor: colors.border,
-      height: 1
-    },
-    infoLabel: {
-      color: colors.textMuted,
-      fontSize: typography.overline,
-      fontWeight: '700',
-      letterSpacing: 0.3,
-      textTransform: 'uppercase'
-    },
-    infoValue: {
-      color: colors.textPrimary,
-      fontSize: typography.body,
-      fontWeight: '600'
     },
   });

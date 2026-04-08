@@ -1,21 +1,30 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { AuthSession } from '../../../core/types/auth';
+import type { AuthEntryDestination, AuthSession } from '../../../core/types/auth';
 import { useAuth } from '../../../features/auth/AuthProvider';
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
+import { GuestUpgradeModal } from './GuestUpgradeModal';
 
 type SettingsAccountSectionProps = {
   session: AuthSession;
 };
 
+type UpgradeModalState = {
+  destination: AuthEntryDestination;
+  title: string;
+  support: string;
+  actionLabel: string;
+} | null;
+
 export function SettingsAccountSection({ session }: SettingsAccountSectionProps) {
-  const { signOut } = useAuth();
+  const { beginAuthEntry, signOut } = useAuth();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
+  const [upgradeModal, setUpgradeModal] = useState<UpgradeModalState>(null);
 
   const providerLabels = strings.screens.settings.providerLabels;
   const accountState =
@@ -24,21 +33,6 @@ export function SettingsAccountSection({ session }: SettingsAccountSectionProps)
       : session.status === 'guest'
         ? strings.screens.settings.accountStateGuest
         : strings.screens.settings.accountStateSignedOut;
-  const badgeLabel = session.provider != null ? providerLabels[session.provider] : accountState;
-  const accountSupport =
-    session.status === 'guest'
-      ? strings.screens.settings.accountSupportGuest
-      : strings.screens.settings.accountSupportAuthenticated;
-  const signOutSupport =
-    session.status === 'guest'
-      ? strings.screens.settings.signOutSupportGuest
-      : strings.screens.settings.signOutSupportAuthenticated;
-  const signOutActionLabel =
-    session.status === 'guest'
-      ? strings.screens.settings.signOutActionGuest
-      : isSigningOut
-        ? strings.screens.settings.signingOutAction
-        : strings.screens.settings.signOutAction;
   const sessionTitle = useMemo(() => {
     if (session.displayName != null) {
       return session.displayName;
@@ -50,6 +44,17 @@ export function SettingsAccountSection({ session }: SettingsAccountSectionProps)
 
     return accountState;
   }, [accountState, session.displayName, session.email]);
+
+  const signOutSupport =
+    session.status === 'guest'
+      ? strings.screens.settings.signOutSupportGuest
+      : strings.screens.settings.signOutSupportAuthenticated;
+  const signOutActionLabel =
+    session.status === 'guest'
+      ? strings.screens.settings.signOutActionGuest
+      : isSigningOut
+        ? strings.screens.settings.signingOutAction
+        : strings.screens.settings.signOutAction;
 
   async function handleSignOut() {
     if (isSigningOut) {
@@ -64,92 +69,145 @@ export function SettingsAccountSection({ session }: SettingsAccountSectionProps)
     } catch {
       setIsSigningOut(false);
       setSignOutError(strings.screens.settings.signOutError);
+      return;
     }
+
+    setIsSigningOut(false);
+  }
+
+  async function handleUpgradeConfirm() {
+    if (upgradeModal == null) {
+      return;
+    }
+
+    setSignOutError(null);
+    setUpgradeModal(null);
+    await beginAuthEntry(upgradeModal.destination);
   }
 
   return (
-    <View style={styles.sectionCard}>
-      <View style={styles.sectionHeaderRow}>
-        <View style={styles.sectionHeaderCopy}>
-          <Text style={styles.eyebrow}>{strings.screens.settings.accountEyebrow}</Text>
-          <Text style={styles.sectionTitle}>{strings.screens.settings.accountTitle}</Text>
-        </View>
-        <View style={styles.statusBadge}>
-          <Text style={styles.statusBadgeLabel}>{badgeLabel}</Text>
-        </View>
-      </View>
-      <Text style={styles.supportText}>{accountSupport}</Text>
-      <View style={styles.accountSummary}>
-        <Text style={styles.accountSummaryTitle}>{sessionTitle}</Text>
-        <Text style={styles.accountSummarySupport}>{signOutSupport}</Text>
-      </View>
-      <View style={styles.infoList}>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>{strings.screens.settings.accountStatusLabel}</Text>
-          <Text style={styles.infoValue}>{accountState}</Text>
-        </View>
-        {session.provider != null ? (
+    <View style={styles.sectionGroup}>
+      <View style={styles.section}>
+        <Text style={styles.eyebrow}>{strings.screens.settings.accountEyebrow}</Text>
+        <Text style={styles.sectionTitle}>{strings.screens.settings.accountTitle}</Text>
+        <Text style={styles.supportText}>
+          {session.status === 'guest'
+            ? strings.screens.settings.accountSupportGuest
+            : strings.screens.settings.accountSupportAuthenticated}
+        </Text>
+
+        {session.status === 'guest' ? (
           <>
-            <View style={styles.infoDivider} />
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>{strings.screens.settings.accountProviderLabel}</Text>
-              <Text style={styles.infoValue}>{providerLabels[session.provider]}</Text>
+            <View style={styles.accountMetaRow}>
+              <Text style={styles.metaLabel}>{strings.screens.settings.accountStatusLabel}</Text>
+              <Text style={styles.metaValue}>{accountState}</Text>
+            </View>
+            <View style={styles.actionRow}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  setUpgradeModal({
+                    actionLabel: strings.screens.settings.linkGoogleAction,
+                    destination: 'google',
+                    support: strings.screens.settings.linkGoogleModalSupport,
+                    title: strings.screens.settings.linkGoogleModalTitle
+                  });
+                }}
+                style={styles.secondaryAction}
+              >
+                <Text style={styles.secondaryActionLabel}>{strings.screens.settings.linkGoogleAction}</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  setUpgradeModal({
+                    actionLabel: strings.auth.landing.createAccount,
+                    destination: 'create_account',
+                    support: strings.screens.settings.createAccountModalSupport,
+                    title: strings.screens.settings.createAccountModalTitle
+                  });
+                }}
+                style={styles.secondaryAction}
+              >
+                <Text style={styles.secondaryActionLabel}>{strings.auth.landing.createAccount}</Text>
+              </Pressable>
             </View>
           </>
-        ) : null}
-        {session.displayName != null ? (
-          <>
-            <View style={styles.infoDivider} />
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>{strings.screens.settings.accountNameLabel}</Text>
-              <Text style={styles.infoValue}>{session.displayName}</Text>
+        ) : (
+          <View style={styles.metaList}>
+            <View style={styles.accountMetaRow}>
+              <Text style={styles.metaLabel}>{strings.screens.settings.accountStatusLabel}</Text>
+              <Text style={styles.metaValue}>{accountState}</Text>
             </View>
-          </>
-        ) : null}
-        {session.email != null ? (
-          <>
-            <View style={styles.infoDivider} />
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>{strings.screens.settings.accountEmailLabel}</Text>
-              <Text style={styles.infoValue}>{session.email}</Text>
-            </View>
-          </>
-        ) : null}
+            {session.provider != null ? (
+              <View style={styles.accountMetaRow}>
+                <Text style={styles.metaLabel}>{strings.screens.settings.accountProviderLabel}</Text>
+                <Text style={styles.metaValue}>{providerLabels[session.provider]}</Text>
+              </View>
+            ) : null}
+            {session.email != null ? (
+              <View style={styles.accountMetaRow}>
+                <Text style={styles.metaLabel}>{strings.screens.settings.accountEmailLabel}</Text>
+                <Text style={styles.metaValue}>{session.email}</Text>
+              </View>
+            ) : null}
+            {session.displayName != null ? (
+              <View style={styles.accountMetaRow}>
+                <Text style={styles.metaLabel}>{strings.screens.settings.accountNameLabel}</Text>
+                <Text style={styles.metaValue}>{session.displayName}</Text>
+              </View>
+            ) : null}
+          </View>
+        )}
       </View>
-      {signOutError != null ? <Text style={styles.errorText}>{signOutError}</Text> : null}
-      <Pressable
-        accessibilityRole="button"
-        disabled={isSigningOut}
-        onPress={() => {
-          void handleSignOut();
+
+      <View style={styles.sectionDivider} />
+
+      <View style={styles.section}>
+        <Text style={styles.eyebrow}>{strings.screens.settings.signOutEyebrow}</Text>
+        <Text style={styles.sectionTitle}>{strings.screens.settings.signOutTitle}</Text>
+        <Text style={styles.supportText}>{signOutSupport}</Text>
+        {session.status === 'authenticated' ? (
+          <Text style={styles.sessionTitle}>{sessionTitle}</Text>
+        ) : null}
+        {signOutError != null ? <Text style={styles.errorText}>{signOutError}</Text> : null}
+        <Pressable
+          accessibilityRole="button"
+          disabled={isSigningOut}
+          onPress={() => {
+            void handleSignOut();
+          }}
+          style={[styles.dangerAction, isSigningOut ? styles.dangerActionDisabled : null]}
+        >
+          <Text style={styles.dangerActionLabel}>{signOutActionLabel}</Text>
+        </Pressable>
+      </View>
+
+      <GuestUpgradeModal
+        actionLabel={upgradeModal?.actionLabel ?? ''}
+        onClose={() => setUpgradeModal(null)}
+        onConfirm={() => {
+          void handleUpgradeConfirm();
         }}
-        style={[styles.signOutButton, isSigningOut ? styles.signOutButtonDisabled : null]}
-      >
-        <Text style={styles.signOutButtonLabel}>{signOutActionLabel}</Text>
-      </Pressable>
+        support={upgradeModal?.support ?? ''}
+        title={upgradeModal?.title ?? ''}
+        visible={upgradeModal != null}
+      />
     </View>
   );
 }
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
-    sectionCard: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: 20,
-      borderWidth: 1,
-      gap: spacing.m,
-      padding: spacing.l
+    sectionGroup: {
+      gap: spacing.l
     },
-    sectionHeaderRow: {
-      alignItems: 'flex-start',
-      flexDirection: 'row',
-      gap: spacing.m,
-      justifyContent: 'space-between'
+    section: {
+      gap: spacing.s
     },
-    sectionHeaderCopy: {
-      flex: 1,
-      gap: spacing.xs
+    sectionDivider: {
+      backgroundColor: colors.border,
+      height: 1
     },
     eyebrow: {
       color: colors.primary,
@@ -168,54 +226,50 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: typography.caption,
       lineHeight: 18
     },
-    statusBadge: {
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.primary,
-      borderRadius: 999,
-      borderWidth: 1,
-      paddingHorizontal: spacing.s,
-      paddingVertical: spacing.xs
-    },
-    statusBadgeLabel: {
-      color: colors.primary,
-      fontSize: typography.caption,
-      fontWeight: '700'
-    },
-    accountSummary: {
-      gap: spacing.xs,
-      paddingTop: spacing.xs
-    },
-    accountSummaryTitle: {
-      color: colors.textPrimary,
-      fontSize: typography.body,
-      fontWeight: '700'
-    },
-    accountSummarySupport: {
-      color: colors.textSecondary,
-      fontSize: typography.caption,
-      lineHeight: 18
-    },
-    infoList: {
+    metaList: {
       gap: spacing.s,
       paddingTop: spacing.xs
     },
-    infoRow: {
+    accountMetaRow: {
       alignItems: 'center',
       flexDirection: 'row',
+      gap: spacing.m,
       justifyContent: 'space-between'
     },
-    infoDivider: {
-      backgroundColor: colors.border,
-      height: 1
-    },
-    infoLabel: {
+    metaLabel: {
       color: colors.textMuted,
       fontSize: typography.overline,
       fontWeight: '700',
       letterSpacing: 0.3,
       textTransform: 'uppercase'
     },
-    infoValue: {
+    metaValue: {
+      color: colors.textPrimary,
+      flex: 1,
+      fontSize: typography.bodySmall,
+      fontWeight: '600',
+      textAlign: 'right'
+    },
+    actionRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.s,
+      paddingTop: spacing.xs
+    },
+    secondaryAction: {
+      backgroundColor: colors.surfaceMuted,
+      borderColor: colors.border,
+      borderRadius: 999,
+      borderWidth: 1,
+      paddingHorizontal: spacing.m,
+      paddingVertical: spacing.s
+    },
+    secondaryActionLabel: {
+      color: colors.textPrimary,
+      fontSize: typography.bodySmall,
+      fontWeight: '700'
+    },
+    sessionTitle: {
       color: colors.textPrimary,
       fontSize: typography.body,
       fontWeight: '600'
@@ -224,19 +278,20 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.error,
       fontSize: typography.caption
     },
-    signOutButton: {
+    dangerAction: {
       alignItems: 'center',
+      alignSelf: 'flex-start',
       backgroundColor: colors.errorSoft,
       borderColor: colors.error,
-      borderRadius: 16,
+      borderRadius: 999,
       borderWidth: 1,
       paddingHorizontal: spacing.m,
-      paddingVertical: spacing.m
+      paddingVertical: spacing.s
     },
-    signOutButtonDisabled: {
+    dangerActionDisabled: {
       opacity: 0.7
     },
-    signOutButtonLabel: {
+    dangerActionLabel: {
       color: colors.error,
       fontSize: typography.bodySmall,
       fontWeight: '700'

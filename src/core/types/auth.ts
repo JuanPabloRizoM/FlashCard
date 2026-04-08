@@ -1,8 +1,10 @@
 export const AUTH_SESSION_STATUSES = ['signed_out', 'guest', 'authenticated'] as const;
 export const AUTH_PROVIDERS = ['guest', 'email', 'google'] as const;
+export const AUTH_ENTRY_DESTINATIONS = ['landing', 'create_account', 'google'] as const;
 
 export type AuthSessionStatus = (typeof AUTH_SESSION_STATUSES)[number];
 export type AuthProviderId = (typeof AUTH_PROVIDERS)[number];
+export type AuthEntryDestination = (typeof AUTH_ENTRY_DESTINATIONS)[number];
 
 export type AuthSession = {
   status: AuthSessionStatus;

@@ -9,7 +9,6 @@ import { spacing, typography, useThemedStyles, type ThemeColors } from '../../th
 type DeckListItemProps = {
   deck: Deck;
   insights: DeckStudyInsights | null;
-  timestampLabel: string;
   onPress: () => void;
 };
 
@@ -27,7 +26,7 @@ function DeckMetaPill({ label }: DeckMetaPillProps) {
   );
 }
 
-export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckListItemProps) {
+export function DeckListItem({ deck, insights, onPress }: DeckListItemProps) {
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const totalCards = insights?.totalCards ?? 0;
@@ -50,13 +49,11 @@ export function DeckListItem({ deck, insights, timestampLabel, onPress }: DeckLi
       </View>
       <View style={styles.copyBlock}>
         <Text style={styles.deckName}>{deck.name}</Text>
-        {deck.description != null ? <Text style={styles.deckDescription}>{deck.description}</Text> : null}
       </View>
       <View style={styles.deckMetaRow}>
         <DeckMetaPill label={strings.deckList.cardsCount(totalCards)} />
         <DeckMetaPill label={strings.deckList.readyToStudy(studyableCards)} />
       </View>
-      <Text style={styles.deckMeta}>{timestampLabel}</Text>
     </Pressable>
   );
 }
@@ -66,10 +63,11 @@ const createStyles = (colors: ThemeColors) =>
   deckCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 20,
+    borderRadius: 18,
     borderWidth: 1,
     gap: spacing.s,
-    padding: spacing.m
+    paddingHorizontal: spacing.m,
+    paddingVertical: spacing.s
   },
   deckCardPressed: {
     backgroundColor: colors.surfaceMuted,
@@ -97,17 +95,12 @@ const createStyles = (colors: ThemeColors) =>
     textTransform: 'uppercase'
   },
   copyBlock: {
-    gap: spacing.xs
+    gap: spacing.xxs
   },
   deckName: {
     color: colors.textPrimary,
-    fontSize: typography.subtitle,
+    fontSize: typography.body,
     fontWeight: '700'
-  },
-  deckDescription: {
-    color: colors.textSecondary,
-    fontSize: typography.bodySmall,
-    lineHeight: 21
   },
   deckMetaRow: {
     flexDirection: 'row',
@@ -126,9 +119,5 @@ const createStyles = (colors: ThemeColors) =>
     color: colors.textSecondary,
     fontSize: typography.caption,
     fontWeight: '600'
-  },
-  deckMeta: {
-    color: colors.textMuted,
-    fontSize: typography.caption
   }
 });

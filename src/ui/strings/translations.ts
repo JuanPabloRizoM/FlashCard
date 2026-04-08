@@ -67,6 +67,7 @@ export type AppStrings = {
       savingDeck: string;
       savedDecksTitle: string;
       savedDecksSubtitle: string;
+      showMoreDecks: string;
       noDecksTitle: string;
       noDecksMessage: string;
     };
@@ -140,6 +141,11 @@ export type AppStrings = {
       accountSupport: string;
       accountSupportGuest: string;
       accountSupportAuthenticated: string;
+      linkGoogleAction: string;
+      linkGoogleModalTitle: string;
+      linkGoogleModalSupport: string;
+      createAccountModalTitle: string;
+      createAccountModalSupport: string;
       accountStatusLabel: string;
       accountProviderLabel: string;
       accountNameLabel: string;
@@ -737,6 +743,7 @@ const es: AppStrings = {
       savingDeck: 'Guardando mazo...',
       savedDecksTitle: 'Mazos guardados',
       savedDecksSubtitle: 'Toca un mazo para ver un resumen rápido y seguir.',
+      showMoreDecks: 'Ver más mazos',
       noDecksTitle: 'Aún no hay mazos',
       noDecksMessage: 'Crea un mazo para empezar.'
     },
@@ -799,7 +806,7 @@ const es: AppStrings = {
     },
     settings: {
       title: 'Ajustes',
-      subtitle: 'Ajusta la apariencia, el idioma y el acceso de tu cuenta desde un solo lugar.',
+      subtitle: 'Ajusta el aspecto, el idioma y el acceso de tu cuenta con una estructura más clara.',
       appearanceEyebrow: 'Apariencia',
       appearanceTitle: 'Tema',
       appearanceSupport: 'Elige cómo quieres ver FlashCards en este dispositivo.',
@@ -807,10 +814,15 @@ const es: AppStrings = {
       languageTitle: 'Idioma de la app',
       languageSupport: 'Se aplica a toda la interfaz y cambia al momento.',
       accountEyebrow: 'Cuenta',
-      accountTitle: 'Configuración de cuenta',
+      accountTitle: 'Cuenta',
       accountSupport: 'Consulta tu acceso actual. Las herramientas de cuenta llegarán más adelante.',
-      accountSupportGuest: 'Estás usando FlashCards como invitado. Puedes salir de este modo en cualquier momento.',
-      accountSupportAuthenticated: 'Esta sección muestra la sesión activa de FlashCards sin fingir controles que todavía no existen.',
+      accountSupportGuest: 'Estás usando FlashCards como invitado. Si quieres conservar tu acceso, puedes vincularlo con Google o crear una cuenta.',
+      accountSupportAuthenticated: 'Esta sección muestra tu sesión activa sin fingir controles de perfil que todavía no existen.',
+      linkGoogleAction: 'Vincular con Google',
+      linkGoogleModalTitle: 'Vincular esta sesión con Google',
+      linkGoogleModalSupport: 'Saldrás del modo invitado y continuarás con Google para guardar tu acceso con una cuenta real.',
+      createAccountModalTitle: 'Crear una cuenta',
+      createAccountModalSupport: 'Saldrás del modo invitado y abrirás el flujo para crear una cuenta nueva.',
       accountStatusLabel: 'Acceso',
       accountProviderLabel: 'Proveedor',
       accountNameLabel: 'Nombre',
@@ -1422,6 +1434,7 @@ const en: AppStrings = {
       savingDeck: 'Saving deck...',
       savedDecksTitle: 'Saved decks',
       savedDecksSubtitle: 'Tap a deck to open a quick summary and keep moving.',
+      showMoreDecks: 'Show more decks',
       noDecksTitle: 'No decks yet',
       noDecksMessage: 'Create a deck to get started.'
     },
@@ -1484,7 +1497,7 @@ const en: AppStrings = {
     },
     settings: {
       title: 'Settings',
-      subtitle: 'Adjust appearance, language, and account access from one place.',
+      subtitle: 'Adjust appearance, language, and account access with a cleaner structure.',
       appearanceEyebrow: 'Appearance',
       appearanceTitle: 'Theme',
       appearanceSupport: 'Choose how FlashCards should look on this device.',
@@ -1492,11 +1505,19 @@ const en: AppStrings = {
       languageTitle: 'App language',
       languageSupport: 'Applies across the interface and updates right away.',
       accountEyebrow: 'Account',
-      accountTitle: 'Account settings',
+      accountTitle: 'Account',
       accountSupport: 'See your current access state here. Full account tools can arrive later.',
-      accountSupportGuest: 'You are using FlashCards in guest mode. You can leave this mode at any time.',
+      accountSupportGuest:
+        'You are using FlashCards in guest mode. If you want to keep your access, you can link it with Google or create an account.',
       accountSupportAuthenticated:
-        'This section shows the current FlashCards session without pretending full account controls already exist.',
+        'This section shows the current FlashCards session without pretending full profile controls already exist.',
+      linkGoogleAction: 'Link with Google',
+      linkGoogleModalTitle: 'Link this session with Google',
+      linkGoogleModalSupport:
+        'You will leave guest mode and continue with Google so this access can be tied to a real account.',
+      createAccountModalTitle: 'Create an account',
+      createAccountModalSupport:
+        'You will leave guest mode and open the account creation flow for a new FlashCards account.',
       accountStatusLabel: 'Access',
       accountProviderLabel: 'Provider',
       accountNameLabel: 'Name',

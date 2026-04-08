@@ -6,7 +6,7 @@ import { spacing, typography, useThemedStyles, type ThemeColors } from '../../th
 
 type ScreenContainerProps = {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   children?: ReactNode;
 };
 
@@ -17,7 +17,7 @@ export function ScreenContainer({ title, subtitle, children }: ScreenContainerPr
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
+          {subtitle != null && subtitle.length > 0 ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
         {children}
       </View>

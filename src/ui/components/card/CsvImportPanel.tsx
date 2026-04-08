@@ -112,7 +112,6 @@ export function CsvImportPanel({
             }}
             selectedColumn={mapping.back}
           />
-          <Text style={styles.optionalLabel}>{strings.common.optional}</Text>
           <CsvImportMappingField
             columns={headers}
             isRequired={false}
@@ -263,9 +262,4 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: typography.body,
       fontWeight: '700'
     },
-    optionalLabel: {
-      color: colors.textMuted,
-      fontSize: typography.caption,
-      fontWeight: '600'
-    }
   });

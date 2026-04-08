@@ -470,3 +470,5 @@
 - Refactored Study into a real nested stack so the Study dashboard only handles setup/history while live review runs in a dedicated full-screen Study Session route with the tab bar hidden.
 - Reworked the active Study Session layout into a card-first full-screen surface with minimal shell chrome and safer web animation settings.
 - Redesigned the Study home tab into a lighter study launchpad with a lead session card, compact setup controls, and less repetitive dashboard chrome.
+- Simplified Settings into divider-based Theme, Language, Account, and Session sections, and added a real guest-upgrade modal that can hand off to Google auth or account creation after leaving guest mode.
+- Refined Decks into a lighter library screen with a compact stats row, a tighter create-deck card, and an initially capped two-deck list with inline expansion instead of a heavier full library block.

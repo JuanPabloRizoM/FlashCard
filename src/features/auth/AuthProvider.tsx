@@ -11,6 +11,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { Platform } from 'react-native';
 
 import {
+  type AuthEntryDestination,
   DEFAULT_AUTH_SESSION,
   normalizeAuthSession,
   type AuthActionResult,
@@ -31,7 +32,10 @@ import {
 type AuthContextValue = {
   session: AuthSession;
   hasAccess: boolean;
+  pendingAuthEntry: AuthEntryDestination | null;
   continueAsGuest: () => Promise<void>;
+  beginAuthEntry: (destination: AuthEntryDestination) => Promise<void>;
+  consumePendingAuthEntry: () => void;
   signOut: () => Promise<void>;
   signIn: (input: { email: string; password: string }) => Promise<AuthActionResult>;
   signUp: (input: { name?: string | null; email: string; password: string }) => Promise<AuthActionResult>;
@@ -141,6 +145,7 @@ function createResetError(error: unknown): AuthResetPasswordResult {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<AuthSession>(DEFAULT_AUTH_SESSION);
+  const [pendingAuthEntry, setPendingAuthEntry] = useState<AuthEntryDestination | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -227,6 +232,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     () => ({
       session,
       hasAccess: session.status === 'guest' || session.status === 'authenticated',
+      pendingAuthEntry,
       continueAsGuest: async () => {
         applySession({
           status: 'guest',
@@ -235,6 +241,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
           displayName: null,
           updatedAt: buildTimestamp()
         });
+      },
+      beginAuthEntry: async (destination) => {
+        setPendingAuthEntry(destination);
+        applySession({
+          ...DEFAULT_AUTH_SESSION,
+          updatedAt: buildTimestamp()
+        });
+      },
+      consumePendingAuthEntry: () => {
+        setPendingAuthEntry(null);
       },
       signOut: async () => {
         if (session.status === 'authenticated' && isSupabaseConfigured && supabase != null) {
@@ -245,6 +261,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         }
 
+        setPendingAuthEntry(null);
         applySession({
           ...DEFAULT_AUTH_SESSION,
           updatedAt: buildTimestamp()
@@ -393,7 +410,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         };
       }
     }),
-    [applySession, session]
+    [applySession, pendingAuthEntry, session]
   );
 
   if (!isHydrated) {

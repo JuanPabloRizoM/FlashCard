@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAuth } from '../../../features/auth/AuthProvider';
@@ -7,15 +7,21 @@ import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 
 type AuthLandingScreenProps = {
+  autoTriggerGoogle?: boolean;
   onOpenSignIn: () => void;
   onOpenCreateAccount: () => void;
 };
 
-export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLandingScreenProps) {
+export function AuthLandingScreen({
+  autoTriggerGoogle = false,
+  onOpenSignIn,
+  onOpenCreateAccount
+}: AuthLandingScreenProps) {
   const { continueAsGuest, signInWithGoogle } = useAuth();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const hasAutoTriggeredGoogle = useRef(false);
 
   async function onGooglePress() {
     const result = await signInWithGoogle();
@@ -27,6 +33,15 @@ export function AuthLandingScreen({ onOpenSignIn, onOpenCreateAccount }: AuthLan
 
     setInfoMessage(null);
   }
+
+  useEffect(() => {
+    if (!autoTriggerGoogle || hasAutoTriggeredGoogle.current) {
+      return;
+    }
+
+    hasAutoTriggeredGoogle.current = true;
+    void onGooglePress();
+  }, [autoTriggerGoogle]);
 
   return (
     <AuthScaffold

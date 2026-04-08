@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import type { AuthEntryDestination } from '../core/types/auth';
 
 import { AuthLandingScreen } from '../ui/screens/auth/AuthLandingScreen';
 import { CreateAccountScreen } from '../ui/screens/auth/CreateAccountScreen';
@@ -7,8 +9,25 @@ import { SignInScreen } from '../ui/screens/auth/SignInScreen';
 
 type AuthRoute = 'landing' | 'sign_in' | 'create_account' | 'forgot_password';
 
-export function AuthFlow() {
-  const [route, setRoute] = useState<AuthRoute>('landing');
+type AuthFlowProps = {
+  pendingAuthEntry?: AuthEntryDestination | null;
+  onConsumePendingAuthEntry?: () => void;
+};
+
+function resolveInitialRoute(pendingAuthEntry?: AuthEntryDestination | null): AuthRoute {
+  if (pendingAuthEntry === 'create_account') {
+    return 'create_account';
+  }
+
+  return 'landing';
+}
+
+export function AuthFlow({ pendingAuthEntry, onConsumePendingAuthEntry }: AuthFlowProps) {
+  const [route, setRoute] = useState<AuthRoute>(() => resolveInitialRoute(pendingAuthEntry));
+
+  useEffect(() => {
+    onConsumePendingAuthEntry?.();
+  }, [onConsumePendingAuthEntry]);
 
   switch (route) {
     case 'sign_in':
@@ -41,6 +60,7 @@ export function AuthFlow() {
     default:
       return (
         <AuthLandingScreen
+          autoTriggerGoogle={pendingAuthEntry === 'google'}
           onOpenCreateAccount={() => {
             setRoute('create_account');
           }}
