@@ -185,14 +185,14 @@ const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
   layout: {
     flex: 1,
-    gap: spacing.m
+    gap: spacing.l
   },
   formCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 24,
+    borderRadius: 20,
     borderWidth: 1,
-    gap: spacing.s,
+    gap: spacing.m,
     padding: spacing.l
   },
   eyebrow: {
@@ -260,7 +260,8 @@ const createStyles = (colors: ThemeColors) =>
     alignItems: 'center',
     flexDirection: 'row',
     gap: spacing.m,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingTop: spacing.s
   },
   listHeaderCopy: {
     flex: 1,
@@ -282,7 +283,7 @@ const createStyles = (colors: ThemeColors) =>
     fontWeight: '600'
   },
   listContent: {
-    gap: spacing.m,
+    gap: spacing.s,
     paddingBottom: spacing.xl
   },
   emptyListContent: {

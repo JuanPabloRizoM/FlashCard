@@ -303,7 +303,7 @@ export function CardsScreen({ navigation, route }: CardsScreenProps) {
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
   content: {
-    gap: spacing.m,
+    gap: spacing.l,
     paddingBottom: spacing.xl
   },
   workspaceHeader: {
@@ -311,7 +311,7 @@ const createStyles = (colors: ThemeColors) =>
   },
   sectionTitle: {
     color: colors.textPrimary,
-    fontSize: typography.subtitle,
+    fontSize: typography.body,
     fontWeight: '700'
   },
   errorText: {
@@ -321,7 +321,8 @@ const createStyles = (colors: ThemeColors) =>
   listHeader: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingTop: spacing.s
   },
   listCount: {
     color: colors.textMuted,

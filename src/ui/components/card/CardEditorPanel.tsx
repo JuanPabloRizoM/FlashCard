@@ -51,7 +51,6 @@ export function CardEditorPanel({
 
   return (
     <View style={styles.formCard}>
-      <View style={styles.headerAccent} />
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>
@@ -173,22 +172,10 @@ const createStyles = (colors: ThemeColors) =>
   formCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 24,
+    borderRadius: 20,
     borderWidth: 1,
     gap: spacing.m,
-    overflow: 'hidden',
-    padding: spacing.l,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.18,
-    shadowRadius: 28
-  },
-  headerAccent: {
-    backgroundColor: colors.primary,
-    borderRadius: 999,
-    height: 4,
-    marginBottom: spacing.xs,
-    width: 64
+    padding: spacing.l
   },
   headerRow: {
     alignItems: 'flex-start',
@@ -198,7 +185,7 @@ const createStyles = (colors: ThemeColors) =>
   },
   headerCopy: {
     flex: 1,
-    gap: spacing.s
+    gap: spacing.xs
   },
   fieldGroup: {
     gap: spacing.m
@@ -208,7 +195,7 @@ const createStyles = (colors: ThemeColors) =>
   },
   sectionTitle: {
     color: colors.textPrimary,
-    fontSize: typography.title,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   sectionText: {

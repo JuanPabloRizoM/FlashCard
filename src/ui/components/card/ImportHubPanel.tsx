@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { CardImportPreview } from '../../../features/cards/cardImport';
 import type {
@@ -14,17 +14,11 @@ import {
   ImportHubChoiceGrid,
   type ImportHubChoiceOption
 } from './ImportHubChoiceGrid';
-import { ImportHubStepHeader } from './ImportHubStepHeader';
 import { CsvImportPanel } from './CsvImportPanel';
 import { ImportHubInfoCard } from './ImportHubInfoCard';
+import { ImportHubStepHeader } from './ImportHubStepHeader';
 import { ImportHubTextFlow } from './ImportHubTextFlow';
-import {
-  buildIntentOptions,
-  buildSourceOptions,
-  getInputSupport,
-  type ImportHubIntent,
-  type ImportHubSource
-} from './importHubConfig';
+import { buildSourceOptions, getInputSupport, type ImportHubSource } from './importHubConfig';
 
 type ImportHubPanelProps = {
   selectedDeckName: string | null;
@@ -55,6 +49,15 @@ type ImportHubPanelProps = {
   onImportDeck: () => Promise<void>;
   onClearDeckImport: () => void;
 };
+
+function buildStructuredDeckOption(strings: ReturnType<typeof useAppStrings>): ImportHubChoiceOption<ImportHubSource> {
+  return {
+    id: 'structured_deck',
+    label: strings.importHub.sourceLabels.structuredDeck,
+    support: strings.importHub.sourceDescriptions.structuredDeck,
+    emphasis: 'utility'
+  };
+}
 
 export function ImportHubPanel({
   selectedDeckName,
@@ -87,38 +90,29 @@ export function ImportHubPanel({
 }: ImportHubPanelProps) {
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
-  const [activeIntent, setActiveIntent] = useState<ImportHubIntent>(
-    canImportCards ? 'cards_into_deck' : 'new_deck'
-  );
   const [activeSource, setActiveSource] = useState<ImportHubSource>('notebooklm');
 
-  useEffect(() => {
-    if (!canImportCards && activeIntent !== 'new_deck') {
-      setActiveIntent('new_deck');
-    }
-  }, [activeIntent, canImportCards]);
+  const sourceOptions = useMemo<Array<ImportHubChoiceOption<ImportHubSource>>>(
+    () => buildSourceOptions(strings, canImportCards),
+    [canImportCards, strings]
+  );
+  const renderedSourceOptions = useMemo<Array<ImportHubChoiceOption<ImportHubSource>>>(
+    () =>
+      activeSource === 'structured_deck'
+        ? [...sourceOptions, buildStructuredDeckOption(strings)]
+        : sourceOptions,
+    [activeSource, sourceOptions, strings]
+  );
 
   useEffect(() => {
-    if (
-      activeIntent === 'new_deck' &&
-      activeSource === 'csv_excel'
-    ) {
+    if (!canImportCards && (activeSource === 'csv_excel' || activeSource === 'paste_notes')) {
       setActiveSource('notebooklm');
     }
-  }, [activeIntent, activeSource]);
+  }, [activeSource, canImportCards]);
 
-  const sourceOptions = useMemo<Array<ImportHubChoiceOption<ImportHubSource>>>(
-    () => buildSourceOptions(strings, activeIntent),
-    [activeIntent, strings]
-  );
-
-  const intentOptions = useMemo<Array<ImportHubChoiceOption<ImportHubIntent>>>(
-    () => buildIntentOptions(strings, canImportCards, selectedDeckName),
-    [canImportCards, selectedDeckName, strings]
-  );
-
-  const isDeckFlow = activeIntent === 'new_deck';
-  const isCsvFlow = activeIntent === 'cards_into_deck' && activeSource === 'csv_excel';
+  const isDeckFlow =
+    activeSource === 'structured_deck' || (!canImportCards && activeSource === 'notebooklm');
+  const isCsvFlow = activeSource === 'csv_excel';
   const textSource: Exclude<ImportHubSource, 'csv_excel'> =
     activeSource === 'csv_excel' ? 'paste_notes' : activeSource;
 
@@ -138,43 +132,38 @@ export function ImportHubPanel({
       <View style={styles.stepSection}>
         <ImportHubStepHeader
           eyebrow={strings.importHub.stepLabel(1)}
-          support={strings.importHub.intentSupport}
-          title={strings.importHub.intentTitle}
-        />
-        <ImportHubChoiceGrid
-          activeId={activeIntent}
-          onChange={setActiveIntent}
-          options={intentOptions}
-        />
-      </View>
-
-      <View style={styles.stepSection}>
-        <ImportHubStepHeader
-          eyebrow={strings.importHub.stepLabel(2)}
-          support={isDeckFlow ? strings.importHub.sourceSupportDeck : strings.importHub.sourceSupportCards}
-          title={strings.importHub.sourceTitle}
+          support={strings.importHub.guidedSupport}
+          title={strings.importHub.guidedTitle}
         />
         <ImportHubChoiceGrid
           activeId={activeSource}
-          groupLabels={{
-            featured: strings.importHub.featuredSourcesTitle,
-            other: strings.importHub.otherSourcesTitle
-          }}
           onChange={setActiveSource}
-          options={sourceOptions}
+          options={renderedSourceOptions}
         />
-        <ImportHubInfoCard
-          support={strings.importHub.futureSourcesSupport}
-          title={strings.importHub.futureSourcesTitle}
-          bullets={[strings.importHub.notionFutureNote]}
-          variant="utility"
-        />
+        {canImportCards && activeSource !== 'structured_deck' ? (
+          <ImportHubInfoCard
+            support={strings.importHub.structuredDeckSupport}
+            title={strings.importHub.structuredDeckShortcutTitle}
+            bullets={[strings.importHub.structuredDeckShortcutBullet]}
+            variant="utility"
+          />
+        ) : null}
+        {activeSource !== 'structured_deck' ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              setActiveSource('structured_deck');
+            }}
+          >
+            <Text style={styles.utilityLink}>{strings.importHub.structuredDeckShortcutAction}</Text>
+          </Pressable>
+        ) : null}
         <Text style={styles.targetLabel}>{helperTarget}</Text>
       </View>
 
       <View style={styles.stepSection}>
         <ImportHubStepHeader
-          eyebrow={strings.importHub.stepLabel(3)}
+          eyebrow={strings.importHub.stepLabel(2)}
           support={getInputSupport(strings, activeSource)}
           title={strings.importHub.inputTitle}
         />
@@ -193,6 +182,7 @@ export function ImportHubPanel({
             onImportCsv={onImportCsv}
             onPickFile={onPickCsvFile}
             preview={csvPreview}
+            reviewStepEyebrow={strings.importHub.stepLabel(3)}
           />
         ) : (
           <ImportHubTextFlow
@@ -213,6 +203,7 @@ export function ImportHubPanel({
             onDeckImportTextChange={onDeckImportTextChange}
             onImportCards={onImportCards}
             onImportDeck={onImportDeck}
+            reviewStepEyebrow={strings.importHub.stepLabel(3)}
             selectedDeckName={selectedDeckName}
             source={textSource}
           />
@@ -247,6 +238,11 @@ const createStyles = (colors: ThemeColors) =>
     },
     stepSection: {
       gap: spacing.s
+    },
+    utilityLink: {
+      color: colors.primary,
+      fontSize: typography.caption,
+      fontWeight: '700'
     },
     targetLabel: {
       color: colors.textSecondary,

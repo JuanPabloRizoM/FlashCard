@@ -3,8 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { StudySessionRecord } from '../../../core/models/StudySessionRecord';
 import {
   formatDurationLabel,
-  formatSessionDateTime,
-  type StudySessionOverview
+  formatSessionDateTime
 } from '../../../features/study/studySessionStats';
 import { CardWorkspaceFeedbackState } from '../card/CardWorkspaceFeedbackState';
 import { useAppStrings } from '../../strings';
@@ -12,14 +11,12 @@ import { spacing, typography, useThemedStyles, type ThemeColors } from '../../th
 
 type StudySessionHistoryPanelProps = {
   recentSessions: StudySessionRecord[];
-  sessionOverview: StudySessionOverview;
   isLoading: boolean;
   onOpenSessionDetail: (sessionId: number) => void;
 };
 
 export function StudySessionHistoryPanel({
   recentSessions,
-  sessionOverview,
   isLoading,
   onOpenSessionDetail
 }: StudySessionHistoryPanelProps) {
@@ -29,24 +26,8 @@ export function StudySessionHistoryPanel({
   return (
     <View style={styles.panel}>
       <View style={styles.headerCopy}>
-        <Text style={styles.eyebrow}>{strings.studyStats.historyEyebrow}</Text>
         <Text style={styles.title}>{strings.studyStats.historyTitle}</Text>
         <Text style={styles.support}>{strings.studyStats.historySupport}</Text>
-      </View>
-
-      <View style={styles.metricGrid}>
-        <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>{strings.studyStats.sessions}</Text>
-          <Text style={styles.metricValue}>{sessionOverview.sessionCount}</Text>
-        </View>
-        <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>{strings.studySummary.accuracy}</Text>
-          <Text style={styles.metricValue}>{`${sessionOverview.averageAccuracy}%`}</Text>
-        </View>
-        <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>{strings.studyStats.totalReviewed}</Text>
-          <Text style={styles.metricValue}>{sessionOverview.totalReviewed}</Text>
-        </View>
       </View>
 
       {isLoading ? (
@@ -88,71 +69,35 @@ export function StudySessionHistoryPanel({
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     panel: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: 20,
-      borderWidth: 1,
       gap: spacing.m,
-      padding: spacing.l
+      paddingTop: spacing.s
     },
     headerCopy: {
       gap: spacing.xs
     },
-    eyebrow: {
-      color: colors.primary,
-      fontSize: typography.overline,
-      fontWeight: '700',
-      letterSpacing: 0.3,
-      textTransform: 'uppercase'
-    },
     title: {
       color: colors.textPrimary,
-      fontSize: typography.subtitle,
+      fontSize: typography.body,
       fontWeight: '700'
     },
     support: {
       color: colors.textSecondary,
-      fontSize: typography.bodySmall,
-      lineHeight: 22
-    },
-    metricGrid: {
-      flexDirection: 'row',
-      gap: spacing.s
-    },
-    metricCard: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.border,
-      borderRadius: 16,
-      borderWidth: 1,
-      flex: 1,
-      gap: spacing.xs,
-      padding: spacing.m
-    },
-    metricLabel: {
-      color: colors.textMuted,
-      fontSize: typography.overline,
-      fontWeight: '700',
-      letterSpacing: 0.3,
-      textTransform: 'uppercase'
-    },
-    metricValue: {
-      color: colors.textPrimary,
-      fontSize: typography.subtitle,
-      fontWeight: '700'
+      fontSize: typography.caption,
+      lineHeight: 18
     },
     list: {
       gap: spacing.s
     },
     row: {
       alignItems: 'center',
-      backgroundColor: colors.background,
+      backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: 16,
+      borderRadius: 14,
       borderWidth: 1,
       flexDirection: 'row',
       gap: spacing.m,
       justifyContent: 'space-between',
-      padding: spacing.m
+      padding: spacing.s
     },
     rowCopy: {
       flex: 1,

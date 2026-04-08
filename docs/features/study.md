@@ -14,6 +14,7 @@ It currently supports:
 - adaptively ordering study items using persisted progress signals
 - shaping study sessions with a practical size cap and balanced item composition
 - showing a Study dashboard for deck selection, setup, and high-level readiness/history context
+- treating the Study tab as a lighter launchpad with a lead session-start surface instead of another heavy dashboard
 - routing active study into a dedicated Study stack screen instead of rendering it inline inside the Study dashboard tab
 - revealing answers by tap/click and `Space` on web
 - grading revealed cards with swipe-up correct / swipe-down incorrect plus fallback buttons

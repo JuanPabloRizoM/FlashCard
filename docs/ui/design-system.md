@@ -16,6 +16,7 @@
 3. Comfortable spacing for longer study sessions
 4. Soft feedback instead of harsh UI contrast
 5. Appearance should respect user preference without changing product structure
+6. Primary actions deserve surfaces; supporting information usually does not
 
 ---
 
@@ -84,7 +85,7 @@ The active theme must flow through the shared theme layer, navigation container,
 
 ## Components
 
-- Screen header card
+- Screen header
 - Surface card
 - Primary button
 - Secondary button
@@ -98,9 +99,11 @@ The active theme must flow through the shared theme layer, navigation container,
 ## Layout
 
 - 8pt spacing base with larger breathing room on main cards
-- Rounded surfaces for group clarity
+- Rounded surfaces reserved for key actions and focused workflows
 - Helper text should stay close to the control it explains
 - Empty and loading states should remain centered and calm
+- Top-level screens should prefer text hierarchy before adding another boxed container
+- Repeated section cards on a single screen should be avoided when spacing and typography can do the job
 
 ---
 
@@ -147,3 +150,4 @@ States should be:
 - Dense layout blocks with no breathing room
 - Inline styles everywhere
 - Unstructured UI
+- Treating every section as a large card by default

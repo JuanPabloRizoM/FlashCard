@@ -10,6 +10,7 @@ import { getTextSourceProfile } from './importHubSourceProfiles';
 type ImportHubTextFlowProps = {
   isDeckFlow: boolean;
   source: Exclude<ImportHubSource, 'csv_excel'>;
+  reviewStepEyebrow: string;
   selectedDeckName: string | null;
   canImportCards: boolean;
   isLocked: boolean;
@@ -32,6 +33,7 @@ type ImportHubTextFlowProps = {
 export function ImportHubTextFlow({
   isDeckFlow,
   source,
+  reviewStepEyebrow,
   selectedDeckName,
   canImportCards,
   isLocked,
@@ -155,7 +157,7 @@ export function ImportHubTextFlow({
 
           void onImportCards();
         }}
-        stepEyebrow={strings.importHub.stepLabel(4)}
+        stepEyebrow={reviewStepEyebrow}
         summaryItems={
           isDeckFlow
             ? [

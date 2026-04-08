@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import {
   APP_LANGUAGES,
@@ -36,7 +36,7 @@ export function SettingsScreen() {
   return (
     <ScreenContainer title={strings.screens.settings.title} subtitle={strings.screens.settings.subtitle}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.sectionCard}>
+        <View style={styles.section}>
           <Text style={styles.eyebrow}>{strings.screens.settings.appearanceEyebrow}</Text>
           <Text style={styles.sectionTitle}>{strings.screens.settings.appearanceTitle}</Text>
           <Text style={styles.supportText}>{strings.screens.settings.appearanceSupport}</Text>
@@ -51,7 +51,7 @@ export function SettingsScreen() {
           />
         </View>
 
-        <View style={styles.sectionCard}>
+        <View style={styles.section}>
           <Text style={styles.eyebrow}>{strings.screens.settings.languageEyebrow}</Text>
           <Text style={styles.sectionTitle}>{strings.screens.settings.languageTitle}</Text>
           <Text style={styles.supportText}>{strings.screens.settings.languageSupport}</Text>
@@ -67,7 +67,7 @@ export function SettingsScreen() {
 
         <SettingsAccountSection session={session} />
 
-        <View style={styles.sectionCard}>
+        <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <View style={styles.sectionHeaderCopy}>
               <Text style={styles.eyebrow}>{strings.screens.settings.billingEyebrow}</Text>
@@ -80,14 +80,15 @@ export function SettingsScreen() {
           <Text style={styles.supportText}>{strings.screens.settings.billingSupport}</Text>
         </View>
 
-        <View style={styles.sectionCard}>
+        <View style={styles.section}>
           <Text style={styles.eyebrow}>{strings.screens.settings.aboutEyebrow}</Text>
           <Text style={styles.sectionTitle}>{strings.screens.settings.aboutTitle}</Text>
-          <View style={styles.metaCard}>
+          <View style={styles.infoList}>
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>{strings.screens.settings.appLabel}</Text>
               <Text style={styles.infoValue}>{APP_NAME}</Text>
             </View>
+            <View style={styles.infoDivider} />
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>{strings.screens.settings.versionLabel}</Text>
               <Text style={styles.infoValue}>{APP_VERSION_LABEL}</Text>
@@ -103,16 +104,11 @@ export function SettingsScreen() {
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     content: {
-      gap: spacing.m,
+      gap: spacing.xl,
       paddingBottom: spacing.xl
     },
-    sectionCard: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: 20,
-      borderWidth: 1,
-      gap: spacing.m,
-      padding: spacing.l
+    section: {
+      gap: spacing.s
     },
     sectionHeaderRow: {
       alignItems: 'flex-start',
@@ -158,18 +154,18 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: typography.caption,
       fontWeight: '700'
     },
-    metaCard: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.border,
-      borderRadius: 16,
-      borderWidth: 1,
+    infoList: {
       gap: spacing.s,
-      padding: spacing.m
+      paddingTop: spacing.xs
     },
     infoRow: {
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-between'
+    },
+    infoDivider: {
+      backgroundColor: colors.border,
+      height: 1
     },
     infoLabel: {
       color: colors.textMuted,

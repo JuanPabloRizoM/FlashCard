@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAppStrings } from '../../strings';
-import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
+import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 
 export type CardWorkspaceMode = 'create' | 'import';
 
@@ -16,7 +16,6 @@ export function CardWorkspaceModeSwitch({
   onChangeMode,
   isDisabled
 }: CardWorkspaceModeSwitchProps) {
-  const colors = useThemeColors();
   const strings = useAppStrings();
   const styles = useThemedStyles(createStyles);
   const workspaceModes: Array<{ mode: CardWorkspaceMode; label: string }> = [
@@ -63,8 +62,8 @@ const createStyles = (colors: ThemeColors) =>
     textTransform: 'uppercase'
   },
   track: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.borderStrong,
     borderRadius: 16,
     borderWidth: 1,
     flexDirection: 'row',
@@ -79,7 +78,7 @@ const createStyles = (colors: ThemeColors) =>
     paddingVertical: spacing.s
   },
   optionActive: {
-    backgroundColor: colors.primarySoft
+    backgroundColor: colors.surface
   },
   optionDisabled: {
     opacity: 0.55
@@ -91,6 +90,6 @@ const createStyles = (colors: ThemeColors) =>
     textAlign: 'center'
   },
   optionLabelActive: {
-    color: colors.primary
+    color: colors.textPrimary
   }
 });

@@ -12,6 +12,27 @@
 ---
 
 [2026-04-07]
+- Change: Simplified the Import Hub into one guided flow with three primary entry paths (`NotebookLM`, `Quick cards`, and `File`), reduced the visible decision points, and made structured deck import a quieter advanced route.
+- Reason: Import still felt too segmented and too parser-driven for normal users, even though the underlying logic was already unified.
+- Files: src/ui/components/card/ImportHubPanel.tsx, src/ui/components/card/ImportHubTextFlow.tsx, src/ui/components/card/CsvImportPanel.tsx, src/ui/components/card/importHubConfig.ts, src/ui/strings/translations.ts, docs/features/cards.md
+- Risk: Medium
+- Notes: NotebookLM remains the primary guided option, CSV still uses real mapping and preview, and structured deck import remains available without competing as a primary path.
+
+[2026-04-07]
+- Change: Further simplified the Study home into a lighter launchpad by removing the extra recent-history metrics block and turning the deck performance strip into text-based compact stats around one dominant next-session card.
+- Reason: Study needed to feel less like a dashboard and more like a clear session-start surface with secondary information visually demoted.
+- Files: src/ui/components/study/StudyDashboardPanel.tsx, src/ui/components/study/StudyHomeStatsStrip.tsx, src/ui/components/study/StudySessionHistoryPanel.tsx
+- Risk: Low
+- Notes: Active study remains out of the Study home route, deck setup still uses chips, and the main visual priority stays on `Start session`.
+
+[2026-04-07]
+- Change: Refactored the shared screen shell and top-level product screens toward a lighter premium layout with text-led headers, fewer repeated section cards, and clearer primary-action surfaces across Study, Cards, Decks, and Settings.
+- Reason: The app had accumulated a heavy dashboard rhythm where too many sections were boxed equally, which diluted hierarchy and made the product feel denser than intended.
+- Files: src/ui/components/layout/ScreenContainer.tsx, src/ui/screens/DecksScreen.tsx, src/ui/components/deck/DeckCollectionOverview.tsx, src/ui/components/deck/DeckListItem.tsx, src/ui/screens/CardsScreen.tsx, src/ui/components/card/CardWorkspaceDeckSelector.tsx, src/ui/components/card/CardWorkspaceModeSwitch.tsx, src/ui/components/card/CardEditorPanel.tsx, src/ui/components/study/StudyDashboardPanel.tsx, src/ui/components/study/StudySessionHistoryPanel.tsx, src/ui/screens/SettingsScreen.tsx, src/ui/components/settings/SettingsChoiceGroup.tsx, src/ui/components/settings/SettingsAccountSection.tsx, docs/ui/design-system.md
+- Risk: Medium
+- Notes: Primary workflows remain card-led where appropriate, but supporting information now relies more on spacing, typography, and compact chips than repeated container cards.
+
+[2026-04-07]
 - Change: Polished Auth and Settings to better match the app’s premium product direction, with calmer auth hierarchy, cleaner form treatment, clearer settings sections, and a real sign-out surface.
 - Reason: Auth and Settings were functionally correct, but they still felt flatter and less product-like than Decks, Cards, Import, and Study.
 - Files: src/ui/components/auth/AuthScaffold.tsx, src/ui/screens/auth/AuthLandingScreen.tsx, src/ui/screens/auth/SignInScreen.tsx, src/ui/screens/auth/CreateAccountScreen.tsx, src/ui/screens/auth/ForgotPasswordScreen.tsx, src/ui/screens/SettingsScreen.tsx, src/ui/strings/translations.ts
@@ -448,3 +469,4 @@
 - Hardened auth sign-out to use Supabase local sign-out only for authenticated sessions, avoiding unnecessary remote auth calls from guest mode.
 - Refactored Study into a real nested stack so the Study dashboard only handles setup/history while live review runs in a dedicated full-screen Study Session route with the tab bar hidden.
 - Reworked the active Study Session layout into a card-first full-screen surface with minimal shell chrome and safer web animation settings.
+- Redesigned the Study home tab into a lighter study launchpad with a lead session card, compact setup controls, and less repetitive dashboard chrome.

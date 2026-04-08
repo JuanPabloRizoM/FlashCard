@@ -66,18 +66,14 @@ const createStyles = (colors: ThemeColors) =>
   deckCard: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 24,
+    borderRadius: 20,
     borderWidth: 1,
-    gap: spacing.m,
-    padding: spacing.l,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.22,
-    shadowRadius: 28
+    gap: spacing.s,
+    padding: spacing.m
   },
   deckCardPressed: {
-    borderColor: colors.primary,
-    transform: [{ scale: 0.992 }]
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.borderStrong
   },
   deckCardHeader: {
     alignItems: 'center',
@@ -105,7 +101,7 @@ const createStyles = (colors: ThemeColors) =>
   },
   deckName: {
     color: colors.textPrimary,
-    fontSize: typography.title,
+    fontSize: typography.subtitle,
     fontWeight: '700'
   },
   deckDescription: {

@@ -18,7 +18,7 @@ export function DeckCollectionOverview({
   const styles = useThemedStyles(createStyles);
 
   return (
-    <View style={styles.collectionCard}>
+    <View style={styles.collectionWrap}>
       <Text style={styles.eyebrow}>{strings.screens.decks.collectionEyebrow}</Text>
       <Text style={styles.collectionTitle}>{strings.screens.decks.collectionTitle}</Text>
       <Text style={styles.helperText}>{strings.screens.decks.collectionSubtitle}</Text>
@@ -42,13 +42,9 @@ export function DeckCollectionOverview({
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
-    collectionCard: {
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderRadius: 24,
-      borderWidth: 1,
+    collectionWrap: {
       gap: spacing.s,
-      padding: spacing.l
+      paddingBottom: spacing.xs
     },
     eyebrow: {
       color: colors.primary,
@@ -70,27 +66,21 @@ const createStyles = (colors: ThemeColors) =>
     collectionStatsRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: spacing.s,
-      paddingTop: spacing.xs
+      gap: spacing.l,
+      paddingTop: spacing.s
     },
     collectionStat: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.border,
-      borderRadius: 18,
-      borderWidth: 1,
       flexGrow: 1,
-      gap: spacing.xs,
-      minWidth: 96,
-      paddingHorizontal: spacing.m,
-      paddingVertical: spacing.m
+      gap: spacing.xxs,
+      minWidth: 96
     },
     collectionStatValue: {
       color: colors.textPrimary,
-      fontSize: typography.subtitle,
+      fontSize: typography.title,
       fontWeight: '700'
     },
     collectionStatLabel: {
-      color: colors.textSecondary,
+      color: colors.textMuted,
       fontSize: typography.caption,
       lineHeight: 18
     }

@@ -4,11 +4,11 @@ import type { CsvImportField, CsvImportMapping, CsvImportPreview } from '../../.
 import { useAppStrings } from '../../strings';
 import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 import { CsvImportMappingField } from './CsvImportMappingField';
-import { ImportHubInfoCard } from './ImportHubInfoCard';
 import { ImportHubReviewSection } from './ImportHubReviewSection';
 
 type CsvImportPanelProps = {
   isEmbedded?: boolean;
+  reviewStepEyebrow: string;
   fileName: string | null;
   headers: string[];
   mapping: CsvImportMapping;
@@ -24,6 +24,7 @@ type CsvImportPanelProps = {
 
 export function CsvImportPanel({
   isEmbedded = false,
+  reviewStepEyebrow,
   fileName,
   headers,
   mapping,
@@ -60,7 +61,7 @@ export function CsvImportPanel({
       <View style={styles.headerRow}>
         <View style={styles.headerCopy}>
           <Text style={styles.sectionTitle}>{strings.importHub.sourceLabels.csvExcel}</Text>
-          <Text style={styles.supportText}>{strings.importHub.sourceDescriptions.csvExcelCards}</Text>
+          <Text style={styles.supportText}>{strings.importHub.inputSupportFile}</Text>
         </View>
         <View style={styles.actionRow}>
           <Pressable
@@ -87,22 +88,10 @@ export function CsvImportPanel({
       </View>
 
       {fileName != null ? <Text style={styles.fileName}>{strings.csvImport.selectedFile(fileName)}</Text> : null}
-
-      <ImportHubInfoCard
-        bullets={[
-          strings.cardEditor.frontLabel,
-          strings.cardEditor.backLabel,
-          strings.cardEditor.descriptionLabel,
-          strings.cardEditor.applicationLabel
-        ]}
-        support={strings.csvImport.mappingSupport}
-        title={strings.csvImport.mappingTitle}
-      />
-
       {headers.length > 0 ? (
         <View style={styles.mappingCard}>
-          <Text style={styles.mappingTitle}>{strings.importHub.reviewSupport}</Text>
-          <Text style={styles.supportText}>{strings.importHub.inputSupportFile}</Text>
+          <Text style={styles.mappingTitle}>{strings.csvImport.mappingTitle}</Text>
+          <Text style={styles.supportText}>{strings.csvImport.mappingSupport}</Text>
           <CsvImportMappingField
             columns={headers}
             isRequired
@@ -123,6 +112,7 @@ export function CsvImportPanel({
             }}
             selectedColumn={mapping.back}
           />
+          <Text style={styles.optionalLabel}>{strings.common.optional}</Text>
           <CsvImportMappingField
             columns={headers}
             isRequired={false}
@@ -167,7 +157,7 @@ export function CsvImportPanel({
         resultMessage={importResultMessage}
         rows={preview.rows}
         statusText={getStatusText()}
-        stepEyebrow={strings.importHub.stepLabel(4)}
+        stepEyebrow={reviewStepEyebrow}
         summaryItems={
           preview.hasFile
             ? [strings.common.valid(preview.validCount), strings.common.invalid(preview.invalidCount), strings.common.total(preview.totalCount)]
@@ -272,5 +262,10 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.textPrimary,
       fontSize: typography.body,
       fontWeight: '700'
+    },
+    optionalLabel: {
+      color: colors.textMuted,
+      fontSize: typography.caption,
+      fontWeight: '600'
     }
   });

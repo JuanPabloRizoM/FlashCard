@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { spacing, typography, useThemeColors, useThemedStyles, type ThemeColors } from '../../theme';
+import { spacing, typography, useThemedStyles, type ThemeColors } from '../../theme';
 
 type ScreenContainerProps = {
   title: string;
@@ -11,12 +11,11 @@ type ScreenContainerProps = {
 };
 
 export function ScreenContainer({ title, subtitle, children }: ScreenContainerProps) {
-  const colors = useThemeColors();
   const styles = useThemedStyles(createStyles);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.content}>
-        <View style={styles.headerCard}>
+        <View style={styles.header}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
         </View>
@@ -35,18 +34,13 @@ const createStyles = (colors: ThemeColors) =>
   content: {
     flex: 1,
     paddingHorizontal: spacing.l,
-    paddingTop: spacing.s,
+    paddingTop: spacing.m,
     paddingBottom: spacing.m,
-    gap: spacing.m
+    gap: spacing.l
   },
-  headerCard: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 24,
-    borderWidth: 1,
-    gap: spacing.s,
-    paddingHorizontal: spacing.l,
-    paddingVertical: spacing.l
+  header: {
+    gap: spacing.xs,
+    paddingTop: spacing.xs
   },
   title: {
     color: colors.textPrimary,
@@ -55,7 +49,8 @@ const createStyles = (colors: ThemeColors) =>
   },
   subtitle: {
     color: colors.textSecondary,
-    fontSize: typography.body,
-    lineHeight: 24
+    fontSize: typography.bodySmall,
+    lineHeight: 22,
+    maxWidth: 520
   }
 });

@@ -71,12 +71,7 @@ export function CardWorkspaceDeckSelector({
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
   panel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 20,
-    borderWidth: 1,
-    gap: spacing.m,
-    padding: spacing.l
+    gap: spacing.s
   },
   headerRow: {
     alignItems: 'flex-start',
@@ -97,7 +92,7 @@ const createStyles = (colors: ThemeColors) =>
   },
   contextValue: {
     color: colors.textPrimary,
-    fontSize: typography.subtitle,
+    fontSize: typography.title,
     fontWeight: '700'
   },
   statusBadge: {

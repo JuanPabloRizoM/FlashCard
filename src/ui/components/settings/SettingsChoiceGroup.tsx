@@ -47,17 +47,16 @@ const createStyles = (colors: ThemeColors) =>
       gap: spacing.s
     },
     choiceCard: {
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderColor: colors.border,
-      borderRadius: 16,
+      borderRadius: 999,
       borderWidth: 1,
-      minWidth: 104,
+      minWidth: 92,
       paddingHorizontal: spacing.m,
-      paddingVertical: spacing.m
+      paddingVertical: spacing.s
     },
     choiceCardActive: {
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.primary
+      backgroundColor: colors.primarySoft
     },
     choiceTitle: {
       color: colors.textPrimary,

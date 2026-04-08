@@ -79,32 +79,41 @@ export function SettingsAccountSection({ session }: SettingsAccountSectionProps)
         </View>
       </View>
       <Text style={styles.supportText}>{accountSupport}</Text>
-      <View style={styles.accountSummaryCard}>
+      <View style={styles.accountSummary}>
         <Text style={styles.accountSummaryTitle}>{sessionTitle}</Text>
         <Text style={styles.accountSummarySupport}>{signOutSupport}</Text>
       </View>
-      <View style={styles.metaCard}>
+      <View style={styles.infoList}>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>{strings.screens.settings.accountStatusLabel}</Text>
           <Text style={styles.infoValue}>{accountState}</Text>
         </View>
         {session.provider != null ? (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>{strings.screens.settings.accountProviderLabel}</Text>
-            <Text style={styles.infoValue}>{providerLabels[session.provider]}</Text>
-          </View>
+          <>
+            <View style={styles.infoDivider} />
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>{strings.screens.settings.accountProviderLabel}</Text>
+              <Text style={styles.infoValue}>{providerLabels[session.provider]}</Text>
+            </View>
+          </>
         ) : null}
         {session.displayName != null ? (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>{strings.screens.settings.accountNameLabel}</Text>
-            <Text style={styles.infoValue}>{session.displayName}</Text>
-          </View>
+          <>
+            <View style={styles.infoDivider} />
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>{strings.screens.settings.accountNameLabel}</Text>
+              <Text style={styles.infoValue}>{session.displayName}</Text>
+            </View>
+          </>
         ) : null}
         {session.email != null ? (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>{strings.screens.settings.accountEmailLabel}</Text>
-            <Text style={styles.infoValue}>{session.email}</Text>
-          </View>
+          <>
+            <View style={styles.infoDivider} />
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>{strings.screens.settings.accountEmailLabel}</Text>
+              <Text style={styles.infoValue}>{session.email}</Text>
+            </View>
+          </>
         ) : null}
       </View>
       {signOutError != null ? <Text style={styles.errorText}>{signOutError}</Text> : null}
@@ -172,13 +181,9 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: typography.caption,
       fontWeight: '700'
     },
-    accountSummaryCard: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.borderStrong,
-      borderRadius: 18,
-      borderWidth: 1,
+    accountSummary: {
       gap: spacing.xs,
-      padding: spacing.m
+      paddingTop: spacing.xs
     },
     accountSummaryTitle: {
       color: colors.textPrimary,
@@ -190,18 +195,18 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: typography.caption,
       lineHeight: 18
     },
-    metaCard: {
-      backgroundColor: colors.surfaceMuted,
-      borderColor: colors.border,
-      borderRadius: 16,
-      borderWidth: 1,
+    infoList: {
       gap: spacing.s,
-      padding: spacing.m
+      paddingTop: spacing.xs
     },
     infoRow: {
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-between'
+    },
+    infoDivider: {
+      backgroundColor: colors.border,
+      height: 1
     },
     infoLabel: {
       color: colors.textMuted,

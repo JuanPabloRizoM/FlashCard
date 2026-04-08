@@ -98,6 +98,14 @@ export type AppStrings = {
     study: {
       title: string;
       subtitle: string;
+      homeEyebrow: string;
+      contextLine: (deckName: string) => string;
+      launchEyebrow: string;
+      launchTitleEmpty: string;
+      launchTitleSelected: (deckName: string) => string;
+      launchSupportEmpty: string;
+      setupTitle: string;
+      deckSectionLabel: string;
       setupEyebrow: string;
       chooseDeckTitle: string;
       chooseDeckSupport: string;
@@ -250,6 +258,8 @@ export type AppStrings = {
     title: string;
     subtitle: string;
     stepLabel: (stepNumber: number) => string;
+    guidedTitle: string;
+    guidedSupport: string;
     intentTitle: string;
     intentSupport: string;
     intentLabels: {
@@ -298,6 +308,10 @@ export type AppStrings = {
     futureSourcesTitle: string;
     futureSourcesSupport: string;
     notionFutureNote: string;
+    structuredDeckShortcutTitle: string;
+    structuredDeckSupport: string;
+    structuredDeckShortcutBullet: string;
+    structuredDeckShortcutAction: string;
     targetDeck: (deckName: string) => string;
     targetDeckMissing: string;
     targetNewDeck: string;
@@ -754,7 +768,15 @@ const es: AppStrings = {
     },
     study: {
       title: 'Estudiar',
-      subtitle: 'Elige un mazo y empieza una sesión.',
+      subtitle: 'Prepara la siguiente sesión y vuelve rápido al estudio real.',
+      homeEyebrow: 'Enfoque',
+      contextLine: (deckName) => `Sesión preparada para: ${deckName}`,
+      launchEyebrow: 'Siguiente sesión',
+      launchTitleEmpty: 'Elige un mazo para empezar',
+      launchTitleSelected: (deckName) => `Listo para estudiar ${deckName}`,
+      launchSupportEmpty: 'Selecciona un mazo y ajusta la sesión antes de empezar.',
+      setupTitle: 'Ajusta la sesión',
+      deckSectionLabel: 'Mazo',
       setupEyebrow: 'Preparación',
       chooseDeckTitle: 'Elige un mazo',
       chooseDeckSupport: 'Ajusta modo, tamaño y técnica antes de empezar.',
@@ -906,8 +928,10 @@ const es: AppStrings = {
   },
   importHub: {
     title: 'Trae tu contenido',
-    subtitle: 'Elige lo que quieres crear, dinos de dónde viene y revisa todo antes de importarlo.',
+    subtitle: 'Elige la ruta más útil, pega o sube el contenido y revísalo antes de importarlo.',
     stepLabel: (stepNumber) => `Paso ${stepNumber}`,
+    guidedTitle: '¿Qué quieres traer?',
+    guidedSupport: 'Empieza por la forma más rápida para el material que ya tienes.',
     intentTitle: '¿Qué quieres importar?',
     intentSupport: 'Empieza por el resultado que quieres obtener.',
     intentLabels: {
@@ -925,19 +949,19 @@ const es: AppStrings = {
     featuredSourcesTitle: 'Fuentes destacadas',
     otherSourcesTitle: 'Otras rutas',
     sourceLabels: {
-      pasteNotes: 'Pegar notas',
+      pasteNotes: 'Tarjetas rápidas',
       notebooklm: 'NotebookLM',
-      csvExcel: 'CSV / Excel',
+      csvExcel: 'Archivo',
       notion: 'Notion',
       googleDocs: 'Google Docs / documento',
       structuredDeck: 'Texto de mazo estructurado'
     },
     sourceDescriptions: {
-      pasteNotesCards: 'La forma más rápida para notas, preguntas o respuestas que ya puedes copiar y pegar.',
+      pasteNotesCards: 'Pega notas, conceptos o pares simples para convertirlos rápido en tarjetas.',
       pasteNotesDeck: 'Pega notas estructuradas y crea un mazo nuevo con ellas.',
       notebookLmCards: 'Ideal para Q&A, resúmenes y notas de estudio generadas en NotebookLM.',
       notebookLmDeck: 'Convierte una sesión de NotebookLM en un mazo nuevo con una revisión rápida antes de importar.',
-      csvExcelCards: 'Úsalo para tablas, exportaciones y hojas donde quieras mapear columnas con precisión.',
+      csvExcelCards: 'Sube un CSV y asigna solo las columnas que de verdad necesitas.',
       notionCards: 'Trae notas de páginas o contenido exportado desde Notion sin depender de una integración directa.',
       notionDeck: 'Convierte notas o contenido exportado desde Notion en un mazo nuevo.',
       googleDocsCards: 'Perfecto para apuntes, guías y documentos de estudio que ya puedes copiar y pegar.',
@@ -956,6 +980,10 @@ const es: AppStrings = {
     futureSourcesTitle: 'Próximamente',
     futureSourcesSupport: 'Mostramos solo las fuentes que ya funcionan de verdad. Las siguientes aparecerán cuando el flujo sea útil y honesto.',
     notionFutureNote: 'Notion llegará como una ruta guiada para pegar o importar contenido exportado, no como una integración falsa.',
+    structuredDeckShortcutTitle: '¿Quieres crear un mazo completo?',
+    structuredDeckSupport: 'Si ya tienes un bloque en formato de mazo, usa la ruta avanzada solo cuando realmente la necesites.',
+    structuredDeckShortcutBullet: 'Funciona mejor con `# Deck:` en la primera línea y luego `frente | reverso`.',
+    structuredDeckShortcutAction: 'Usar texto de mazo estructurado',
     targetDeck: (deckName) => `Destino: ${deckName}`,
     targetDeckMissing: 'Destino: elige un mazo',
     targetNewDeck: 'Destino: crear un mazo nuevo',
@@ -1425,7 +1453,15 @@ const en: AppStrings = {
     },
     study: {
       title: 'Study',
-      subtitle: 'Choose a deck and start a session.',
+      subtitle: 'Prepare the next session and get back into studying quickly.',
+      homeEyebrow: 'Focus',
+      contextLine: (deckName) => `Session ready for: ${deckName}`,
+      launchEyebrow: 'Next session',
+      launchTitleEmpty: 'Choose a deck to begin',
+      launchTitleSelected: (deckName) => `Ready to study ${deckName}`,
+      launchSupportEmpty: 'Select a deck and shape the session before you start.',
+      setupTitle: 'Shape the session',
+      deckSectionLabel: 'Deck',
       setupEyebrow: 'Setup',
       chooseDeckTitle: 'Choose a deck',
       chooseDeckSupport: 'Adjust mode, size, and technique before you start.',
@@ -1578,8 +1614,10 @@ const en: AppStrings = {
   },
   importHub: {
     title: 'Bring in your content',
-    subtitle: 'Choose what you want to create, tell us where the content comes from, and review it before importing.',
+    subtitle: 'Choose the most useful path, paste or upload the content, then review it before importing.',
     stepLabel: (stepNumber) => `Step ${stepNumber}`,
+    guidedTitle: 'What are you bringing in?',
+    guidedSupport: 'Start with the fastest path for the material you already have.',
     intentTitle: 'What do you want to import?',
     intentSupport: 'Start with the result you want.',
     intentLabels: {
@@ -1597,19 +1635,19 @@ const en: AppStrings = {
     featuredSourcesTitle: 'Featured sources',
     otherSourcesTitle: 'Other paths',
     sourceLabels: {
-      pasteNotes: 'Paste notes',
+      pasteNotes: 'Quick cards',
       notebooklm: 'NotebookLM',
-      csvExcel: 'CSV / Excel',
+      csvExcel: 'File',
       notion: 'Notion',
       googleDocs: 'Google Docs / document',
       structuredDeck: 'Structured deck text'
     },
     sourceDescriptions: {
-      pasteNotesCards: 'The fastest path for notes, prompts, or Q&A you can already copy and paste.',
+      pasteNotesCards: 'Paste notes, concepts, or simple pairs to turn them into cards quickly.',
       pasteNotesDeck: 'Paste structured notes and turn them into a new deck.',
       notebookLmCards: 'Best for Q&A, summaries, and study notes generated in NotebookLM.',
       notebookLmDeck: 'Turn a NotebookLM session into a new deck with one guided review before import.',
-      csvExcelCards: 'Use this for tables, exports, and spreadsheets when you want precise column mapping.',
+      csvExcelCards: 'Upload a CSV and map only the columns you actually need.',
       notionCards: 'Bring in pasted page notes or exported content from Notion without pretending there is direct sync.',
       notionDeck: 'Turn Notion notes or exported content into a new deck.',
       googleDocsCards: 'Ideal for lecture notes, study guides, and pasted document content.',
@@ -1628,6 +1666,10 @@ const en: AppStrings = {
     futureSourcesTitle: 'Coming next',
     futureSourcesSupport: 'Only sources that already work well stay live here. The next ones should arrive as honest workflows, not fake integrations.',
     notionFutureNote: 'Notion will arrive as a guided paste or export path, not as pretend direct sync.',
+    structuredDeckShortcutTitle: 'Need to create a full deck?',
+    structuredDeckSupport: 'Use the advanced path only when you already have deck-formatted content ready to paste.',
+    structuredDeckShortcutBullet: 'It works best with `# Deck:` on the first line and then `front | back` rows.',
+    structuredDeckShortcutAction: 'Use structured deck text',
     targetDeck: (deckName) => `Target: ${deckName}`,
     targetDeckMissing: 'Target: choose a deck',
     targetNewDeck: 'Target: create a new deck',

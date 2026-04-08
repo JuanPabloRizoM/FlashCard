@@ -80,8 +80,9 @@ The Cards tab is now the primary card workspace:
 - the optional image area supports upload from device, paste from clipboard, image preview, replace/remove, and manual image URL entry
 - the user can edit an existing card without leaving the workspace
 - the user can switch the workspace between `Create` and `Import`
-- the Import Hub starts from intent first: `add cards to this deck` or `create a new deck`
-- the source step now highlights knowledge sources first, especially `NotebookLM`, `Notion`, and `Google Docs / document`, while keeping lower-level routes like `CSV / Excel` and `Structured deck text` available without dominating the flow
+- the Import Hub now uses one guided flow with three primary entry paths: `NotebookLM`, `Quick cards`, and `File`
+- the user sees only one primary path choice, one source-specific input area, then one shared preview/confirm step instead of multiple stacked import modes
+- `Structured deck text` remains available as a quiet advanced path for creating a full deck without competing with the main guided choices
 - the user can paste structured multiline text and preview valid/invalid rows before importing
 - the user can paste a full exported deck into the same Import Hub through the structured-deck/new-deck path, preview the parsed deck plus card lines, and confirm deck import
 - the editor keeps optional details secondary instead of splitting creation into separate modes
@@ -108,16 +109,16 @@ Deck Export/Import v1 format:
 - invalid card lines stay visible in preview and are skipped until the user fixes or removes them
 
 Import Hub v1:
-- visible sources:
-  - `Paste text`
-  - `Import deck`
+- primary visible paths:
+  - `NotebookLM`
+  - `Quick cards`
   - `File`
-- `File` is a structural placeholder only in v1 and does not parse or upload anything yet
+- `File` is the real CSV path and reuses the same preview and confirm flow
+- `Structured deck text` remains as a lower-noise advanced route
 - the shared import experience always follows:
-  - choose source
+  - choose path
   - provide input
   - review preview
-  - fix invalid rows
   - confirm import
 
 ---
